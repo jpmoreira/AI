@@ -24,5 +24,18 @@ public class Coordinate {
 		return 0;
 	}
 	
+	
+	/**
+	 * 
+	 * Simple Constructor
+	 * 
+	 * 
+	 * */
+	
+	public Coordinate(float lat,float longit){
+		this.latitude=lat;
+		this.longitude=longit;
+	}
+	
 
 }

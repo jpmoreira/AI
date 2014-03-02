@@ -1,5 +1,6 @@
 package mainPackage;
 import mainPackage.Tile;
+import mainPackage.constructions.Construction;
 /**
  * 
  * A class that represents a given State in the resolution process
@@ -47,5 +48,17 @@ public class State {
 		//TODO implement it
 		return null;
 	}
+
+	/**
+	 * 
+	 * A method used to mutate this object
+	 * 
+	 * */
+	public void mutate(){
+		
+		
+	}
+
+	
 
 }
