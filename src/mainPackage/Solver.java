@@ -63,7 +63,7 @@ public class Solver {
 	 * */
 	public void useSimulatedAnnealing(boolean use){
 		
-		//TODO implement it
+		this.useSimulatedAnnealing=use;
 	}
 	
 	/**
