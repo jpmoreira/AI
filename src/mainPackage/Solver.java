@@ -11,7 +11,6 @@ import mainPackage.constructions.Construction;
  * */
 public class Solver {
 	
-	
 	HashMap<String, State> tabuMap;
 	State [] states;
 	Construction [] constructions;
