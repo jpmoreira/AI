@@ -1,17 +1,19 @@
 package mainPackage.constructions;
 
+import Exceptions.ConstructionException;
 import mainPackage.Tile;
 
 public class HouseConstruction extends Construction {
 
-	public HouseConstruction(float latitude, float longitude) {
+	//TODO document this class
+	public HouseConstruction(float latitude, float longitude) throws ConstructionException {
 		super(latitude, longitude);
-		// TODO Auto-generated constructor stub
+		// TODO implement House Construction stuff
 	}
 
 	@Override
 	public float affinityToTile(Tile tile) {
-		// TODO Auto-generated method stub
+		// TODO implement House Construction stuff
 		return 0;
 	}
 

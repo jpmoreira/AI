@@ -1,7 +1,8 @@
 package mainPackage;
 import java.util.HashMap;
 
-import mainPackage.InputException.InputExceptionCode;
+import Exceptions.InputException;
+import Exceptions.InputException.InputExceptionCode;
 import mainPackage.constructions.Construction;
 
 /**

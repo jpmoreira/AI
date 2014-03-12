@@ -16,13 +16,27 @@ public class Coordinate {
 	 * A method to calculate the distance between two points in the globe
 	 * 
 	 * */
-	public float distanceToPoint(Coordinate otherPoint){
+	public double distanceToPoint(Coordinate otherPoint){
 		
 		
-		//TODO implement it check http://www.movable-type.co.uk/scripts/latlong.html for formula
-		
-		return 0;
+		 double R = 6371; // Radius of the earth in km
+		 double dLat = deg2rad(otherPoint.latitude-latitude);  // deg2rad below
+		 double dLon = deg2rad(otherPoint.longitude-longitude); 
+		 double a = 
+		    Math.sin(dLat/2) * Math.sin(dLat/2) +
+		    Math.cos(deg2rad(latitude)) * Math.cos(deg2rad(otherPoint.latitude)) * 
+		    Math.sin(dLon/2) * Math.sin(dLon/2)
+		    ; 
+		  double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+		  double d = R * c; // Distance in km
+		  return d;
 	}
+
+
+	private double deg2rad(double deg) {
+		  return deg * (Math.PI/180);
+		}
+	
 	
 	
 	/**

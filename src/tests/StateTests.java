@@ -1,0 +1,280 @@
+package tests;
+import static org.junit.Assert.*;
+import mainPackage.Population;
+import mainPackage.State;
+import mainPackage.Tile;
+import mainPackage.constructions.Construction;
+
+import org.junit.Test;
+
+import Exceptions.ConstructionException;
+
+
+public class StateTests {
+
+	
+	
+	@Test
+	public void pairingTest1(){
+		
+		
+		Construction[] constructions=new Construction[3];
+		Tile[] tiles=new Tile[3];
+		
+		try{
+			constructions[0]=new Construction(10,10){
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+			constructions[1]=new Construction(12,12){
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+			constructions[2]=new Construction(13,13){
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+
+		}catch(ConstructionException e){
+			
+			fail(e.message());
+			
+		}
+		
+		
+		Population p=new Population(tiles, constructions, 2);
+		
+		State a=p.states.get(0);
+		State b=p.states.get(1);
+		int[] segments={0,1,2};
+		State c=a.pairWith(b, segments);
+		
+
+		assertArrayEquals(c.constructions, a.constructions);
+	}
+	@Test
+	public void pairingTest2(){
+		
+		
+		Construction[] constructions=new Construction[3];
+		Tile[] tiles=new Tile[3];
+
+		try{
+			constructions[0]=new Construction(10,10){
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					return 0;
+				}
+			};
+			constructions[1]=new Construction(12,12){
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+			constructions[2]=new Construction(13,13){
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+		}
+		catch(ConstructionException e){
+			
+			fail(e.message());
+		}
+
+
+		
+		
+		
+		Population p=new Population(tiles, constructions, 2);
+		
+		State a=p.states.get(0);
+		State b=p.states.get(1);
+		int[] segments={0,2};
+		State c=a.pairWith(b, segments);
+		
+
+		assertEquals(c.constructions[0], a.constructions[0]);
+		assertEquals(c.constructions[1], b.constructions[1]);
+		assertEquals(c.constructions[2], a.constructions[2]);
+	}
+	@Test
+	public void chromossomeTests(){
+		
+		try{
+			
+			Construction.resetConstructions();
+			
+			Construction c=new Construction(10,10) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					return 0;
+				}
+			};
+			
+			Construction c2=new Construction(20,20) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					return 0;
+				}
+			};
+			
+			
+			Construction[] array={c,c2};
+			State s=new State(array);
+			
+			int[] expectedChromo={1,2};
+			
+			assertArrayEquals(expectedChromo,s.chromosome(2));
+			
+		}
+		catch(ConstructionException e){
+			
+			fail(e.message());
+		}
+		
+	}
+	@Test
+	public void testDiversity() {
+		
+		Tile tile1=new Tile();
+		Tile tile2=new Tile();
+		
+		
+		try {
+			
+			Construction c1=new Construction(10,10) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+			Construction c2 = new Construction(20,20) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+			Construction c3 = new Construction(30,30) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+			
+			
+			Tile[] tiles={tile1,tile2};
+			Construction[] constructions1={c1,c2,c3};
+			Construction[] constructions2={c2,c2,c1};
+			
+			State state1=new State(constructions1);
+			State state2=new State(constructions2);
+			
+			State[] states={state1,state2};
+			
+			assertEquals(2, state1.diversity(states));
+			
+			
+			
+			
+			
+			
+		} catch (ConstructionException e) {
+			fail(e.message());
+		}
+		
+		
+		
+		
+		
+		
+	}
+	@Test
+	public void testDiversity2() {
+		
+		Tile tile1=new Tile();
+		Tile tile2=new Tile();
+		
+		
+		try {
+			
+			Construction c1=new Construction(10,10) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+			Construction c2 = new Construction(20,20) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+			Construction c3 = new Construction(30,30) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 0;
+				}
+			};
+			
+			
+			Tile[] tiles={tile1,tile2};
+			Construction[] constructions1={c1,c2,c3};
+			Construction[] constructions2={c1,c2,c1};
+			
+			State state1=new State(constructions1);
+			State state2=new State(constructions2);
+			
+			State[] states={state1,state2};
+			
+			assertEquals(1, state1.diversity(states));
+			
+			
+			
+			
+			
+			
+		} catch (ConstructionException e) {
+			fail(e.message());
+		}
+		
+		
+		
+		
+		
+		
+	}
+}

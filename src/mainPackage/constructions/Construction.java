@@ -1,8 +1,11 @@
 package mainPackage.constructions;
-import java.lang.reflect.Array;
+import java.util.HashMap;
 
-import mainPackage.Tile;
+import mainPackage.ConstantManager;
 import mainPackage.Coordinate;
+import mainPackage.Tile;
+import Exceptions.ConstructionException;
+import Exceptions.ConstructionException.ConstructionExeptionCode;
 /**
  * 
  * A class that represents a construction and all its properties. Intended to be subclassed
@@ -10,12 +13,13 @@ import mainPackage.Coordinate;
  * */
 abstract public class Construction {
 	
-	/**
-	 * 
-	 * Class property to hold the representations that have already been used
-	 * 
-	 * */
-	private static char[] usedRepresentations;
+	
+	
+	
+	private static int indexForNextConstruction=0;
+
+	private static HashMap<Integer, Construction> constructions=new HashMap<Integer,Construction>();
+	
 	/**
 	 * 
 	 * A property that holds the value of the prefered location for this particular construction
@@ -25,10 +29,10 @@ abstract public class Construction {
 	
 	/**
 	 * 
-	 * A property to hold the chromossome representation for the object
+	 * A property to hold the chromosome representation for the object
 	 * 
 	 * */
-	private char chromoRepresentation;
+	private int chromoRepresentation;
 	/**
 	 * 
 	 * A method that should calculate how good a tile is for a given type of construction.
@@ -37,47 +41,25 @@ abstract public class Construction {
 	 * */
 	abstract public float affinityToTile(Tile tile);
 	
-	/**
-	 * A method to attribute a chromossome representation to a given construction
-	 * 
-	 * */
-	static private void attributeChromoRepresentation(Construction construction){
-		
-		if(Construction.usedRepresentations==null){
-			
-			construction.chromoRepresentation='A';
-			Construction.usedRepresentations=new char[1];//create array
-			Construction.usedRepresentations[0]='A';
-			
-		} 
-		
-		else{
-			
-			char[] newArray=new char [Construction.usedRepresentations.length+1];//create a bigger array
-			for(int i=0;i<newArray.length-1;i++){//copy old one's contents
-				newArray[i]=Construction.usedRepresentations[i];
-			}
-			
-			char newChar=(char) (newArray[newArray.length-2]+1);//the new one is the char next to the last one used
-			newArray[newArray.length-1]=newChar;
-			Construction.usedRepresentations=newArray;
-			construction.chromoRepresentation=newChar;
-			
-		}
-		
-		
-	}
 	
 	/**
 	 * 
-	 * Simple constructor for the construction
-	 *
+	 * A simple constructor.
+	 * 
+	 * @param latitude the prefered latitude for the construction
+	 * @param longitude the prefered longitude for the construction
+	 * @param index the index of the construction (necessary to have a chomosome representation)
+	 * @throws ConstructionException 
 	 */
 	
-	public Construction(float latitude,float longitude){
+	public Construction(float latitude,float longitude) throws ConstructionException {
+		
+		
+		if(indexForNextConstruction>=ConstantManager.INT_NR_BITS-1)throw new ConstructionException(ConstructionExeptionCode.MaximumNumOfConstructionsReached_Code.ordinal());
 		
 		preferedLocation=new Coordinate(latitude, longitude);
-		//TODO continue implementation
+		chromoRepresentation=(1<<indexForNextConstruction++);
+		constructions.put(this.chromoRepresentation,this);
 		
 	}
 
@@ -86,7 +68,35 @@ abstract public class Construction {
 	 *A method to pass a Construction object to a Cromossome representation
 	 * 
 	 * */
-	public char toCromossome() {
+	public int toCromossome() {
 		return this.chromoRepresentation;
 	}
+
+	/**
+	 * 
+	 * A method to get the construction that has a given chormossome sequence
+	 * 
+	 * @param chromossome the chromossome sequence whose construction is to be retrieved
+	 * @return the construction with thte passed chromossome
+	 */
+	static public Construction constructionWithCromossome(int chromossome){
+		
+		return constructions.get(chromossome);
+		
+		
+	}
+	
+	/**
+	 * 
+	 * A method that removes all previously used constructions and resets the chromossome representations
+	 * 
+	 */
+	static public void resetConstructions(){
+		
+		constructions.clear();
+		indexForNextConstruction=0;
+	}
+	
+	
+	
 }
