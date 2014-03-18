@@ -29,10 +29,10 @@ public class GeneticRandomGenerator {
 	}
 	/**
 	 * 
-	 * The mutations that are supposed to occur per 10000 states
+	 * The probability a single bit will be toggled
 	 * 
 	 */
-	int mutationsPer10Thousand;
+	float mutationProbability;
 	/**
 	 * 
 	 * The method to be applied to serialize states that are to be passed along to the next generation
@@ -40,11 +40,23 @@ public class GeneticRandomGenerator {
 	fitnessToProbabilityType toNextGenerationMethod;
 	/**
 	 * 
-	 * The method to be applied to find states to be paired
+	 * The probability a state will be paired
 	 * 
 	 */
-	fitnessToProbabilityType toPairMethod;
+	float pairingProbability;
+	/**
+	 * 
+	 * the size of the population we are dealing with
+	 * 
+	 */
+	int populationSize;
 	
+	/**
+	 * 
+	 * the number of bit of a chromossome
+	 * 
+	 */
+	int bitsPerChromossome;
 	
 	/**
 	 * 
@@ -76,12 +88,9 @@ public class GeneticRandomGenerator {
 	 */
 	boolean stateShouldMutate(){
 		
-		int randomNum =(int)(Math.random()*(10000+1));
+		//TODO implement this. Maybe this is not the betters predicate! Maybe this class should be asked bits to toogle or states to pair etc instead of this way!!!
 		
-		if (randomNum<=mutationsPer10Thousand)return true;
 		return false;
-		
-		
 	}
 	
 	/**
@@ -92,11 +101,11 @@ public class GeneticRandomGenerator {
 	 * @param toPair the method to translate into Pairing Probability
 	 * @param mutationsPer10Tousand the number of mutations that should happen to an individual per 10 Thousand generations
 	 */
-	public GeneticRandomGenerator(fitnessToProbabilityType toNextGen,fitnessToProbabilityType toPair,int mutationsPer10Tousand) {
+	public GeneticRandomGenerator(fitnessToProbabilityType toNextGen,int populationSize,int bitsPerChromossome) {
 		
 		toNextGenerationMethod=toNextGen;
-		toPairMethod=toPair;
-		this.mutationsPer10Thousand=mutationsPer10Tousand;
+		this.populationSize=populationSize;
+		this.bitsPerChromossome=bitsPerChromossome;
 		
 		
 	}

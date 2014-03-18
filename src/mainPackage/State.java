@@ -43,22 +43,31 @@ public class State {
 	 * 
 	 * A method use to pair two states. It does not prevent that the Resulting States has more than one tile with the same construction
 	 * @param otherState the state this object is to be paired with
-	 * @param segmentsFromSelf the segments from this object that are to be passed to the next generation
+	 * @param segmentsFromSelf the segments from this object that are to be passed to the the first of the childs
 	 * @return the state resulting from the pairing
 	 */
-	public State pairWith(State otherState,int[]segmentsFromSelf){
+	public State[] pairWith(State otherState,int[]segmentsFromSelf){
 		
-		Construction[] constructionsOfChild=new Construction[this.constructions.length];
-		for(int i=0;i<segmentsFromSelf.length;i++)constructionsOfChild[segmentsFromSelf[i]]=this.constructions[segmentsFromSelf[i]];//if it's ment to be one of this then assign it
+		Construction[] constructionsOfChild1=new Construction[this.constructions.length];
+		Construction[] constructionsOfChild2=new Construction[this.constructions.length];
+		for(int i=0;i<segmentsFromSelf.length;i++){
+			constructionsOfChild1[segmentsFromSelf[i]]=this.constructions[segmentsFromSelf[i]];//if it's ment to be one of this then assign it
+			constructionsOfChild2[segmentsFromSelf[i]]=otherState.constructions[segmentsFromSelf[i]];
+			
+		}
 		
-		for(int i=0;i<constructionsOfChild.length;i++){//search for the ones that have not been assigned yet.
-			if(constructionsOfChild[i]==null){//if was not previously set
-				constructionsOfChild[i]=otherState.constructions[i];//set it
+		for(int i=0;i<constructionsOfChild1.length;i++){//search for the ones that have not been assigned yet.
+			if(constructionsOfChild1[i]==null){//if was not previously set
+				constructionsOfChild1[i]=otherState.constructions[i];//set it
+				constructionsOfChild2[i]=this.constructions[i];
 			}
 		}
 		
 		
-		return new State(constructionsOfChild);
+		State[] childs=new State[2];
+		childs[0]=new State(constructionsOfChild1);
+		childs[1]=new State(constructionsOfChild2);
+		return childs;
 		
 	}
 

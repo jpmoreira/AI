@@ -13,27 +13,26 @@ import mainPackage.constructions.Construction;
 public class Solver {
 	
 	HashMap<String, State> tabuMap;
-	State [] states;
+	Population pop;
 	Construction [] constructions;
+	
+	
+	GeneticRandomGenerator coinFlipper;
 	
 	public boolean useTabu;
 	public boolean useSimulatedAnnealing;
 	public float mutationProbability;
-	public int initialNumberOfStates;
+	public float pairingProbability;
 	/**
 	 * 
 	 * Simple Class constructor
 	 * 
 	 * 
 	 * */
-	public Solver(int nrTiles,int nrConstructions) throws InputException{
-		
-		if(nrTiles<1)throw new InputException(InputExceptionCode.InvalidTiles_Code.ordinal());
-		else if(nrConstructions<1)throw new InputException(InputExceptionCode.InvalidConstruction_Code.ordinal());
+	public Solver(int populationSize,Construction[] constructions,Tile[] tiles) throws InputException{
 		
 		
-		states=new State[nrTiles];
-		constructions=new Construction[nrConstructions];
+		pop=new Population(tiles, constructions, populationSize);
 		
 		
 		
@@ -79,5 +78,25 @@ public class Solver {
 		
 	}
 	
+	public void setPairingProbability(float prob){
+		
+		if(prob<0)pairingProbability=0;
+		else if(prob>1)pairingProbability=1;
+		else mutationProbability=prob;
+		
+	}
 
+	
+	/**
+	 * 
+	 * Method called when 
+	 * 
+	 */
+	public void solve(int nrGenerations){
+		
+		for(int i=0;i<nrGenerations;i++){
+			
+			
+		}
+	}
 }

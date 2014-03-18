@@ -56,13 +56,15 @@ public class StateTests {
 		
 		Population p=new Population(tiles, constructions, 2);
 		
-		State a=p.states.get(0);
-		State b=p.states.get(1);
+		State a=p.states[0];
+		State b=p.states[1];
 		int[] segments={0,1,2};
-		State c=a.pairWith(b, segments);
+		
+		State[] childs=a.pairWith(b, segments);
+		
 		
 
-		assertArrayEquals(c.constructions, a.constructions);
+		assertArrayEquals(childs[0].constructions, a.constructions);
 	}
 	@Test
 	public void pairingTest2(){
@@ -107,15 +109,24 @@ public class StateTests {
 		
 		Population p=new Population(tiles, constructions, 2);
 		
-		State a=p.states.get(0);
-		State b=p.states.get(1);
+		State a=p.states[0];
+		State b=p.states[1];
 		int[] segments={0,2};
-		State c=a.pairWith(b, segments);
+		
+		State[] childs=a.pairWith(b,segments);
+		State c=childs[0];
+		State d=childs[1];
 		
 
 		assertEquals(c.constructions[0], a.constructions[0]);
 		assertEquals(c.constructions[1], b.constructions[1]);
 		assertEquals(c.constructions[2], a.constructions[2]);
+		
+		assertEquals(d.constructions[0], b.constructions[0]);
+		assertEquals(d.constructions[1], a.constructions[1]);
+		assertEquals(d.constructions[2], b.constructions[2]);
+		
+		
 	}
 	@Test
 	public void chromossomeTests(){

@@ -47,9 +47,9 @@ public class PopulationTest {
 			Population pop=new Population(tiles, constructions, 2);
 			
 			
-			ArrayList<State> states=pop.states;
+			State[] states=pop.states;
 			
-			assertEquals(2,states.size());
+			assertEquals(2,states.length);
 			
 			
 			

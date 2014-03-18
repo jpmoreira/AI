@@ -11,7 +11,7 @@ public class Population {
 	 * The states belonging to this Population
 	 * 
 	 */
-	public ArrayList<State> states;
+	public State[] states;
 	/**
 	 * 
 	 * The Constructions in this problem
@@ -26,7 +26,7 @@ public class Population {
 	public Tile[] tiles;
 	
 	
-	GeneticRandomGenerator coinFlipper;
+	
 	
 	
 	
@@ -60,16 +60,17 @@ public class Population {
 	 * 
 	 * @param tiles the tiles that exist in the problem
 	 * @param constructions the constructions that exist in the problem
-	 * @param initialPopulation the size of the initial population
+	 * @param populationSize the size of the initial population
 	 */
-	public Population(Tile[] tiles,Construction[] constructions,int initialPopulation){
+	public Population(Tile[] tiles,Construction[] constructions,int populationSize){
 		
-		states=new ArrayList<State>(2*initialPopulation);//initialize the initial size as the double of the initial capacity
+		states=new State[populationSize];//initialize the initial size as the double of the initial capacity
 		this.tiles=tiles;
 		this.constructions=constructions;
-		for(int i=0;i<initialPopulation;i++){
+		for(int i=0;i<populationSize;i++){
 			State stateToAdd=new State(this.generateRandomConstructionArray(tiles.length));
-			states.add(stateToAdd);
+			states[i]=stateToAdd;
+		
 		}
 		
 		
@@ -112,4 +113,21 @@ public class Population {
 	}
 	
 	
+	public float[] fitnessArray(){
+		
+		float[] fitnesses=new float[states.length];
+		for(int i=0;i<states.length;i++){
+			fitnesses[i]=states[i].fitnessForTiles(tiles);
+		}
+		
+		return fitnesses;
+	}
+
+	//TODO: Make test to test this
+	public void pairStatesAtIndexes(int index1,int index2,int[] segmentsOfFirstOne){
+		
+		State [] newOnes=states[index1].pairWith(states[index2], segmentsOfFirstOne);
+		states[index1]=newOnes[0];
+		states[index2]=newOnes[1];
+	}
 }
