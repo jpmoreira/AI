@@ -56,8 +56,8 @@ public class StateTests {
 		
 		Population p=new Population(tiles, constructions, 2);
 		
-		State a=p.states[0];
-		State b=p.states[1];
+		State a=p.states()[0];
+		State b=p.states()[1];
 		int[] segments={0,1,2};
 		
 		State[] childs=a.pairWith(b, segments);
@@ -109,8 +109,8 @@ public class StateTests {
 		
 		Population p=new Population(tiles, constructions, 2);
 		
-		State a=p.states[0];
-		State b=p.states[1];
+		State a=p.states()[0];
+		State b=p.states()[1];
 		int[] segments={0,2};
 		
 		State[] childs=a.pairWith(b,segments);
@@ -153,11 +153,12 @@ public class StateTests {
 			
 			
 			Construction[] array={c,c2};
-			State s=new State(array);
+			Tile[] tiles={new Tile(),new Tile()};
+			State s=new State(array,tiles);
 			
 			int[] expectedChromo={1,2};
 			
-			assertArrayEquals(expectedChromo,s.chromosome(2));
+			assertArrayEquals(expectedChromo,s.chromosome());
 			
 		}
 		catch(ConstructionException e){
@@ -205,8 +206,8 @@ public class StateTests {
 			Construction[] constructions1={c1,c2,c3};
 			Construction[] constructions2={c2,c2,c1};
 			
-			State state1=new State(constructions1);
-			State state2=new State(constructions2);
+			State state1=new State(constructions1,tiles);
+			State state2=new State(constructions2,tiles);
 			
 			State[] states={state1,state2};
 			
@@ -266,8 +267,8 @@ public class StateTests {
 			Construction[] constructions1={c1,c2,c3};
 			Construction[] constructions2={c1,c2,c1};
 			
-			State state1=new State(constructions1);
-			State state2=new State(constructions2);
+			State state1=new State(constructions1,tiles);
+			State state2=new State(constructions2,tiles);
 			
 			State[] states={state1,state2};
 			

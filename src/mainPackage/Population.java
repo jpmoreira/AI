@@ -11,7 +11,7 @@ public class Population {
 	 * The states belonging to this Population
 	 * 
 	 */
-	public State[] states;
+	private State[] states;
 	/**
 	 * 
 	 * The Constructions in this problem
@@ -27,6 +27,20 @@ public class Population {
 	
 	
 	
+	public int populationSize(){
+		
+		return states.length;
+	}
+	
+	public State[] states(){
+		
+		return this.states;
+	}
+	
+	public Tile[] tiles(){
+		
+		return this.tiles;
+	}
 	
 	
 	
@@ -68,7 +82,7 @@ public class Population {
 		this.tiles=tiles;
 		this.constructions=constructions;
 		for(int i=0;i<populationSize;i++){
-			State stateToAdd=new State(this.generateRandomConstructionArray(tiles.length));
+			State stateToAdd=new State(this.generateRandomConstructionArray(tiles.length),tiles);
 			states[i]=stateToAdd;
 		
 		}
@@ -104,7 +118,7 @@ public class Population {
 		
 		float overallFitness=0;
 		for (State state : states) {
-			overallFitness+=state.fitnessForTiles(tiles);
+			overallFitness+=state.fitness();
 		}
 		
 		return overallFitness;
@@ -117,7 +131,7 @@ public class Population {
 		
 		float[] fitnesses=new float[states.length];
 		for(int i=0;i<states.length;i++){
-			fitnesses[i]=states[i].fitnessForTiles(tiles);
+			fitnesses[i]=states[i].fitness();
 		}
 		
 		return fitnesses;

@@ -17,16 +17,26 @@ public class State {
 	 */
 	public Construction[] constructions;
 	
+	
+	
+	/**
+	 * 
+	 * 
+	 * the tiles this state has.
+	 * 
+	 */
+	public Tile[] tiles;
+	
 	/**
 	 * 
 	 * A method for getting the chromosome representation of the state
 	 * 
 	 * */
-	public int[] chromosome(int nrTiles){
+	public int[] chromosome(){
 
 		
 		
-		int []chromosome=new int[nrTiles];
+		int []chromosome=new int[tiles.length];
 		
 		for(int i=0;i<chromosome.length;i++){
 			chromosome[i]=constructions[i].toCromossome();
@@ -65,8 +75,8 @@ public class State {
 		
 		
 		State[] childs=new State[2];
-		childs[0]=new State(constructionsOfChild1);
-		childs[1]=new State(constructionsOfChild2);
+		childs[0]=new State(constructionsOfChild1,tiles);
+		childs[1]=new State(constructionsOfChild2,tiles);
 		return childs;
 		
 	}
@@ -97,15 +107,16 @@ public class State {
 	 * @param pop the population this State belongs to
 	 * @param constr the array of constructions this state have
 	 */
-	public State(Construction[] constr){
+	public State(Construction[] constr,Tile[] tiles){
 		
 		this.constructions=constr;
+		this.tiles=tiles;
 	
 	}
 
 	
 
-	public float fitnessForTiles(Tile[] tiles){
+	public float fitness(){
 		float fitness = 0;
 		if(tiles.length<constructions.length)return (float) -1.0;
 		for(int i=0;i<tiles.length;i++){
