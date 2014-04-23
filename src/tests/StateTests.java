@@ -54,11 +54,11 @@ public class StateTests {
 		}
 		
 		
-		Population p=new Population(tiles, constructions, 2);
+		Population p=new Population(tiles, constructions, 2,1.0,0);
 		
 		State a=p.states()[0];
 		State b=p.states()[1];
-		int[] segments={0,1,2};
+		Integer[] segments={0,1,2};
 		
 		State[] childs=a.pairWith(b, segments);
 		
@@ -107,11 +107,11 @@ public class StateTests {
 		
 		
 		
-		Population p=new Population(tiles, constructions, 2);
+		Population p=new Population(tiles, constructions, 2,1.0,0);
 		
 		State a=p.states()[0];
 		State b=p.states()[1];
-		int[] segments={0,2};
+		Integer[] segments={0,2};
 		
 		State[] childs=a.pairWith(b,segments);
 		State c=childs[0];

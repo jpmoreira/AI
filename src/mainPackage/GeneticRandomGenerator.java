@@ -1,5 +1,8 @@
 package mainPackage;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import com.sun.tools.javac.code.Attribute.Array;
 
 import mainPackage.State;
 
@@ -34,7 +37,7 @@ public class GeneticRandomGenerator {
 	 * The probability a single bit will be toggled
 	 * 
 	 */
-	float mutationProbability;
+	double mutationProbability;
 	/**
 	 * 
 	 * The method to be applied to serialize states that are to be passed along to the next generation
@@ -42,10 +45,10 @@ public class GeneticRandomGenerator {
 	fitnessToProbabilityType toNextGenerationMethod;
 	/**
 	 * 
-	 * The probability a state will be paired
+	 * The number of states to be paired in each iteration
 	 * 
 	 */
-	float pairingProbability;
+	int statesToPair;
 	/**
 	 * 
 	 * The Population We are dealing with
@@ -53,17 +56,6 @@ public class GeneticRandomGenerator {
 	 */
 	Population population;
 	
-	/**
-	 * 
-	 * the number of bit of a chromossome
-	 * 
-	 */
-	int bitsPerChromossome;
-	/**
-	 * A number to be passed to check how many states are to be passed to the next generation in case {@link #toNextGenerationMethod toNextGenerationMethod} is set to {@link fitnessToProbabilityType#FitnessToRank FitnessToRank}
-	 * 
-	 */
-	int nrOfElitistStatesToSelect;
 	
 	/**
 	 * 
@@ -71,55 +63,78 @@ public class GeneticRandomGenerator {
 	 * @param inputStates the states to be selected
 	 * @return an array withTheStatesForNextGeneration
 	 */
-	public State [] statesForReproduction(State[] inputStates){
+	public State [] statesForReproduction(){
+		
 		
 		ArrayList<State> statesForReproduction=new ArrayList<State>();
-		for (State state : inputStates) {
-			double randomNumber=Math.random();
-			if(randomNumber<=pairingProbability)statesForReproduction.add(state);
+		
+		
+		double overallFitness=this.population.overallFitness();
+		double randomNumber;
+		double probForReproduction;
+		int stateIndex=0;
+		State currentState;
+		
+		//TODO for now only supporting direct fitness to probability method
+		while(statesForReproduction.size()<this.statesToPair){
+			
+			randomNumber=Math.random();
+			currentState=this.population.states()[stateIndex];
+			probForReproduction=currentState.fitness()/overallFitness;
+			if(randomNumber<=probForReproduction)statesForReproduction.add(currentState);
+			
+			stateIndex++;
+			if(stateIndex==this.population.states().length)stateIndex=0;
+			
+			
+			
 		}
 		
-		if(statesForReproduction.size()%2!=0)statesForReproduction.remove(0);//if there is an odd number of states remove one
 		
-		return (State[]) statesForReproduction.toArray();
+		return statesForReproduction.toArray(new State[statesForReproduction.size()]);
+		
+		
+		
+		
 		
 	}
-	/**
-	 * 
-	 * A method that returns the states that are to be passed along to the next generation 
-	 * @param inputStates the states that will possibly be selected
-	 * @return
-	 */
-	public State [] statesForNextGeneration(State[] inputStates){
+
+	//TODO document it
+	public Integer[] segmentsOfState(State state){
 		
-		int popSize=population.populationSize();
-		double overallFitness=population.overallFitness();
-		ArrayList<State> selectedStates=new ArrayList<State>();
+		ArrayList<Integer> segments=new ArrayList<Integer>();
+		double randomNr=Math.random();
 		
-		if(toNextGenerationMethod==fitnessToProbabilityType.DirectFitnessToProbability){
+		for(int i=0;i<state.tiles.length;i++){
 			
-			while(selectedStates.size()<popSize){//while we havent selected the nr of states required
-				for (State state : inputStates) {//for each input state
-					double fitness=state.fitness();
-					double randomNr=Math.random();
-					if(randomNr<=fitness)selectedStates.add(state);//if the number fits then add
-					if(selectedStates.size()==popSize)return (State[])selectedStates.toArray();
-				}
-			}
-			
-		}
-		else if(toNextGenerationMethod==fitnessToProbabilityType.FitnessToRank){//case of elitist selection
-			
-			
+			if(randomNr<0.5)segments.add(i);
 			
 		}
 		
-		return inputStates;//TODO implement this
+		return segments.toArray(new Integer[segments.size()]);
 		
 	}
 	
 	
 
+	//TODO implement it
+	public State[] statesForNextGen(){
+		
+		State[] orderedStates=this.population.states().clone();
+		
+		int nrOfElitistStatesToSelect=this.population.states().length-statesToPair;
+		
+		GeneticRandomGenerator.BubbleSort(orderedStates, nrOfElitistStatesToSelect);
+		
+		State[] statesForNextGen=new State[nrOfElitistStatesToSelect];
+		
+		for(int i=0;i<nrOfElitistStatesToSelect;i++){
+			statesForNextGen[i]=orderedStates[i];
+		}
+		
+		return statesForNextGen;
+		
+	}
 	
 	/**
 	 * 
@@ -129,37 +144,33 @@ public class GeneticRandomGenerator {
 	 */
 	boolean stateShouldMutate(){
 		
-		//TODO implement this. Maybe this is not the betters predicate! Maybe this class should be asked bits to toogle or states to pair etc instead of this way!!!
+		if(Math.random()<mutationProbability)return true;
+		
 		
 		return false;
 	}
 	
+	int mutatingSegmentForState(State s){
+		
+		return (int) Math.random()*s.tiles.length;
+		
+		
+	}
+	
 	/**
-	 * 
-	 * 
 	 * 
 	 * @param toNextGen
 	 * @param toPair the method to translate into Pairing Probability
 	 * @param mutationsPer10Tousand the number of mutations that should happen to an individual per 10 Thousand generations
 	 */
-	public GeneticRandomGenerator(fitnessToProbabilityType toNextGen,int bitsPerChromossome,int nrOfElitistStatesToSelect,Population pop) {
+	public GeneticRandomGenerator(fitnessToProbabilityType toNextGen,Population pop,int statesToPair, double mutationProb) {
 		
 		toNextGenerationMethod=toNextGen;
-		this.bitsPerChromossome=bitsPerChromossome;
-		this.nrOfElitistStatesToSelect=nrOfElitistStatesToSelect;
 		this.population=pop;
+		this.mutationProbability=mutationProb;
+		this.statesToPair=statesToPair;
 		
 		
-	}
-	
-	
-	
-	public float probabilityForNextGenerationOfState(State state){
-		
-		
-		//TODO implement this
-		
-		return 0;
 	}
 	
 	
@@ -172,7 +183,7 @@ public class GeneticRandomGenerator {
 	 * @param nrStatesToOrder the number of states to be garanteed to be at the head of the array
 	 * @param tiles the tiles to give the states in order for them to evaluate their fitness
 	 */
-	public static void BubbleSort(State[] states,int nrStatesToOrder,Tile[] tiles) {
+	public static void BubbleSort(State[] states,int nrStatesToOrder) {
 		 for (int i = 0; i < states.length && i<nrStatesToOrder; i++) {
 		    for (int x = states.length-1; x >i; x--) {
 		        if (states[x].fitness() > states[x-1].fitness()) {

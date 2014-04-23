@@ -2,6 +2,7 @@ package mainPackage;
 
 import java.util.ArrayList;
 
+import mainPackage.GeneticRandomGenerator.fitnessToProbabilityType;
 import mainPackage.constructions.Construction;
 
 public class Population {
@@ -25,6 +26,7 @@ public class Population {
 	 */
 	public Tile[] tiles;
 	
+	public GeneticRandomGenerator coinTosser;
 	
 	
 	public int populationSize(){
@@ -75,12 +77,16 @@ public class Population {
 	 * @param tiles the tiles that exist in the problem
 	 * @param constructions the constructions that exist in the problem
 	 * @param populationSize the size of the initial population
+	 * @param mutationProb the probability of a mutation occurring
+	 * @param statesToPair the probability of a pairing occurring
+	 * 
 	 */
-	public Population(Tile[] tiles,Construction[] constructions,int populationSize){
+	public Population(Tile[] tiles,Construction[] constructions,int populationSize,double mutationProb,int statesToPair){
 		
 		states=new State[populationSize];//initialize the initial size as the double of the initial capacity
 		this.tiles=tiles;
 		this.constructions=constructions;
+		this.coinTosser=new GeneticRandomGenerator(fitnessToProbabilityType.DirectFitnessToProbability, this, statesToPair, mutationProb);
 		for(int i=0;i<populationSize;i++){
 			State stateToAdd=new State(this.generateRandomConstructionArray(tiles.length),tiles);
 			states[i]=stateToAdd;
@@ -114,22 +120,25 @@ public class Population {
 	 * 
 	 * A method that returns the sum of the fitnesses of all states
 	 */
-	public float overallFitness(){
+	public double overallFitness(){
 		
-		float overallFitness=0;
+		System.out.println("Start");
+		//FIXME function bugged
+		double overallFitness=0;
 		for (State state : states) {
 			overallFitness+=state.fitness();
 		}
 		
+		System.out.println("Ends");
 		return overallFitness;
 		
 		
 	}
 	
 	
-	public float[] fitnessArray(){
+	public double[] fitnessArray(){
 		
-		float[] fitnesses=new float[states.length];
+		double[] fitnesses=new double[states.length];
 		for(int i=0;i<states.length;i++){
 			fitnesses[i]=states[i].fitness();
 		}
@@ -137,11 +146,105 @@ public class Population {
 		return fitnesses;
 	}
 
-	//TODO: Make test to test this
-	public void pairStatesAtIndexes(int index1,int index2,int[] segmentsOfFirstOne){
+	
+	/**
+	 * A method that pairs all the states that are to be paired
+	 */
+	public void pair(){
+		
+		
+		State[] statesToBePaired=coinTosser.statesForReproduction();
+		State st1,st2;
+		Integer[] segments;
+		State[] childs;
+		
+		ArrayList<State> statesAfterPairing=new ArrayList<State>();
+		
+		
+		for(int i=0;i<statesToBePaired.length-1;i+=2){
+			st1=statesToBePaired[i];
+			st2=statesToBePaired[i+1];
+			segments=coinTosser.segmentsOfState(st1);
+			childs=st1.pairWith(st2, segments);
+			statesAfterPairing.add(childs[0]);
+			statesAfterPairing.add(childs[1]);
+			
+		}
+		
+		
+		State[] directToNextGenStates=coinTosser.statesForNextGen();
+		
+		for(int i=0;i<directToNextGenStates.length;i++){//add states passing intact
+			states[i]=directToNextGenStates[i];
+		}
+
+		for(int i=directToNextGenStates.length;i<states.length;i++){//ass states paired
+			states[i]=statesAfterPairing.get(i-directToNextGenStates.length);
+		}
+		
+		
+		
+	}
+	
+	/**
+	 * 
+	 * A method that mutates all the states that are to be mutated
+	 * 
+	 */
+	public void mutate(){
+		
+		
+		boolean mutate;
+		for(State s: states){
+			mutate=coinTosser.stateShouldMutate();
+			if(mutate){
+				s.mutate(coinTosser.mutatingSegmentForState(s));
+			}
+			
+		}
+		
+		coinTosser.stateShouldMutate();
+	}
+	
+	/**
+	 * 
+	 * A method that performs a pairing followed by a mutation step
+	 */
+	public void iterate(){
+		this.pair();
+		this.mutate();
+
+	}
+	/**
+	 * 
+	 * A method that returns the most fit state of this population
+	 * @return the most fit state of this population
+	 */
+	public State mostFitState(){
+		
+		State best=states[0];
+		
+		for (State s : states) {
+			if(best.fitness()<s.fitness())best=s;
+		}
+		return best;
+	}
+	
+	/**
+	 * 
+	 * A method that pairs two states and replaces them  for the new ones.
+	 * Public for testing purposes.
+	 * @param index1
+	 * @param index2
+	 * @param segmentsOfFirstOne
+	 * @return
+	 */
+	public State[] pairStatesAtIndexes(int index1,int index2,Integer[] segmentsOfFirstOne){
 		
 		State [] newOnes=states[index1].pairWith(states[index2], segmentsOfFirstOne);
 		states[index1]=newOnes[0];
 		states[index2]=newOnes[1];
+		
+		return newOnes;
 	}
 }

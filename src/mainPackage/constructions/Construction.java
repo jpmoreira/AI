@@ -14,6 +14,36 @@ import Exceptions.ConstructionException.ConstructionExeptionCode;
 abstract public class Construction {
 	
 	
+	/**
+	 * 
+	 * A private data member to hold the construction representing an invalid construction. This property should never be used explicitly as it may be null.
+	 * A call to {@link nullConstruction()} should be used instead where the lazy instantiation is done.
+	 * 
+	 */
+	private static Construction nullConstruction;
+	/**
+	 * A method that returns a construction that represents an invalid construction. The construction returned has a fitness of 0 whatever the tile it is attached to
+	 * @return
+	 */
+	private static Construction nullConstruction(){
+		
+		if(nullConstruction==null){
+			
+			
+			try {
+				nullConstruction=new Construction(0,0) {
+					
+					@Override
+					public float affinityToTile(Tile tile) {
+						
+						return 0;
+					}
+				};
+			} catch (ConstructionException e) {}
+			
+		}
+		return nullConstruction;
+	};
 	
 	
 	private static int indexForNextConstruction=0;
@@ -77,10 +107,16 @@ abstract public class Construction {
 	 * A method to get the construction that has a given chormossome sequence
 	 * 
 	 * @param chromossome the chromossome sequence whose construction is to be retrieved
-	 * @return the construction with thte passed chromossome
+	 * @return the construction with the passed chromossome
 	 */
 	static public Construction constructionWithCromossome(int chromossome){
 		
+		
+		Construction c=constructionWithCromossome(chromossome);
+		if(c==null){
+			
+			
+		}
 		return constructions.get(chromossome);
 		
 		

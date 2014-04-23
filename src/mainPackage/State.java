@@ -56,7 +56,7 @@ public class State {
 	 * @param segmentsFromSelf the segments from this object that are to be passed to the the first of the childs
 	 * @return the state resulting from the pairing
 	 */
-	public State[] pairWith(State otherState,int[]segmentsFromSelf){
+	public State[] pairWith(State otherState,Integer[]segmentsFromSelf){
 		
 		Construction[] constructionsOfChild1=new Construction[this.constructions.length];
 		Construction[] constructionsOfChild2=new Construction[this.constructions.length];

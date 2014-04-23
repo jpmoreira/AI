@@ -2,6 +2,8 @@ package tests;
 
 import static org.junit.Assert.*;
 import mainPackage.GeneticRandomGenerator;
+import mainPackage.GeneticRandomGenerator.fitnessToProbabilityType;
+import mainPackage.Population;
 import mainPackage.State;
 import mainPackage.Tile;
 import mainPackage.constructions.Construction;
@@ -68,7 +70,7 @@ public class GeneticRandomGeneratorTests {
 			
 			
 			
-			GeneticRandomGenerator.BubbleSort(statesArray, 1, tiles);
+			GeneticRandomGenerator.BubbleSort(statesArray, 1);
 			
 			assertEquals(statesArray[0],s4);
 			
@@ -139,7 +141,7 @@ public class GeneticRandomGeneratorTests {
 			
 			
 			
-			GeneticRandomGenerator.BubbleSort(statesArray, 2, tiles);
+			GeneticRandomGenerator.BubbleSort(statesArray, 2);
 			
 			assertEquals(statesArray[0],s4);
 			assertEquals(statesArray[1],s3);
@@ -152,7 +154,6 @@ public class GeneticRandomGeneratorTests {
 		
 		
 	}
-	
 	
 	@Test
 	public void testBubbleSortMultipleConstruction() {
@@ -210,7 +211,7 @@ public class GeneticRandomGeneratorTests {
 			
 			
 			
-			GeneticRandomGenerator.BubbleSort(statesArray, 1, tiles);
+			GeneticRandomGenerator.BubbleSort(statesArray, 1);
 			
 			assertEquals(statesArray[0],s4);
 			
@@ -222,6 +223,76 @@ public class GeneticRandomGeneratorTests {
 		
 		
 	}
-
+	@Test
+	public void testNextGeneration(){
+		
+		
+		try{
+			
+			Tile[] tiles={new Tile()};
+			
+			Construction c1=new Construction(10,10) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					
+					return 1;
+				}
+			};
+			Construction c2=new Construction(20,20) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					return 2;
+				}
+			};
+			Construction c3=new Construction(30,30) {
+				
+				@Override
+				public float affinityToTile(Tile tile) {
+					return 3;
+				}
+			};
+			
+			Construction[] constructions={c1,c2,c3};
+			Construction[] constructions1={c1};
+			Construction[] constructions2={c2};
+			Construction[] constructions3={c3};
+			
+			State s1=new State(constructions1, tiles);
+			State s2=new State(constructions2, tiles);
+			State s3=new State(constructions3, tiles);
+			
+			Population pop= new Population(tiles, constructions, 3, 0.5, 2);
+			
+			
+			//alter states not to be random
+			State[] states=pop.states();
+			states[0]=s1;
+			states[1]=s2;
+			states[2]=s3;
+			
+			GeneticRandomGenerator gen=new GeneticRandomGenerator(fitnessToProbabilityType.FitnessToRank, pop, 1, 0.5);
+			
+			State[] statesOfNextGen=gen.statesForNextGen();
+			State[] supposedStatesForNextGen={s3,s2};
+			
+			assertArrayEquals(statesOfNextGen, supposedStatesForNextGen);
+			
+			//TODO test further!!! only one test proves nothing
+			
+			
+		}catch(Exception e){
+			
+			fail("Thrown exeption but shouldn't");
+			
+		}
+		
+		
+		
+		
+		
+		
+	}
 
 }
