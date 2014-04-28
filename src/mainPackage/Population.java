@@ -103,7 +103,7 @@ public class Population {
 	 * 
 	 * A method that returns a given number of construction by a random order
 	 * @param size
-	 * @return
+	 * @return the array with the constructions by a random order
 	 */
 	Construction[] generateRandomConstructionArray(int size){
 		
@@ -210,7 +210,7 @@ public class Population {
 	public void iterate(){
 		this.pair();
 		this.mutate();
-
+		this.coinTosser.updateParameters();
 	}
 	/**
 	 * 
@@ -234,7 +234,7 @@ public class Population {
 	 * @param index1
 	 * @param index2
 	 * @param segmentsOfFirstOne
-	 * @return
+	 * @return the two states that are the result of the pairing
 	 */
 	public State[] pairStatesAtIndexes(int index1,int index2,Integer[] segmentsOfFirstOne){
 		

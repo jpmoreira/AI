@@ -22,7 +22,7 @@ public class State {
 	
 	/**
 	 * 
-	 * A unique identifier for a state. This identifier atribution mechanism may be reset by using the method {@link resetStates()}.
+	 * A unique identifier for a state. This identifier attribution mechanism may be reset by using the method {@link #resetStates()}.
 	 * @return the unique identifier for the state
 	 */
 	public int id(){
@@ -122,8 +122,8 @@ public class State {
 	 * 
 	 * Simple constructor
 	 * 
-	 * @param pop the population this State belongs to
 	 * @param constr the array of constructions this state have
+	 * @param tiles the tiles to be associated with the constructions.
 	 */
 	public State(Construction[] constr,Tile[] tiles){
 		

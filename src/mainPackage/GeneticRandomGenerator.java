@@ -37,8 +37,8 @@ public class GeneticRandomGenerator {
 	
 	/**
 	 * 
-	 * The decreasing factor by which the {@link mutationProbability} value is decreased in each iteration. The default value is 1.0 which implies that {@link mutationProbability} value doesn't decrease.
-	 * To set this value  {@link setVariableMutationProbability()} should be used.
+	 * The decreasing factor by which the {@link #mutationProbability} value is decreased in each iteration. The default value is 1.0 which implies that {@link #mutationProbability} value doesn't decrease.
+	 * To set this value  {@link #setVariableMutationProbability(double)} should be used.
 	 * 
 	 * 
 	 */
@@ -55,7 +55,7 @@ public class GeneticRandomGenerator {
 	/**
 	 * 
 	 * A boolean that states whether a direct translation of fitness to probability is to be used or on the other hand a ranking method.
-	 * for more detailed information see documentation of {@link enableFitnessToRank()} and {@link enableDirectMethod()}.
+	 * for more detailed information see documentation of {@link #enableFitnessToRank(double)} and {@link #enableDirectMethod()}.
 	 * 
 	 */
 	private boolean directFitnessToProbability;
@@ -76,7 +76,6 @@ public class GeneticRandomGenerator {
 	/**
 	 * 
 	 * A method that returns the states to be paired for the next generation
-	 * @param inputStates the states to be selected
 	 * @return an array withTheStatesForNextGeneration
 	 */
 	public State [] statesForReproduction(){
@@ -104,7 +103,7 @@ public class GeneticRandomGenerator {
 
 	/**
 	 * 
-	 * A method that returns the states for reproduction using the method {@link directFitnessToProbability}.
+	 * A method that returns the states for reproduction using the method {@link #directFitnessToProbability}.
 	 * @return the states to be used in reproduction
 	 */
 	public State [] statesForReproduction_Direct_Fitness_To_Probability(){
@@ -184,9 +183,9 @@ public class GeneticRandomGenerator {
 	
 	/**
 	 * 
-	 * A function return a value that is intended to make a state mutate or not
+	 * A function return a value that is intended to make a state mutate or not. The best state is never mutated.
 	 * 
-	 * @return
+	 * @return a boolean stating if a state should mutate
 	 */
 	boolean stateShouldMutate(State s){
 		
@@ -207,9 +206,11 @@ public class GeneticRandomGenerator {
 	
 	/**
 	 * 
-	 * @param toNextGen
-	 * @param toPair the method to translate into Pairing Probability
-	 * @param mutationsPer10Tousand the number of mutations that should happen to an individual per 10 Thousand generations
+	 * A simple constructor.
+	 * 
+	 * @param pop the Population to whom this {@link GeneticRandomGenerator} is link
+	 * @param statesToPair the number of states to pair
+	 * @param mutationProb the initial mutation probability
 	 */
 	public GeneticRandomGenerator(Population pop,int statesToPair, double mutationProb) {
 		
@@ -230,7 +231,6 @@ public class GeneticRandomGenerator {
 	 * This method is used to put at the head of the array a given number of the most fit states. Useful since most times not the hole array needs to be sorted
 	 * @param states all the states
 	 * @param nrStatesToOrder the number of states to be guaranteed to be at the head of the array
-	 * @param tiles the tiles to give the states in order for them to evaluate their fitness
 	 */
 	public static void BubbleSort(State[] states,int nrStatesToOrder) {
 		 for (int i = 0; i < states.length && i<nrStatesToOrder; i++) {
@@ -295,10 +295,10 @@ public class GeneticRandomGenerator {
 	//SETTING DECREASING MUTATION PROB
 	
 	/**
-	 * A method that sets the increment/decrement factor for {@link mutationProbability}.
-	 * Change in {@link mutationProbability} as well as other variable parameters will only occur after a call to {@link updateParameters()}.
+	 * A method that sets the increment/decrement factor for {@link #mutationProbability}.
+	 * Change in {@link #mutationProbability} as well as other variable parameters will only occur after a call to {@link #updateParameters()}.
 	 * 
-	 * @param factor the factor by which {@link mutationProbability} should be multiplied at each cycle. This number shouldn't be negative.A value smaller than 1 means that {@link mutationProbability} will decrease over time.A value bigger than 1 means that {@link mutationProbability} will increase over time.
+	 * @param factor the factor by which {@link #mutationProbability} should be multiplied at each cycle. This number shouldn't be negative.A value smaller than 1 means that {@link #mutationProbability} will decrease over time.A value bigger than 1 means that {@link #mutationProbability} will increase over time.
 	 */
 	public void setVariableMutationProbability(double factor){
 		

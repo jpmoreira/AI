@@ -19,7 +19,7 @@ abstract public class Construction {
 	/**
 	 * 
 	 * A private data member to hold the construction representing an invalid construction. This property should never be used explicitly as it may be null.
-	 * A call to {@link nullConstruction()} should be used instead where the lazy instantiation is done.
+	 * A call to {@link #nullConstruction()} should be used instead where the lazy instantiation is done.
 	 * 
 	 */
 	private static Construction nullConstruction;
@@ -72,9 +72,7 @@ abstract public class Construction {
 	 * 
 	 * A simple constructor.
 	 * 
-	 * @param latitude the prefered latitude for the construction
-	 * @param longitude the prefered longitude for the construction
-	 * @param index the index of the construction (necessary to have a chomosome representation)
+	 * @param theName an alias for the construction. This will be used in the state visual representation.
 	 * @throws ConstructionException 
 	 */
 	
