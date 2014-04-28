@@ -2,7 +2,6 @@ package mainPackage.constructions;
 import java.util.HashMap;
 
 import mainPackage.ConstantManager;
-import mainPackage.Coordinate;
 import mainPackage.Tile;
 import Exceptions.ConstructionException;
 import Exceptions.ConstructionException.ConstructionExeptionCode;
@@ -13,7 +12,10 @@ import Exceptions.ConstructionException.ConstructionExeptionCode;
  * */
 abstract public class Construction {
 	
-	
+	/**
+	 * the name of the construction
+	 */
+	private String name;
 	/**
 	 * 
 	 * A private data member to hold the construction representing an invalid construction. This property should never be used explicitly as it may be null.
@@ -23,7 +25,7 @@ abstract public class Construction {
 	private static Construction nullConstruction;
 	/**
 	 * A method that returns a construction that represents an invalid construction. The construction returned has a fitness of 0 whatever the tile it is attached to
-	 * @return
+	 * @return a construction representing an empty construction
 	 */
 	private static Construction nullConstruction(){
 		
@@ -31,10 +33,10 @@ abstract public class Construction {
 			
 			
 			try {
-				nullConstruction=new Construction(0,0) {
+				nullConstruction=new Construction("NULL") {
 					
 					@Override
-					public float affinityToTile(Tile tile) {
+					public double affinityToTile(Tile tile) {
 						
 						return 0;
 					}
@@ -49,13 +51,7 @@ abstract public class Construction {
 	private static int indexForNextConstruction=0;
 
 	private static HashMap<Integer, Construction> constructions=new HashMap<Integer,Construction>();
-	
-	/**
-	 * 
-	 * A property that holds the value of the prefered location for this particular construction
-	 * 
-	 * */
-	private Coordinate preferedLocation;
+
 	
 	/**
 	 * 
@@ -69,7 +65,7 @@ abstract public class Construction {
 	 * @return A float ranging from 0 to 1. A zero represents that the tile doesn't suit this construction.
 	 * 
 	 * */
-	abstract public float affinityToTile(Tile tile);
+	abstract public double affinityToTile(Tile tile);
 	
 	
 	/**
@@ -82,12 +78,12 @@ abstract public class Construction {
 	 * @throws ConstructionException 
 	 */
 	
-	public Construction(float latitude,float longitude) throws ConstructionException {
+	public Construction(String theName) throws ConstructionException {
 		
 		
 		if(indexForNextConstruction>=ConstantManager.INT_NR_BITS-1)throw new ConstructionException(ConstructionExeptionCode.MaximumNumOfConstructionsReached_Code.ordinal());
 		
-		preferedLocation=new Coordinate(latitude, longitude);
+		this.name=theName;
 		chromoRepresentation=(1<<indexForNextConstruction++);
 		constructions.put(this.chromoRepresentation,this);
 		
@@ -112,12 +108,12 @@ abstract public class Construction {
 	static public Construction constructionWithCromossome(int chromossome){
 		
 		
-		Construction c=constructionWithCromossome(chromossome);
+		Construction c=constructions.get(chromossome);
 		if(c==null){
 			
-			
+			c=nullConstruction();
 		}
-		return constructions.get(chromossome);
+		return c;
 		
 		
 	}
@@ -133,6 +129,10 @@ abstract public class Construction {
 		indexForNextConstruction=0;
 	}
 	
+	public String name(){
+		
+		return this.name;
+	}
 	
 	
 }

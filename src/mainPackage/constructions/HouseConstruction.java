@@ -18,13 +18,13 @@ public class HouseConstruction extends Construction {
 	 * @param longitude
 	 * @throws ConstructionException
 	 */
-	public HouseConstruction(float latitude, float longitude) throws ConstructionException {
-		super(latitude, longitude);
+	public HouseConstruction(double latitude, double longitude) throws ConstructionException {
+		super("Moradia");
 		// TODO implement House Construction stuff
 	}
 
 	@Override
-	public float affinityToTile(Tile tile) {
+	public double affinityToTile(Tile tile) {
 		// TODO implement House Construction stuff
 		return 0;
 	}

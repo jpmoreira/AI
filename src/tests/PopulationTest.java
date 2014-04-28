@@ -26,17 +26,17 @@ public class PopulationTest {
 		
 		try {
 			
-			c1=new Construction(10,10) {
+			c1=new Construction("Casa") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {	
+				public double affinityToTile(Tile tile) {	
 					return 0;
 				}
 			};
-			c2 = new Construction(20,20) {
+			c2 = new Construction("Escola") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 0;
 				}
 			};
@@ -81,32 +81,32 @@ public class PopulationTest {
 		
 		try {
 			
-			c1=new Construction(10,10) {
+			c1=new Construction("Casa") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {	
+				public double affinityToTile(Tile tile) {	
 					return 0;
 				}
 			};
-			c2 = new Construction(20,20) {
+			c2 = new Construction("Escola") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 0;
 				}
 			};
-			c3 = new Construction(30,30) {
+			c3 = new Construction("Aeroporto") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 0;
 				}
 			};
 			
-			c4 = new Construction(40,40) {
+			c4 = new Construction("Autoestrada") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 0;
 				}
 			};
@@ -155,32 +155,32 @@ public class PopulationTest {
 		
 		try {
 			
-			c1=new Construction(10,10) {
+			c1=new Construction("Moradia") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {	
+				public double affinityToTile(Tile tile) {	
 					return 1;
 				}
 			};
-			c2 = new Construction(20,20) {
+			c2 = new Construction("Apartamento") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 10;
 				}
 			};
-			c3 = new Construction(30,30) {
+			c3 = new Construction("Escola") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 100;
 				}
 			};
 			
-			c4 = new Construction(40,40) {
+			c4 = new Construction("Aeroporto") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 27;
 				}
 			};
@@ -222,8 +222,8 @@ public class PopulationTest {
 			boolean foundSecondBest=false;
 			
 			for(State s : pop.states()){
-				if(s==best)foundBest=true;
-				else if(s==secondBest)foundSecondBest=true;
+				if(s.id()==best.id())foundBest=true;
+				else if(s.id()==secondBest.id())foundSecondBest=true;
 				
 			}
 			
@@ -250,10 +250,18 @@ public class PopulationTest {
 	@Test
 	public void testBestFitnessEvolution(){
 		
-		
+		Construction.resetConstructions();
 
+		State.resetStates();
+		
 		Tile tile1=new Tile();
 		Tile tile2=new Tile();
+		Tile tile3=new Tile();
+		Tile tile4=new Tile();
+		Tile tile5=new Tile();
+		Tile tile6=new Tile();
+		Tile tile7=new Tile();
+		Tile tile8=new Tile();
 		
 		Construction c1;
 		Construction c2;
@@ -262,55 +270,53 @@ public class PopulationTest {
 		
 		try {
 			
-			c1=new Construction(10,10) {
+			c1 = new Construction("Escola") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {	
+				public double affinityToTile(Tile tile) {	
 					return 1;
 				}
 			};
-			c2 = new Construction(20,20) {
+			c2 = new Construction("Casa") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 10;
 				}
 			};
-			c3 = new Construction(30,30) {
+			c3 = new Construction("Aeroporto") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 100;
 				}
 			};
-			
-			c4 = new Construction(40,40) {
+			c4 = new Construction("Prisao") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 27;
 				}
 			};
 			
-			Tile[] tiles={tile1,tile2};
-			Construction[] constructions={c1,c2,c3,c4};
-			Population pop=new Population(tiles, constructions, 4,0.1,2);
+			Tile[] tiles={tile1,tile2,tile3,tile4,tile5,tile6,tile7,tile8};
+			Construction[] constructions={c2,c3,c4,c3,c1};
+			Population pop=new Population(tiles, constructions, 5,0.01,2);
 			
 			
 			
 			State best=pop.mostFitState();
 	
-			System.out.println("BEFORE "+best.fitness());
+			System.out.println("BEFORE "+best.fitness()+" "+best.visualRepresentation());
 		
-			for(int i=0;i<200;i++){
+			for(int i=0;i<100000;i++){
 				
 				pop.iterate();
-				System.out.println("i="+i);
 				
 			}
 			
 			State bestAfter=pop.mostFitState();
-			System.out.println("AFTER "+bestAfter.fitness());
+			System.out.println("AFTER "+bestAfter.fitness()+" "+bestAfter.visualRepresentation());
 			
 			assertTrue(bestAfter.fitness()>=best.fitness());
 			
@@ -342,32 +348,32 @@ public void testMantainNumberOfStates(){
 	
 	try {
 		
-		c1=new Construction(10,10) {
+		c1=new Construction("Moradia") {
 			
 			@Override
-			public float affinityToTile(Tile tile) {	
+			public double affinityToTile(Tile tile) {	
 				return 1;
 			}
 		};
-		c2 = new Construction(20,20) {
+		c2 = new Construction("Apartamento") {
 			
 			@Override
-			public float affinityToTile(Tile tile) {
+			public double affinityToTile(Tile tile) {
 				return 10;
 			}
 		};
-		c3 = new Construction(30,30) {
+		c3 = new Construction("Parque de Estacionamento") {
 			
 			@Override
-			public float affinityToTile(Tile tile) {
+			public double affinityToTile(Tile tile) {
 				return 100;
 			}
 		};
 		
-		c4 = new Construction(40,40) {
+		c4 = new Construction("Escola") {
 			
 			@Override
-			public float affinityToTile(Tile tile) {
+			public double affinityToTile(Tile tile) {
 				return 27;
 			}
 		};

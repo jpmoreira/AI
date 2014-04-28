@@ -2,7 +2,7 @@ package mainPackage;
 
 import java.util.ArrayList;
 
-import mainPackage.GeneticRandomGenerator.fitnessToProbabilityType;
+
 import mainPackage.constructions.Construction;
 
 public class Population {
@@ -86,7 +86,7 @@ public class Population {
 		states=new State[populationSize];//initialize the initial size as the double of the initial capacity
 		this.tiles=tiles;
 		this.constructions=constructions;
-		this.coinTosser=new GeneticRandomGenerator(fitnessToProbabilityType.DirectFitnessToProbability, this, statesToPair, mutationProb);
+		this.coinTosser=new GeneticRandomGenerator( this, statesToPair, mutationProb);
 		for(int i=0;i<populationSize;i++){
 			State stateToAdd=new State(this.generateRandomConstructionArray(tiles.length),tiles);
 			states[i]=stateToAdd;
@@ -122,14 +122,12 @@ public class Population {
 	 */
 	public double overallFitness(){
 		
-		System.out.println("Start");
-		//FIXME function bugged
+		
 		double overallFitness=0;
 		for (State state : states) {
 			overallFitness+=state.fitness();
 		}
 		
-		System.out.println("Ends");
 		return overallFitness;
 		
 		
@@ -196,14 +194,13 @@ public class Population {
 		
 		boolean mutate;
 		for(State s: states){
-			mutate=coinTosser.stateShouldMutate();
+			mutate=coinTosser.stateShouldMutate(s);
 			if(mutate){
 				s.mutate(coinTosser.mutatingSegmentForState(s));
 			}
 			
 		}
 		
-		coinTosser.stateShouldMutate();
 	}
 	
 	/**

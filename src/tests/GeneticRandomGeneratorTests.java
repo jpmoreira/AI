@@ -2,7 +2,6 @@ package tests;
 
 import static org.junit.Assert.*;
 import mainPackage.GeneticRandomGenerator;
-import mainPackage.GeneticRandomGenerator.fitnessToProbabilityType;
 import mainPackage.Population;
 import mainPackage.State;
 import mainPackage.Tile;
@@ -18,35 +17,35 @@ public class GeneticRandomGeneratorTests {
 	public void testBubbleSort1() {
 		
 		try {
-			Construction c1=new Construction(20,20) {
+			Construction c1=new Construction("Moradia") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 1;
 				}
 			};
 		
 
-			Construction c2=new Construction(20,20) {
+			Construction c2=new Construction("Apartamento") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 2;
 				}
 			};
 			
-			Construction c3=new Construction(20,20) {
+			Construction c3=new Construction("Escola") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 3;
 				}
 			};
 			
-			Construction c4=new Construction(20,20) {
+			Construction c4=new Construction("Aeroporto") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 4;
 				}
 			};
@@ -88,35 +87,35 @@ public class GeneticRandomGeneratorTests {
 	public void testBubbleSort2() {
 		
 		try {
-			Construction c1=new Construction(20,20) {
+			Construction c1=new Construction("Moradia") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 1;
 				}
 			};
 		
 
-			Construction c2=new Construction(20,20) {
+			Construction c2=new Construction("Apartamento") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 2;
 				}
 			};
 			
-			Construction c3=new Construction(20,20) {
+			Construction c3=new Construction("Escola") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 3;
 				}
 			};
 			
-			Construction c4=new Construction(20,20) {
+			Construction c4=new Construction("Aeroporto") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 4;
 				}
 			};
@@ -159,35 +158,35 @@ public class GeneticRandomGeneratorTests {
 	public void testBubbleSortMultipleConstruction() {
 		
 		try {
-			Construction c1=new Construction(20,20) {
+			Construction c1=new Construction("Moradia") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 1;
 				}
 			};
 		
 
-			Construction c2=new Construction(20,20) {
+			Construction c2=new Construction("Apartamento") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 2;
 				}
 			};
 			
-			Construction c3=new Construction(20,20) {
+			Construction c3=new Construction("Aeroporto") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 3;
 				}
 			};
 			
-			Construction c4=new Construction(20,20) {
+			Construction c4=new Construction("Escola") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 4;
 				}
 			};
@@ -231,25 +230,25 @@ public class GeneticRandomGeneratorTests {
 			
 			Tile[] tiles={new Tile()};
 			
-			Construction c1=new Construction(10,10) {
+			Construction c1=new Construction("Aeroporto") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 1;
 				}
 			};
-			Construction c2=new Construction(20,20) {
+			Construction c2=new Construction("Moradia") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 2;
 				}
 			};
-			Construction c3=new Construction(30,30) {
+			Construction c3=new Construction("Parque") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 3;
 				}
 			};
@@ -272,7 +271,7 @@ public class GeneticRandomGeneratorTests {
 			states[1]=s2;
 			states[2]=s3;
 			
-			GeneticRandomGenerator gen=new GeneticRandomGenerator(fitnessToProbabilityType.FitnessToRank, pop, 1, 0.5);
+			GeneticRandomGenerator gen=new GeneticRandomGenerator( pop, 1, 0.5);
 			
 			State[] statesOfNextGen=gen.statesForNextGen();
 			State[] supposedStatesForNextGen={s3,s2};

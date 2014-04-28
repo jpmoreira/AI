@@ -22,26 +22,26 @@ public class StateTests {
 		Tile[] tiles=new Tile[3];
 		
 		try{
-			constructions[0]=new Construction(10,10){
+			constructions[0]=new Construction("Parque"){
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
 			};
-			constructions[1]=new Construction(12,12){
+			constructions[1]=new Construction("Moradia"){
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
 			};
-			constructions[2]=new Construction(13,13){
+			constructions[2]=new Construction("Aeroporto"){
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
@@ -74,25 +74,25 @@ public class StateTests {
 		Tile[] tiles=new Tile[3];
 
 		try{
-			constructions[0]=new Construction(10,10){
+			constructions[0]=new Construction("Parque"){
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 0;
 				}
 			};
-			constructions[1]=new Construction(12,12){
+			constructions[1]=new Construction("Moradia"){
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
 			};
-			constructions[2]=new Construction(13,13){
+			constructions[2]=new Construction("Apartamentos"){
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
@@ -135,18 +135,18 @@ public class StateTests {
 			
 			Construction.resetConstructions();
 			
-			Construction c=new Construction(10,10) {
+			Construction c=new Construction("Moradia") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 0;
 				}
 			};
 			
-			Construction c2=new Construction(20,20) {
+			Construction c2=new Construction("Apartamento") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					return 0;
 				}
 			};
@@ -176,26 +176,26 @@ public class StateTests {
 		
 		try {
 			
-			Construction c1=new Construction(10,10) {
+			Construction c1=new Construction("Moradia") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
 			};
-			Construction c2 = new Construction(20,20) {
+			Construction c2 = new Construction("Parque") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
 			};
-			Construction c3 = new Construction(30,30) {
+			Construction c3 = new Construction("Escola") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
@@ -237,26 +237,26 @@ public class StateTests {
 		
 		try {
 			
-			Construction c1=new Construction(10,10) {
+			Construction c1=new Construction("Moradia") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
 			};
-			Construction c2 = new Construction(20,20) {
+			Construction c2 = new Construction("Apartamento") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}
 			};
-			Construction c3 = new Construction(30,30) {
+			Construction c3 = new Construction("Parque") {
 				
 				@Override
-				public float affinityToTile(Tile tile) {
+				public double affinityToTile(Tile tile) {
 					
 					return 0;
 				}

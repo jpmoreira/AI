@@ -16,8 +16,26 @@ public class State {
 	 * the Constructions this state has. Order matters
 	 */
 	public Construction[] constructions;
+	private static int currentID=0;
 	
+	private int id;
 	
+	/**
+	 * 
+	 * A unique identifier for a state. This identifier atribution mechanism may be reset by using the method {@link resetStates()}.
+	 * @return the unique identifier for the state
+	 */
+	public int id(){
+		return this.id;
+	}
+	
+	/**
+	 * A method that resets the id generation process.
+	 */
+	public static void resetStates(){
+		currentID=0;
+		
+	}
 	
 	/**
 	 * 
@@ -111,31 +129,63 @@ public class State {
 		
 		this.constructions=constr;
 		this.tiles=tiles;
+		this.id=currentID++;
 	
 	}
 
 	
-
-	public float fitness(){
-		float fitness = 0;
-		if(tiles.length<constructions.length)return (float) -1.0;
+	/**
+	 * 
+	 * A method that returns the fitness of a given state. The most fit the state the bigger then number returned.
+	 * @return a number representing the fitness of the state. This number should be between 0 and 1.
+	 */
+	public double fitness(){
+		double fitness = 0;
+		if(tiles.length<constructions.length)return (double) -1.0;
 		for(int i=0;i<tiles.length;i++){
 			fitness+=constructions[i].affinityToTile(tiles[i]);
 		}
-		return fitness;
+		return fitness/tiles.length;
 	}
-
-	public int diversity(State[] states){
+	/**
+	 * 
+	 * Returns a number between 0 and 1 representing the likeliness with passed states. A 0 means the states is as likely as possible with the remaining population and 1 means it's as different as possible.
+	 * @param states the states to be tested against this state for similarities.
+	 * @return a number between 0 and 1 representing the level of similarities between this state and the ones passed as described above.
+	 */
+	public double diversity(State[] states){
 		
 		int diversity=0;
+		int iterations=0;
+		
 		
 		for (State state : states) {
 			for(int i=0;i<state.constructions.length;i++){
+				iterations++;
 				if(state.constructions[i]!=this.constructions[i])diversity++;
 			}
 		}
 		
-		return diversity;
+		return diversity/(double)iterations;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * A method that returns a string with the visual representation of a state
+	 * @return the visual representation of a state
+	 */
+	public String visualRepresentation(){
+		
+		String rep=id+"-[";
+		
+		for(int i=0;i<constructions.length;i++){
+			
+			rep+=constructions[i].name();
+			if(constructions.length-1!=i)rep+="-";
+			else rep+="]";
+		}
+		
+		return rep;
+	}
 }
