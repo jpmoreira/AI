@@ -7,5 +7,6 @@
 
 .project
 /bin
+/doc
 .classpath
 .DS_Store
