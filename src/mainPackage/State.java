@@ -108,7 +108,11 @@ public class State {
 		
 		if(segmentNr>=constructions.length)return;
 		
-		int bitToBeOne= (int)(Math.random()*(ConstantManager.INT_NR_BITS-1));
+		//FIXME not sure this is the correct formula
+		
+		int nrMaxBit=currentID/2+1;//the number of the highest order bit used
+		
+		int bitToBeOne= (int)(Math.random()*(nrMaxBit));
 		
 		int newSegment=(1<<bitToBeOne);
 		constructions[segmentNr]=Construction.constructionWithCromossome(newSegment);

@@ -69,7 +69,7 @@ public class GeneticRandomGeneratorTests {
 			
 			
 			
-			GeneticRandomGenerator.BubbleSort(statesArray, 1);
+			GeneticRandomGenerator.BubbleSort(statesArray, 1,0.0);
 			
 			assertEquals(statesArray[0],s4);
 			
@@ -140,7 +140,7 @@ public class GeneticRandomGeneratorTests {
 			
 			
 			
-			GeneticRandomGenerator.BubbleSort(statesArray, 2);
+			GeneticRandomGenerator.BubbleSort(statesArray, 2,0.0);
 			
 			assertEquals(statesArray[0],s4);
 			assertEquals(statesArray[1],s3);
@@ -210,7 +210,7 @@ public class GeneticRandomGeneratorTests {
 			
 			
 			
-			GeneticRandomGenerator.BubbleSort(statesArray, 1);
+			GeneticRandomGenerator.BubbleSort(statesArray, 1,0.0);
 			
 			assertEquals(statesArray[0],s4);
 			

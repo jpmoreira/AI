@@ -8,30 +8,7 @@ import mainPackage.State;
 
 
 public class GeneticRandomGenerator {
-	
-	
-	private enum fitnessToProbabilityType{
-		/**
-		 * Method to translate fitness into probability that divides the actual fitness of a State by the overall fitness and translates that directly into probability
-		 * 
-		 */
-		DirectFitnessToProbability,
-		
-		/**
-		 * Method that orders the States by their fitness making the nth most fit state to be the nth with the biggest probability of survival.
-		 * The value of the fitness itself doesn't influence the probability, is only a mean to indicate their relative order.  
-		 * 
-		 */
-		FitnessToRank,
-		
-		/**
-		 * 
-		 * Method that takes into account the diversity along with the fitness to measure probabilities
-		 * 
-		 */
-		FitnessAndDiversityToProbability//TODO maybe support it later
-		
-	}
+
 
 
 	
@@ -44,12 +21,27 @@ public class GeneticRandomGenerator {
 	 */
 	private double mutationProbVarFactor;
 	
-	double mutationProbability;
+	
+	/**
+	 * The current probability of a mutation occurring
+	 * 
+	 */
+	private double mutationProbability;
+	
+	
 	/**
 	 * 
-	 * The method to be applied to serialize states that are to be passed along to the next generation
+	 * The factor to be used to calculate the probability of a state being chosen based on it's ranking
+	 * 
 	 */
-	private fitnessToProbabilityType toNextGenerationMethod;
+	private double probToRankFactor;
+	/**
+	 * 
+	 * A number between 0 and 1 that represents the factor by which the diversity is to be multiplied to calculate the ultimate value of a state. A value of 1 means that fitness will be totally discarded and diversity used instead. A value of 0 means that only fitness will be used
+	 * 
+	 */
+	private double diversityUsageFactor;
+	
 	
 	
 	/**
@@ -75,13 +67,14 @@ public class GeneticRandomGenerator {
 	
 	/**
 	 * 
-	 * A method that returns the states to be paired for the next generation
+	 * A method that returns the states to be paired for the next generation. It selects the method to select the states based on the current setting
 	 * @return an array withTheStatesForNextGeneration
 	 */
 	public State [] statesForReproduction(){
 		
 		
-		return this.statesForReproduction_Direct_Fitness_To_Probability();//FIXME only supporting one mode!
+		if(this.directFitnessToProbability)return this.statesForReproduction_Direct_Fitness_To_Probability();
+		else return this.statesForReproduction_Fitness_To_Rank();
 		
 		
 	}
@@ -92,13 +85,27 @@ public class GeneticRandomGenerator {
 	 * @return the states to be used in reproduction
 	 */
 	private State [] statesForReproduction_Fitness_To_Rank(){
-		//TODO implement it
+		//TODO implemented not tested
 		
-		GeneticRandomGenerator.BubbleSort(population.states(), population.states().length);//sort states
+		GeneticRandomGenerator.BubbleSort(population.states(), population.states().length,this.diversityUsageFactor);//sort states
+		
+		ArrayList<State> statesForReproduction=new ArrayList<State>();
+		
+		double randomNumber;
+		double lowerBound=0;
+		double upperBound=(1.0-this.probToRankFactor);
+		
+		for(int i=0;i<this.population.states().length;i++){
+			
+			randomNumber=Math.random();
+			if(randomNumber>=lowerBound && randomNumber<=upperBound){
+				statesForReproduction.add(this.population.states()[i]);
+			}
+		}
 		
 		
 		
-		return null;
+		return statesForReproduction.toArray(new State[statesForReproduction.size()]);
 	}
 
 	/**
@@ -162,14 +169,13 @@ public class GeneticRandomGenerator {
 	
 	
 
-	//TODO implement it
 	public State[] statesForNextGen(){
 		
 		State[] orderedStates=this.population.states().clone();
 		
 		int nrOfElitistStatesToSelect=this.population.states().length-statesToPair;
 		
-		GeneticRandomGenerator.BubbleSort(orderedStates, nrOfElitistStatesToSelect);
+		GeneticRandomGenerator.BubbleSort(orderedStates, nrOfElitistStatesToSelect,diversityUsageFactor);
 		
 		State[] statesForNextGen=new State[nrOfElitistStatesToSelect];
 		
@@ -214,7 +220,8 @@ public class GeneticRandomGenerator {
 	 */
 	public GeneticRandomGenerator(Population pop,int statesToPair, double mutationProb) {
 		
-		toNextGenerationMethod=fitnessToProbabilityType.DirectFitnessToProbability;
+		this.directFitnessToProbability=true;
+		this.diversityUsageFactor=0.0;
 		this.mutationProbVarFactor=1.0;
 		this.population=pop;
 		this.mutationProbability=mutationProb;
@@ -232,10 +239,14 @@ public class GeneticRandomGenerator {
 	 * @param states all the states
 	 * @param nrStatesToOrder the number of states to be guaranteed to be at the head of the array
 	 */
-	public static void BubbleSort(State[] states,int nrStatesToOrder) {
+	public static void BubbleSort(State[] states,int nrStatesToOrder,double diversityFactor) {
 		 for (int i = 0; i < states.length && i<nrStatesToOrder; i++) {
 		    for (int x = states.length-1; x >i; x--) {
-		        if (states[x].fitness() > states[x-1].fitness()) {
+		    	
+		    	double valueX=states[x].fitness()*(1-diversityFactor)+states[x].diversity(states)*diversityFactor;
+		    	double valueBeforeX=states[x-1].fitness()*(1-diversityFactor)+states[x-1].diversity(states)*diversityFactor;
+		    	
+		        if (valueX > valueBeforeX) {
 		            State temp = states[x];
 		            states[x] = states[x-1];
 		            states[x-1] = temp;
@@ -257,6 +268,7 @@ public class GeneticRandomGenerator {
 		 //FIXME probably more parameter should be updated;
 		 //FIXME this method should be called after an iteration
 		 this.mutationProbability=this.mutationProbability*this.mutationProbVarFactor;
+		 this.diversityUsageFactor*=0.90;//multiply diversityUsageFactorBy 0.9
 		 
 	 }
 	
@@ -268,7 +280,7 @@ public class GeneticRandomGenerator {
 	 * 
 	 */
 	public void enableDirectMethod(){
-		//TODO implement it
+		this.directFitnessToProbability=true;
 	}
 	
 	/**
@@ -278,7 +290,8 @@ public class GeneticRandomGenerator {
 	 */
 	public void enableFitnessToRank(double rankProb){
 		
-		//TODO implement it
+		this.directFitnessToProbability=false;
+		this.probToRankFactor=rankProb;
 	}
 	
 	/**
@@ -289,7 +302,13 @@ public class GeneticRandomGenerator {
 	 */
 	public void enableFitnessAndDiversity(boolean enable){
 	
-		//TODO implement it
+			
+		if(enable){
+			this.diversityUsageFactor=0.5;		
+		}
+		else{
+			this.diversityUsageFactor=0.0;
+		}
 	}
 	
 	//SETTING DECREASING MUTATION PROB
