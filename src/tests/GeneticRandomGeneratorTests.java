@@ -294,4 +294,68 @@ public class GeneticRandomGeneratorTests {
 		
 	}
 
+	public void testNextGenerationRank(){
+		
+try{
+			
+			Tile[] tiles={new Tile()};
+			
+			Construction c1=new Construction("Aeroporto") {
+				
+				@Override
+				public double affinityToTile(Tile tile) {
+					
+					return 1;
+				}
+			};
+			Construction c2=new Construction("Moradia") {
+				
+				@Override
+				public double affinityToTile(Tile tile) {
+					return 2;
+				}
+			};
+			Construction c3=new Construction("Parque") {
+				
+				@Override
+				public double affinityToTile(Tile tile) {
+					return 3;
+				}
+			};
+			
+			Construction[] constructions={c1,c2,c3};
+			Construction[] constructions1={c1};
+			Construction[] constructions2={c2};
+			Construction[] constructions3={c3};
+			
+			State s1=new State(constructions1, tiles);
+			State s2=new State(constructions2, tiles);
+			State s3=new State(constructions3, tiles);
+			
+			Population pop= new Population(tiles, constructions, 3, 0.5, 2);
+			pop.coinTosser.enableFitnessToRank();
+			
+			
+			//alter states not to be random
+			State[] states=pop.states();
+			states[0]=s1;
+			states[1]=s2;
+			states[2]=s3;
+			
+			GeneticRandomGenerator gen=new GeneticRandomGenerator( pop, 1, 0.5);
+			
+			State[] statesOfNextGen=gen.statesForNextGen();
+			State[] supposedStatesForNextGen={s3,s2};
+			
+			assertArrayEquals(statesOfNextGen, supposedStatesForNextGen);
+			
+			//TODO test further!!! only one test proves nothing
+			
+			
+		}catch(Exception e){
+			
+			fail("Thrown exeption but shouldn't");
+			
+		}
+	}
 }

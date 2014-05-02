@@ -10,7 +10,12 @@ import mainPackage.State;
 public class GeneticRandomGenerator {
 
 
-
+	/**
+	 * 
+	 * the default random number generator to be used in case no other was specified. Specification of random generator is made on a method basis, mainly to facilitate testing.
+	 * 
+	 */
+	private RandomNrGenerator defaultGenerator;
 	
 	/**
 	 * 
@@ -31,7 +36,7 @@ public class GeneticRandomGenerator {
 	
 	/**
 	 * 
-	 * The factor to be used to calculate the probability of a state being chosen based on it's ranking
+	 * The factor to be used to calculate the probability of a state being chosen based on it's ranking. This parameter is 1 minus the parameter passed in {@link #enableFitnessToRank(double rankProb)}.
 	 * 
 	 */
 	private double probToRankFactor;
@@ -82,9 +87,12 @@ public class GeneticRandomGenerator {
 	/**
 	 * 
 	 * A method that returns the states for reproduction using the method fitness to rank.
+	 * @param gen the random number generator to be used. If null is passed the {@link #defaultGenerator} will be used instead.
 	 * @return the states to be used in reproduction
 	 */
-	private State [] statesForReproduction_Fitness_To_Rank(){
+	private State [] statesForReproduction_Fitness_To_Rank(RandomNrGenerator gen){
+		
+		if(gen==null)gen=defaultGenerator;
 		//TODO implemented not tested
 		
 		GeneticRandomGenerator.BubbleSort(population.states(), population.states().length,this.diversityUsageFactor);//sort states
@@ -94,18 +102,27 @@ public class GeneticRandomGenerator {
 		double randomNumber;
 		double lowerBound=0;
 		double upperBound=(1.0-this.probToRankFactor);
+		State[] states=this.population.states();
 		
-		for(int i=0;i<this.population.states().length;i++){
+		while(statesForReproduction.size()<this.statesToPair){
 			
-			randomNumber=Math.random();
-			if(randomNumber>=lowerBound && randomNumber<=upperBound){
-				statesForReproduction.add(this.population.states()[i]);
+			randomNumber=gen.nextRandomNr();
+			if(randomNumber>Math.pow(this.probToRankFactor, this.statesToPair))statesForReproduction.add(states[states.length-1]);
+			else{
+				
+				
+				int index=(int) (Math.log(randomNumber)/Math.log(this.probToRankFactor))+1;//extract integer part and increase by one
+				
+				statesForReproduction.add(states[index]);
+				
 			}
+			
+			
+			
 		}
 		
-		
-		
 		return statesForReproduction.toArray(new State[statesForReproduction.size()]);
+		
 	}
 
 	/**
@@ -150,12 +167,15 @@ public class GeneticRandomGenerator {
 	 * 
 	 * A method that returns the index of the segments of the choromosome of a given state to be passed along to his first descendant
 	 * @param state the state whose chromosome is to be passed to his descendant
+	 * @param gen the random generator to be used. If null is passed the {@link #defaultGenerator} will be used.
 	 * @return the zero based index of the chromosome segments to be passed along to the passed state's first descendant
 	 */
-	public Integer[] segmentsOfState(State state){
+	public Integer[] segmentsOfState(State state,RandomNrGenerator gen){
+		
+		if(gen==null)gen=this.defaultGenerator;
 		
 		ArrayList<Integer> segments=new ArrayList<Integer>();
-		double randomNr=Math.random();
+		double randomNr=gen.nextRandomNr();
 		
 		for(int i=0;i<state.tiles.length;i++){
 			
@@ -199,7 +219,7 @@ public class GeneticRandomGenerator {
 		if(Math.random()<mutationProbability)return true;
 		
 
-		
+		//FIXME continue introducing custom generators in every function that makes use of Math.random and replace it
 		return false;
 	}
 	
@@ -226,6 +246,7 @@ public class GeneticRandomGenerator {
 		this.population=pop;
 		this.mutationProbability=mutationProb;
 		this.statesToPair=statesToPair;
+		this.defaultGenerator=new DefaultRandomGenerator();
 		
 		
 	}
@@ -291,7 +312,7 @@ public class GeneticRandomGenerator {
 	public void enableFitnessToRank(double rankProb){
 		
 		this.directFitnessToProbability=false;
-		this.probToRankFactor=rankProb;
+		this.probToRankFactor=1.0-rankProb;//directly calculate
 	}
 	
 	/**
