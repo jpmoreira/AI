@@ -53,7 +53,7 @@ public class Tile {
 	 * @param tile the tile to add to the adjacencies array
 	 */
 	public void addAdjacentTile(Tile tile){
-		
+		//TODO test this method
 		if(this.isAdjacent(tile))return;
 		this.adjacencies.add(tile);
 		tile.addAdjacentTile(this);//add this tile as adjacent to the other one (adjacency is a bidirectional property)
@@ -77,5 +77,10 @@ public class Tile {
 		
 	}
 	
-
+	//TODO document it
+	public Tile[] adjacencies(){
+		
+	
+		return adjacencies.toArray(new Tile[adjacencies.size()]);
+	}
 }

@@ -147,7 +147,7 @@ public class State {
 		double fitness = 0;
 		if(tiles.length<constructions.length)return (double) -1.0;
 		for(int i=0;i<tiles.length;i++){
-			fitness+=constructions[i].affinityToTile(tiles[i]);
+			fitness+=constructions[i].affinityToTileInState(tiles[i],this);
 		}
 		return fitness/tiles.length;
 	}
@@ -192,4 +192,19 @@ public class State {
 		
 		return rep;
 	}
+
+	
+	//TODO document it
+	
+	public Construction constructionForTile(Tile t){
+		
+		for(int i=0;i<tiles.length;i++){
+			if(this.tiles[i]==t){
+				return this.constructions[i];
+			}
+		}
+		return null;
+		
+	}
+
 }

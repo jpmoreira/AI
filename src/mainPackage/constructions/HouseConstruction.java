@@ -1,6 +1,7 @@
 package mainPackage.constructions;
 
 import Exceptions.ConstructionException;
+import mainPackage.State;
 import mainPackage.Tile;
 /**
  * 
@@ -23,9 +24,10 @@ public class HouseConstruction extends Construction {
 		// TODO implement House Construction stuff
 	}
 
+
 	@Override
-	public double affinityToTile(Tile tile) {
-		// TODO implement House Construction stuff
+	public double affinityToTileInState(Tile tile, State state) {
+		// TODO implemnt
 		return 0;
 	}
 
