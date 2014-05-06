@@ -2,6 +2,6 @@ package gui;
 
 import javax.swing.JDialog;
 
-public class SiteDialog extends JDialog {
+public class TileDialog extends JDialog {
 
 }
