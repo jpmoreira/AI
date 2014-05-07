@@ -744,11 +744,32 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
 			if (landuses == null){
 				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
 				return;
 			}
-			// TODO Auto-generated method stub
+
+			int id = 0;
+			landuseDialog = new LanduseDialog(frame, true, "Landuse Settings", landuses, id);
+			
+			landuses[id] = landuseDialog.getTempLanduse();
+			id = landuseDialog.getLanduseID();
+			
+			boolean finished = false;
+			
+			while (!finished){
+				
+				landuseDialog = new LanduseDialog(frame, true, "Landuse Settings", landuses, id);
+				if (!landuseDialog.isCanceled()){
+					landuses[id] = landuseDialog.getTempLanduse();
+					id = landuseDialog.getLanduseID();
+					finished = landuseDialog.isFinished();
+				} else {
+					break;
+				}
+
+			}
 
 		}
 
