@@ -29,17 +29,17 @@ public class Tile {
 	 * The maximum inclination of this tile. This value should represent the percentual inclination in a number >=0 and <= 100.
 	 * 
 	 */
-	public int maxInclination;
+	private int maxInclination;
 	/**
 	 * The Area of the tile
 	 */
-	public float area;
+	private float area;
 	/**
 	 * The price per area unit of this tile
 	 * 
 	 */
-	public float pricePerAreaUnit;
-	public SoilType soilType;
+	private float pricePerAreaUnit;
+	private SoilType soilType;
 	/**
 	 * A property intended to keep track of the {@link mainPackage.Tile tiles} adjacent to this tile.
 	 * 
@@ -75,6 +75,30 @@ public class Tile {
 		return false;
 		
 		
+	}
+	public int getMaxInclination() {
+		return maxInclination;
+	}
+	public void setMaxInclination(int maxInclination) {
+		this.maxInclination = maxInclination;
+	}
+	public float getArea() {
+		return area;
+	}
+	public void setArea(float area) {
+		this.area = area;
+	}
+	public float getPricePerAreaUnit() {
+		return pricePerAreaUnit;
+	}
+	public void setPricePerAreaUnit(float pricePerAreaUnit) {
+		this.pricePerAreaUnit = pricePerAreaUnit;
+	}
+	public SoilType getSoilType() {
+		return soilType;
+	}
+	public void setSoilType(SoilType soilType) {
+		this.soilType = soilType;
 	}
 	
 

@@ -26,12 +26,21 @@ public class StartDialog extends JDialog{
 	
 	/** The number of landuses. */
 	private int numLanduses;
+	
+	/** The number of tiles. */
+	private int populationSize;
 
 	/** The input panel. */
 	private JPanel inputPanel;
 	
 	/** The input buttons panel. */
 	private JPanel inputButtonsPanel;
+
+	/** The tiles label. */
+	private JLabel populationLabel;
+	
+	/** The input field. */
+	private JTextField populationField;
 
 	/** The tiles label. */
 	private JLabel tilesLabel;
@@ -75,12 +84,14 @@ public class StartDialog extends JDialog{
 		inputPanel.add(tileField);
 		inputPanel.add(landuseLabel);
 		inputPanel.add(landuseField);
+		inputPanel.add(populationLabel);
+		inputPanel.add(populationField);
 		inputPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
 		contentPane.add(inputPanel,BorderLayout.CENTER);
 
-		inputButtonsPanel.add(cancelButton);
 		inputButtonsPanel.add(okButton);
+		inputButtonsPanel.add(cancelButton);
 		contentPane.add(inputButtonsPanel,BorderLayout.SOUTH);
 
 	}
@@ -91,7 +102,7 @@ public class StartDialog extends JDialog{
 
 		// Input Panel
 		inputPanel = new JPanel();
-		inputPanel.setLayout(new GridLayout(2,2,5,5));
+		inputPanel.setLayout(new GridLayout(3,2,5,5));
 
 		// Input Content
 		tilesLabel = new JLabel("Number of Tiles:");
@@ -103,6 +114,12 @@ public class StartDialog extends JDialog{
 
 		landuseField = new JTextField();
 		landuseField.setEditable(true);
+		
+		populationLabel = new JLabel("Population Size:");
+
+		populationField = new JTextField();
+		populationField.setEditable(true);
+		
 
 		// Button Panel
 		inputButtonsPanel = new JPanel();
@@ -135,33 +152,44 @@ public class StartDialog extends JDialog{
 	}
 	
 	
+	public int getPopulationSize() {
+		return populationSize;
+	}
+	
 	
 	public class OkListener implements ActionListener {
 
 		
-		int tempTiles;
-		int tempLanduse;
+	
 		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			
+			int tempTiles;
+			int tempLanduse;
+			int tempPopSize;
+			
 			try {
 				tempTiles = Integer.parseInt(tileField.getText());
 				tempLanduse = Integer.parseInt(landuseField.getText());
-			}
-			catch (NumberFormatException n) {
-				JOptionPane.showMessageDialog(getParent(), "Input must be an Integer");
-				return;
-			}
-			try {
-				if (tempTiles > 0 && tempLanduse > 0 ){
+				tempPopSize = Integer.parseInt(populationField.getText());	
+				
+				if (tempTiles > 0 && tempLanduse > 0  && tempPopSize > 0){
 					numTiles = tempTiles;
 					numLanduses = tempLanduse;
+					populationSize = tempPopSize;
 					newProblem = true;
 					setVisible(false);
 				} else {
 					throw new Exception();
 				}
-			} catch (Exception e1) {
+				
+			}
+			catch (NumberFormatException n) {
+				JOptionPane.showMessageDialog(getParent(), "Input must be an Integer");
+				return;
+			}
+			catch (Exception e1) {	
 				JOptionPane.showMessageDialog(getParent(), "The numbers must be greater than 0");
 			}
 			
@@ -174,6 +202,7 @@ public class StartDialog extends JDialog{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			newProblem = false;
 			setVisible(false);
 		}
 

@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -19,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
@@ -34,8 +36,6 @@ import mainPackage.constructions.Construction;
  * The Class GUInterface.
  */
 public class GUInterface {
-
-
 
 
 
@@ -70,8 +70,11 @@ public class GUInterface {
 	/** The center panel. */
 	private JPanel centerPanel;
 	
-	/** The Status output */
+	/** The population status output */
 	private JLabel statusOuputLabel;
+	
+	/** The generator status output */
+	private JLabel genStatusOuputLabel;
 	
 	/** The run panel. */
 	private JPanel runPanel;
@@ -232,27 +235,36 @@ public class GUInterface {
 		geneticPanel.add(stateSettingButton);
 		geneticPanel.add(sitesSettingsButton);
 		geneticPanel.add(landuseSettingButton);
-		geneticPanel.add(popSettingsButton);
+		//geneticPanel.add(popSettingsButton);
 		geneticPanel.add(geneticButton);
-		leftPanel.add(geneticPanel);
+		leftPanel.add(geneticPanel,BorderLayout.NORTH);
 
 		annealingPanel.add(annealingLabel);
-		leftPanel.add(annealingPanel);
+		annealingPanel.add(new JLabel(""));
+		annealingPanel.add(new JLabel(""));
+		annealingPanel.add(new JLabel(""));
+		annealingPanel.add(new JLabel(""));
+		annealingLabel.add(Box.createVerticalStrut(100));
+		leftPanel.add(annealingPanel,BorderLayout.CENTER);
 
 		exitPanel.add(newProblemButton);
 		exitPanel.add(exitButton);
-		leftPanel.add(exitPanel);
+		leftPanel.add(exitPanel,BorderLayout.SOUTH);
 
 		contentPane.add(leftPanel,BorderLayout.WEST);
-			
+		
+		topPanel.add(statusOuputLabel,BorderLayout.NORTH);
+		topPanel.add(genStatusOuputLabel,BorderLayout.CENTER);
+		
 		runPanel.add(run1GenBtn);
 		runPanel.add(run10GenBtn);
 		runPanel.add(run100GenBtn);
 		runPanel.add(run1000GenBtn);
 		runPanel.add(runBtn);
 		runPanel.add(pauseBtn);	
-		topPanel.add(statusOuputLabel,BorderLayout.NORTH);
 		topPanel.add(runPanel,BorderLayout.SOUTH);	
+		
+		
 		
 		centerPanel.add(topPanel,BorderLayout.NORTH);
 		
@@ -271,14 +283,15 @@ public class GUInterface {
 
 		/* Left Panel and Elements */
 		leftPanel = new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel,BoxLayout.Y_AXIS));
+		leftPanel.setLayout(new BorderLayout(5, 5));
 		//leftPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		leftPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		leftPanel.setMaximumSize(new Dimension(175, 735));
 
 		/* Genetic Algorithm Panel */
 		geneticPanel = new JPanel();
-		geneticPanel.setLayout(new GridLayout(6,1,1,1));
+		geneticPanel.setLayout(new GridLayout(5,1,1,1));
+//		geneticPanel.setLayout(new BoxLayout(geneticPanel,BoxLayout.Y_AXIS));
 
 		geneticLabel = new JLabel("Genetic Algorithms");
 		geneticLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -288,26 +301,27 @@ public class GUInterface {
 		stateSettingButton = new JButton("<html><center>State<br>Settings</center></html>");
 		stateSettingButton.addActionListener(new StateSettingsListener());
 
-		sitesSettingsButton = new JButton("<html><center>Sites<br>Settings</center></html>");
+		sitesSettingsButton = new JButton("<html><center>Tiles<br>Settings</center></html>");
 		sitesSettingsButton.addActionListener(new SiteSettingsListener());
 
 		landuseSettingButton = new JButton("<html><center>Landuses<br>Settings</center></html>");
 		landuseSettingButton.addActionListener(new LanduseSettingsListener());
-
+/*
 		popSettingsButton = new JButton("<html><center>Population<br>Settings</center></html>");
 		popSettingsButton.addActionListener(new PopulationSettingsListener());
-		
+*/		
 		geneticButton = new JButton("<html><center>Generator<br>Settings</center></html>");
 		geneticButton.addActionListener(new GeneticListener());
 
 		/* Simulated Annealing Panel */
 		annealingPanel = new JPanel();
-		annealingPanel.setLayout(new GridLayout(5,1,2,2));
+		annealingPanel.setLayout(new GridLayout(6,1,2,2));
 		annealingPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		annealingPanel.setMaximumSize(new Dimension (175,250));
 
 		annealingLabel = new JLabel("Simulated Annealing");
 		annealingLabel.setHorizontalAlignment(JLabel.CENTER);
-		annealingLabel.setVerticalAlignment(JLabel.BOTTOM);
+		annealingLabel.setVerticalAlignment(JLabel.CENTER);
 
 		/* Top Panel */
 		topPanel = new JPanel();
@@ -319,7 +333,14 @@ public class GUInterface {
 								  ";   Population Size: " /*+ String.valueOf(population.populationSize())*/ +
 								  ";   Generation Nr: "/*+ */);
 		statusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
+		statusOuputLabel.setVisible(false);
 		
+		genStatusOuputLabel = new JLabel("Pairing: " /*+ String.valueOf(tiles.length)*/ + 
+				  ";   Mutation: "/* + String.valueOf(landuses.length)*/ + 
+				  ";   Diversity: " /*+ String.valueOf(population.populationSize())*/ +
+				  ";   Probability to Rank: "/*+ */);
+		genStatusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
+		genStatusOuputLabel.setVisible(false);
 		
 		
 		/* Center and Top Panels and Elements */
@@ -613,6 +634,10 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (tiles == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
 			// TODO Auto-generated method stub
 
 		}
@@ -640,8 +665,8 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-
+			populationDialog = new PopulationDialog(frame, true, "Population Settings");
+			topPanel.repaint();
 		}
 
 	}
@@ -666,7 +691,15 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			
+			if (tiles == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
+			siteDialog = new TileDialog(frame, true, "Tile Settings", tiles);
+			
+			
+			
 
 		}
 
@@ -693,6 +726,10 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (landuses == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
 			// TODO Auto-generated method stub
 
 		}
@@ -709,6 +746,8 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent arg0) {
 			geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings");
 			topPanel.repaint();
+			
+			
 
 		}
 
