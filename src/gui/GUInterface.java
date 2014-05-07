@@ -696,10 +696,28 @@ public class GUInterface {
 				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
 				return;
 			}
-			siteDialog = new TileDialog(frame, true, "Tile Settings", tiles);
 			
+			int id = 0;
+			siteDialog = new TileDialog(frame, true, "Tile Settings", tiles, id);
 			
+			tiles[id] = siteDialog.getTempTile();
+			id = siteDialog.getTileID();
 			
+			boolean finished = false;
+			
+			while (!finished){
+				
+				siteDialog = new TileDialog(frame, true, "Tile Settings", tiles, id);
+				if (!siteDialog.isCanceled()){
+					tiles[id] = siteDialog.getTempTile();
+					id = siteDialog.getTileID();
+					finished = siteDialog.isFinished();
+				} else {
+					break;
+				}
+
+			}
+						
 
 		}
 

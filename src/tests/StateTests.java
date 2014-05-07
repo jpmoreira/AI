@@ -12,7 +12,7 @@ import Exceptions.ConstructionException;
 
 public class StateTests {
 
-	
+/*	
 	
 	@Test
 	public void pairingTest1(){
@@ -288,5 +288,5 @@ public class StateTests {
 		
 		
 		
-	}
+	} */
 }

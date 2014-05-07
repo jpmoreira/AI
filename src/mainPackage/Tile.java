@@ -40,6 +40,15 @@ public class Tile {
 	 */
 	private float pricePerAreaUnit;
 	private SoilType soilType;
+	
+	
+	public Tile(SoilType soil, float area, int incl, float price){
+		this.soilType = soil;
+		this.area = area;
+		this.maxInclination = incl;
+		this.pricePerAreaUnit = price;
+	}
+	
 	/**
 	 * A property intended to keep track of the {@link mainPackage.Tile tiles} adjacent to this tile.
 	 * 
@@ -100,6 +109,5 @@ public class Tile {
 	public void setSoilType(SoilType soilType) {
 		this.soilType = soilType;
 	}
-	
 
 }
