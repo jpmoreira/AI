@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Exceptions.ConstructionException;
-import mainPackage.Tile;
 import mainPackage.constructions.Construction;
 
 public class LanduseDialog extends JDialog{
@@ -170,14 +169,14 @@ public class LanduseDialog extends JDialog{
 
 	private void buildLanduse() throws ConstructionException {
 		
-		tempLanduse = new Construction(landuseField.getText()) {
-			
-			@Override
-			public double affinityToTile(Tile tile) {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-		};
+//		tempLanduse = new Construction(landuseField.getText()) {
+//			
+//			@Override
+//			public double affinityToTile(Tile tile) {
+//				// TODO Auto-generated method stub
+//				return 0;
+//			}
+//		};
 		
 	}
 	

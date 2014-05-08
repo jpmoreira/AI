@@ -180,67 +180,7 @@ public class StateTests {
 	}
 
 	@Test
-	public void testDiversity2() {
-
-		
-		Tile tile1=new Tile();
-		Tile tile2=new Tile();
-		
-		
-		try {
-			
-			Construction c1=new Construction("Moradia") {
-				
-				@Override
-				public double affinityToTile(Tile tile) {
-					
-					return 0;
-				}
-			};
-			Construction c2 = new Construction("Apartamento") {
-				
-				@Override
-				public double affinityToTile(Tile tile) {
-					
-					return 0;
-				}
-			};
-			Construction c3 = new Construction("Parque") {
-				
-				@Override
-				public double affinityToTile(Tile tile) {
-					
-					return 0;
-				}
-			};
-			
-			
-			Tile[] tiles={tile1,tile2};
-			Construction[] constructions1={c1,c2,c3};
-			Construction[] constructions2={c1,c2,c1};
-			
-			State state1=new State(constructions1,tiles);
-			State state2=new State(constructions2,tiles);
-			
-			State[] states={state1,state2};
-			
-			assertEquals(1, state1.diversity(states));
-			
-			
-			
-			
-			
-			
-		} catch (ConstructionException e) {
-			fail(e.message());
-		}
-		
-		
-		
-		
-		
-		
-	} 
+	public void testDiversity2() { 
 
 		Tile tile1 = new Tile();
 		Tile tile2 = new Tile();
