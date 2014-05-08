@@ -179,20 +179,20 @@ public class GeneticGeneratorDialog extends JDialog{
 		statesToPairSlider.setPaintLabels(true);
 		statesToPairSlider.setMinorTickSpacing(1);
 		statesToPairSlider.setMajorTickSpacing(maxPairing/4);
-		statesToPairSlider.setPreferredSize(new Dimension(400,40));
+		statesToPairSlider.setPreferredSize(new Dimension(500,40));
 
 //		mutationCheckBox = new JCheckBox("Mutation");
 //		mutationCheckBox.setSelected(true);
 //		mutationCheckBox.addActionListener(new MutationListener());
 
 		mutationProbLabel = new JLabel("Mutation probability (%):");
-		mutationProbSlider = new JSlider(0, 100, 0);
+		mutationProbSlider = new JSlider(0, 100, 50);
 		mutationProbSlider.setSnapToTicks(true);
 		mutationProbSlider.setPaintTicks(true);
 		mutationProbSlider.setPaintLabels(true);
 		mutationProbSlider.setMinorTickSpacing(1);
 		mutationProbSlider.setMajorTickSpacing(10);
-		mutationProbSlider.setPreferredSize(new Dimension(400,40));
+		mutationProbSlider.setPreferredSize(new Dimension(500,40));
 //		mutationProbSlider.setEnabled(mutationCheckBox.isSelected());
 				
 
@@ -205,24 +205,25 @@ public class GeneticGeneratorDialog extends JDialog{
 		directFitnessCheckBox.addActionListener(new DirectFitnessListener());
 
 		probToRankLabel = new JLabel("Ranking Factor:");
-		probToRankSlider = new JSlider(0, 100, 0);
+		probToRankSlider = new JSlider(0, 100, 50);
 		probToRankSlider.setSnapToTicks(true);
 		probToRankSlider.setPaintTicks(true);
 		probToRankSlider.setPaintLabels(true);
 		probToRankSlider.setMinorTickSpacing(1);
 		probToRankSlider.setMajorTickSpacing(10);
+		probToRankSlider.setPaintTrack(true);
 		probToRankSlider.setEnabled(directFitnessCheckBox.isSelected());
-		probToRankSlider.setPreferredSize(new Dimension(400,40));
+		probToRankSlider.setPreferredSize(new Dimension(500,40));
 	
 
 		diversityLabel = new JLabel("Diversity usage factor (%):");
-		diversitySlider = new JSlider(0, 100, 0);
+		diversitySlider = new JSlider(0, 100, 75);
 		diversitySlider.setSnapToTicks(true);
 		diversitySlider.setPaintTicks(true);
 		diversitySlider.setPaintLabels(true);
 		diversitySlider.setMinorTickSpacing(1);
 		diversitySlider.setMajorTickSpacing(10);
-		diversitySlider.setPreferredSize(new Dimension(400,40));
+		diversitySlider.setPreferredSize(new Dimension(500,40));
 
 		/* Ok Panel */
 		okPanel = new JPanel();
