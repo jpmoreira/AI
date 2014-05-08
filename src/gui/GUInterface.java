@@ -42,10 +42,10 @@ public class GUInterface {
 	Construction[] landuses;
 	
 	Tile[] tiles;
-
-	State[] states;
 	
 	Population population;
+	
+	private int popSize; 
 
 
 
@@ -212,11 +212,16 @@ public class GUInterface {
 	
 	
 	private void startNewProblem() {
+		
+		//TODO 
+		Construction.resetConstructions();
+		
 		startDialog = new StartDialog(frame, true, "New Problem");
 		
 		if (startDialog.getNewProblem()) {
 			tiles = new Tile[startDialog.getTilesNumber()];
 			landuses = new Construction[startDialog.getLandUseNumber()];
+			popSize = startDialog.getPopulationSize();
 			
 		}
 		
@@ -232,10 +237,10 @@ public class GUInterface {
 	private void addWidgets(Container contentPane) {
 
 		geneticPanel.add(geneticLabel);
-		geneticPanel.add(stateSettingButton);
+		//geneticPanel.add(stateSettingButton);
+		geneticPanel.add(popSettingsButton);
 		geneticPanel.add(sitesSettingsButton);
 		geneticPanel.add(landuseSettingButton);
-		//geneticPanel.add(popSettingsButton);
 		geneticPanel.add(geneticButton);
 		leftPanel.add(geneticPanel,BorderLayout.NORTH);
 
@@ -297,19 +302,19 @@ public class GUInterface {
 		geneticLabel.setHorizontalAlignment(JLabel.CENTER);
 		geneticLabel.setVerticalAlignment(JLabel.CENTER);
 		geneticPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-
+/*
 		stateSettingButton = new JButton("<html><center>State<br>Settings</center></html>");
 		stateSettingButton.addActionListener(new StateSettingsListener());
+*/		
+		popSettingsButton = new JButton("<html><center>Population<br>Settings</center></html>");
+		popSettingsButton.addActionListener(new PopulationSettingsListener());
 
 		sitesSettingsButton = new JButton("<html><center>Tiles<br>Settings</center></html>");
 		sitesSettingsButton.addActionListener(new SiteSettingsListener());
 
 		landuseSettingButton = new JButton("<html><center>Landuses<br>Settings</center></html>");
 		landuseSettingButton.addActionListener(new LanduseSettingsListener());
-/*
-		popSettingsButton = new JButton("<html><center>Population<br>Settings</center></html>");
-		popSettingsButton.addActionListener(new PopulationSettingsListener());
-*/		
+		
 		geneticButton = new JButton("<html><center>Generator<br>Settings</center></html>");
 		geneticButton.addActionListener(new GeneticListener());
 
@@ -386,7 +391,6 @@ public class GUInterface {
 
 		exitButton = new JButton("Exit");
 		exitButton.addActionListener(new ExitListener());
-
 
 	}
 
@@ -783,7 +787,7 @@ public class GUInterface {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings");
+			geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", popSize/2);
 			topPanel.repaint();
 			
 			

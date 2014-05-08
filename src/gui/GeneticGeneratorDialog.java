@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 public class GeneticGeneratorDialog extends JDialog{
@@ -27,17 +29,15 @@ public class GeneticGeneratorDialog extends JDialog{
 	private double probToRank;
 	private double diversityUsageFac;
 	private boolean directFitnessToProb;
-	private int pairingStates = 0;
-
-
-	/** The states pairing check box. */
-	private JCheckBox statesPairingCheckBox;
+	private int pairingStates;
+	private int maxPairing;
+	
 
 	/** The states to pair label. */
 	private JLabel statesToPairLabel;
 
 	/** The states to pair text field. */
-	private JTextField statesToPairTextField;  
+	private JSlider statesToPairSlider;  
 
 	/** The mutation check box. */
 	private JCheckBox mutationCheckBox;
@@ -46,34 +46,32 @@ public class GeneticGeneratorDialog extends JDialog{
 	private JLabel mutationProbLabel;
 
 	/** The mutation prob text field. */
-	private JTextField mutationProbTextField;
+	private JSlider mutationProbSlider;
 
 	/** The mutation var label. */
 	private JLabel mutationVarLabel;
 
 	/** The mutation var text field. */
-	private JTextField mutationVarTextField;    
+	private JTextField mutationVarField;    
 
 	/** The direct fitness check box. */
 	private JCheckBox directFitnessCheckBox;
 
 	private JLabel probToRankLabel;
 
-	private JTextField probToRankLTextField;
+	private JSlider probToRankSlider;
 
 	private JLabel diversityLabel;
 
-	private JTextField diversityTextField;
+	private JSlider diversitySlider;
 
 
-	/** The left gen panel. */
-	private JPanel leftGenPanel;
+	/** The pairing panel. */
+	private JPanel pairingPanel;
 
-	/** The center gen panel. */
-	private JPanel centerGenPanel;
 
 	/** The right gen panel. */
-	private JPanel rightGenPanel;
+	private JPanel fitnessPanel;
 
 	/** The genetic label. */
 	private JLabel geneticLabel;
@@ -89,11 +87,21 @@ public class GeneticGeneratorDialog extends JDialog{
 	private JButton cancelButton;
 
 
-	public GeneticGeneratorDialog(JFrame frame, boolean modal, String myMessage){
+	private JPanel diversityPanel;
+	
+	
+	private JPanel mutationProPanel;
+	private JPanel mutationVarPanel;
+	private JPanel directFitnessPanel;
+
+
+	public GeneticGeneratorDialog(JFrame frame, boolean modal, String myMessage, int maxPairing){
 
 		super(frame,modal);
 
-		getContentPane().setLayout(new BorderLayout(5,5));
+		getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
+		
+		this.maxPairing = maxPairing;
 
 		createWidgets();
 		addWidgets(getContentPane());
@@ -106,97 +114,115 @@ public class GeneticGeneratorDialog extends JDialog{
 
 
 	private void addWidgets(Container contentPane) {
+		
+		pairingPanel.add(statesToPairLabel);
+		pairingPanel.add(statesToPairSlider);
 
-		leftGenPanel.add(statesPairingCheckBox,BorderLayout.NORTH);
-		leftGenPanel.add(statesToPairLabel,BorderLayout.CENTER);
-		leftGenPanel.add(statesToPairTextField,BorderLayout.EAST);
-		//topPanel.add(leftGenPanel,BorderLayout.WEST);
-		//contentPane.add(leftGenPanel);
+		mutationProPanel.add(mutationProbLabel);
+		mutationProPanel.add(mutationProbSlider);
+		
+		mutationVarPanel.add(mutationVarLabel);
+		mutationVarPanel.add(mutationVarField);
 
-		centerGenPanel.add(mutationCheckBox);
-		centerGenPanel.add(new JLabel(""));
-		centerGenPanel.add(mutationProbLabel);
-		centerGenPanel.add(mutationProbTextField);
-		centerGenPanel.add(mutationVarLabel);
-		centerGenPanel.add(mutationVarTextField);
-		//topPanel.add(centerGenPanel,BorderLayout.CENTER);
-		//contentPane.add(centerGenPanel);
-
-		rightGenPanel.add(directFitnessCheckBox);
-		rightGenPanel.add(new JLabel(""));
-		rightGenPanel.add(probToRankLabel);
-		rightGenPanel.add(probToRankLTextField);
-		rightGenPanel.add(diversityLabel);
-		rightGenPanel.add(diversityTextField);
-
-		//contentPane.add(rightGenPanel);
-
-		//		JPanel temp = new JPanel();
-		//		temp.setLayout(new GridLayout(1,3,5,5));
-		//		
-		//		temp.add(leftGenPanel);
-		//		temp.add(centerGenPanel);
-		//		temp.add(rightGenPanel);
-		//temp.add(new JLabel(""));
-		//temp.setAlignmentY(GridLayout.LEADING);
-
-		//contentPane.add(geneticGenLabel,BorderLayout.NORTH);
+		directFitnessPanel.add(directFitnessCheckBox);
+		
+		fitnessPanel.add(probToRankLabel);
+		fitnessPanel.add(probToRankSlider);
+		
+		diversityPanel.add(diversityLabel);
+		diversityPanel.add(diversitySlider);
 
 		okPanel.add(okButton);
 		okPanel.add(cancelButton);
 
-		contentPane.add(leftGenPanel,BorderLayout.WEST);
-		contentPane.add(centerGenPanel,BorderLayout.CENTER);
-		contentPane.add(rightGenPanel,BorderLayout.EAST);
-		contentPane.add(okPanel,BorderLayout.SOUTH);
-
+		
+		contentPane.add(diversityPanel);
+		contentPane.add(pairingPanel);
+		contentPane.add(mutationProPanel);
+		contentPane.add(mutationVarPanel);
+		contentPane.add(directFitnessPanel);
+		contentPane.add(fitnessPanel);
+		contentPane.add(okPanel);
 
 	}
 
 
 	private void createWidgets() {
+		
+		FlowLayout centerLineLayout = new FlowLayout(FlowLayout.CENTER,5,5);
+		FlowLayout leftLineLayout = new FlowLayout(FlowLayout.LEADING,5,5);
 
-		leftGenPanel = new JPanel();
-		leftGenPanel.setLayout(new BorderLayout(0,0));
-		centerGenPanel = new JPanel();
-		centerGenPanel.setLayout(new GridLayout(3, 2, 0, 0));
-		rightGenPanel = new JPanel();
-		rightGenPanel.setLayout(new GridLayout(3, 2, 0, 0));
+		pairingPanel = new JPanel();
+		pairingPanel.setLayout(centerLineLayout);
+		
+		mutationProPanel = new JPanel();
+		mutationProPanel.setLayout(centerLineLayout);
+		
+		mutationVarPanel = new JPanel();
+		mutationVarPanel.setLayout(centerLineLayout);
+		
+		fitnessPanel = new JPanel();
+		fitnessPanel.setLayout(centerLineLayout);
+		
+		diversityPanel = new JPanel();
+		diversityPanel.setLayout(centerLineLayout);
+		
+		directFitnessPanel = new JPanel();
+		directFitnessPanel.setLayout(leftLineLayout);
+		
+		
+		
+		statesToPairLabel = new JLabel("Nr of Pairings:");	
+		statesToPairSlider = new JSlider(0, maxPairing, maxPairing/2);
+		statesToPairSlider.setSnapToTicks(true);
+		statesToPairSlider.setPaintTicks(true);
+		statesToPairSlider.setPaintLabels(true);
+		statesToPairSlider.setMinorTickSpacing(1);
+		statesToPairSlider.setMajorTickSpacing(maxPairing/4);
+		statesToPairSlider.setPreferredSize(new Dimension(400,40));
 
-		statesPairingCheckBox = new JCheckBox("Pairing States");
-		statesPairingCheckBox.setSelected(false);
-		statesPairingCheckBox.addActionListener(new StatesPairingListener());
+//		mutationCheckBox = new JCheckBox("Mutation");
+//		mutationCheckBox.setSelected(true);
+//		mutationCheckBox.addActionListener(new MutationListener());
 
-		statesToPairLabel = new JLabel("States to pair");
-		statesToPairLabel.setAlignmentY(TOP_ALIGNMENT);
+		mutationProbLabel = new JLabel("Mutation probability (%):");
+		mutationProbSlider = new JSlider(0, 100, 0);
+		mutationProbSlider.setSnapToTicks(true);
+		mutationProbSlider.setPaintTicks(true);
+		mutationProbSlider.setPaintLabels(true);
+		mutationProbSlider.setMinorTickSpacing(1);
+		mutationProbSlider.setMajorTickSpacing(10);
+		mutationProbSlider.setPreferredSize(new Dimension(400,40));
+//		mutationProbSlider.setEnabled(mutationCheckBox.isSelected());
+				
 
-		statesToPairTextField = new JTextField(4);
-		statesToPairTextField.setEditable(false);
-		statesToPairTextField.setAlignmentY(TOP_ALIGNMENT);
+		mutationVarLabel = new JLabel("Mutation variation factor:");
+		mutationVarField = new JTextField("1.0", 4);
+//		mutationVarSlider.setEnabled(mutationCheckBox.isSelected());
 
-		mutationCheckBox = new JCheckBox("Mutation");
-		mutationCheckBox.setSelected(false);
-		mutationCheckBox.addActionListener(new MutationListener());
-
-		mutationProbLabel = new JLabel("Mutation probability");
-		mutationProbTextField = new JTextField(4);
-		mutationProbTextField.setEditable(false);
-
-		mutationVarLabel = new JLabel("Mutation decreasing factor");
-		mutationVarTextField = new JTextField(4);
-		mutationVarTextField.setEditable(false);
-
-		directFitnessCheckBox = new JCheckBox("Direct fitness to probability");
-		directFitnessCheckBox.setSelected(false);
+		directFitnessCheckBox = new JCheckBox("Direct fitness to probability (%):");
+		directFitnessCheckBox.setSelected(true);
 		directFitnessCheckBox.addActionListener(new DirectFitnessListener());
 
-		probToRankLabel = new JLabel("State chosen probability ");
-		probToRankLTextField = new JTextField(4);
-		//probToRankLTextField.setEditable(false);
+		probToRankLabel = new JLabel("Ranking Factor:");
+		probToRankSlider = new JSlider(0, 100, 0);
+		probToRankSlider.setSnapToTicks(true);
+		probToRankSlider.setPaintTicks(true);
+		probToRankSlider.setPaintLabels(true);
+		probToRankSlider.setMinorTickSpacing(1);
+		probToRankSlider.setMajorTickSpacing(10);
+		probToRankSlider.setEnabled(directFitnessCheckBox.isSelected());
+		probToRankSlider.setPreferredSize(new Dimension(400,40));
+	
 
-		diversityLabel = new JLabel("Diversity usage factor");
-		diversityTextField = new JTextField(4);
-		//diversityTextField.setEditable(false);
+		diversityLabel = new JLabel("Diversity usage factor (%):");
+		diversitySlider = new JSlider(0, 100, 0);
+		diversitySlider.setSnapToTicks(true);
+		diversitySlider.setPaintTicks(true);
+		diversitySlider.setPaintLabels(true);
+		diversitySlider.setMinorTickSpacing(1);
+		diversitySlider.setMajorTickSpacing(10);
+		diversitySlider.setPreferredSize(new Dimension(400,40));
 
 		/* Ok Panel */
 		okPanel = new JPanel();
@@ -273,56 +299,6 @@ public class GeneticGeneratorDialog extends JDialog{
 	}
 
 
-	/**
-	 * The listener interface for receiving mutation events.
-	 * The class that is interested in processing a mutation
-	 * event implements this interface, and the object created
-	 * with that class is registered with a component using the
-	 * component's <code>addMutationListener<code> method. When
-	 * the mutation event occurs, that object's appropriate
-	 * method is invoked.
-	 *
-	 * @see MutationEvent
-	 */
-	public class MutationListener implements ActionListener {
-
-		/* (non-Javadoc)
-		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			mutationProbTextField.setEditable(mutationCheckBox.isSelected());
-			mutationVarTextField.setEditable(mutationCheckBox.isSelected());
-		}
-
-	}
-
-
-
-
-
-	/**
-	 * The listener interface for receiving statesPairing events.
-	 * The class that is interested in processing a statesPairing
-	 * event implements this interface, and the object created
-	 * with that class is registered with a component using the
-	 * component's <code>addStatesPairingListener<code> method. When
-	 * the statesPairing event occurs, that object's appropriate
-	 * method is invoked.
-	 *
-	 * @see StatesPairingEvent
-	 */
-	public class StatesPairingListener implements ActionListener {
-
-		/* (non-Javadoc)
-		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-		 */
-		@Override
-		public void actionPerformed(ActionEvent arg0) {			
-			statesToPairTextField.setEditable(statesPairingCheckBox.isSelected());
-		}
-
-	}
 
 
 
@@ -345,7 +321,7 @@ public class GeneticGeneratorDialog extends JDialog{
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			probToRankSlider.setEnabled(directFitnessCheckBox.isSelected());
 
 		}
 
@@ -371,78 +347,36 @@ public class GeneticGeneratorDialog extends JDialog{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			
-
-			if (statesPairingCheckBox.isSelected()){
-				int tempPairingStates;
-				
-				try {
-					tempPairingStates = Integer.parseInt(statesToPairTextField.getText());
-					if (tempPairingStates < 1 ) throw new Exception();
-					
-					//TODO add population limit
-					setPairingStates(tempPairingStates);
-				}
-				catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(getParent(), "Pairing states input must be an Integer");
-					return;
-				}
-				catch (Exception e) {
-					JOptionPane.showMessageDialog(getParent(), "Pairing states input must be greater than 0");
-					return;
-				}			
-			}
+			pairingStates = statesToPairSlider.getValue();
 			
-			if (mutationCheckBox.isSelected()){
-				double tempMutProb;
+			mutationProb = ((double) mutationProbSlider.getValue())/100;
+			
 				double tempMutVarFac;
 				
 				try {
-					tempMutProb = Double.parseDouble(mutationProbTextField.getText());
-					tempMutVarFac = Double.parseDouble(mutationVarTextField.getText());
 					
-					if (tempMutProb < 0 || tempMutProb > 1) throw new Exception();
-					if (tempMutVarFac < 0 || tempMutVarFac > 1) throw new Exception();
+					tempMutVarFac = Double.parseDouble(mutationVarField.getText());
+					
+					if (tempMutVarFac < 0) throw new Exception();
 					
 					//TODO add population limit
-					setMutationProb(tempMutProb);
 					setMutationProbVarFac(tempMutVarFac);
 				}
 				catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(getParent(), "Mutations factors must Doubles");
+					JOptionPane.showMessageDialog(getParent(), "Mutations factors must a Double");
 					return;
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(getParent(), "Mutations factor must be between 0.0 and 1.0");
+					JOptionPane.showMessageDialog(getParent(), "Mutations factor must be greater than 0");
 					return;
 				}
 				
-			}
 				
 			setDirectFitnessToProb(directFitnessCheckBox.isSelected());
 			
-			try {
-				
-				double tempDivUsageFac;
-				double tempProbToRank;
-				
-				tempDivUsageFac = Double.parseDouble(diversityTextField.getText());
-				tempProbToRank = Double.parseDouble(probToRankLTextField.getText());
-				
-				if (tempDivUsageFac < 0 || tempDivUsageFac > 1) throw new Exception();
-				if (tempProbToRank < 0 || tempProbToRank > 1) throw new Exception();
-				
-				//TODO add population limit
-				setProbToRank(tempProbToRank);
-				setDiversityUsageFac(tempDivUsageFac);
-			}
-			catch (NumberFormatException n) {
-				JOptionPane.showMessageDialog(getParent(), "Diversity usage factor and probability to rank must Double");
-				return;
-			}
-			catch (Exception e) {
-				JOptionPane.showMessageDialog(getParent(), "Diversity usage factor and probability to rank must be between 0.0 and 1.0");
-				return;
-			}
+			probToRank = ((double) probToRankSlider.getValue())/100;
+			
+			diversityUsageFac = ((double) diversitySlider.getValue())/100;
 			
 			newSettings = true;
 			setVisible(false);
