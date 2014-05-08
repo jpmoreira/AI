@@ -10,7 +10,22 @@ import mainPackage.State;
 public class GeneticRandomGenerator {
 
 
-
+	/**
+	 * the lower bound for all the probability to rank algorithm sub intervals. Public for testing purposes
+	 * 
+	 */
+	public double[] lowerBound;
+	/**
+	 * the upper bound for all the probability to rank algorithm sub intervals. Public for testing purposes.
+	 * 
+	 */
+	public double[] upperBound;
+	/**
+	 * 
+	 * the default random number generator to be used in case no other was specified. Specification of random generator is made on a method basis, mainly to facilitate testing.
+	 * 
+	 */
+	private RandomNrGenerator defaultGenerator;
 	
 	/**
 	 * 
@@ -31,7 +46,7 @@ public class GeneticRandomGenerator {
 	
 	/**
 	 * 
-	 * The factor to be used to calculate the probability of a state being chosen based on it's ranking
+	 * The factor to be used to calculate the probability of a state being chosen based on it's ranking. This parameter is 1 minus the parameter passed in {@link #enableFitnessToRank(double rankProb)}.
 	 * 
 	 */
 	private double probToRankFactor;
@@ -68,13 +83,14 @@ public class GeneticRandomGenerator {
 	/**
 	 * 
 	 * A method that returns the states to be paired for the next generation. It selects the method to select the states based on the current setting
+	 * @param gen the random generator to be used. If null is passed the {@link #defaultGenerator} will be used.
 	 * @return an array withTheStatesForNextGeneration
 	 */
-	public State [] statesForReproduction(){
+	public State [] statesForReproduction(RandomNrGenerator gen){
 		
 		
-		if(this.directFitnessToProbability)return this.statesForReproduction_Direct_Fitness_To_Probability();
-		else return this.statesForReproduction_Fitness_To_Rank();
+		if(this.directFitnessToProbability)return this.statesForReproduction_Direct_Fitness_To_Probability(gen);
+		else return this.statesForReproduction_Fitness_To_Rank(gen);
 		
 		
 	}
@@ -82,10 +98,12 @@ public class GeneticRandomGenerator {
 	/**
 	 * 
 	 * A method that returns the states for reproduction using the method fitness to rank.
+	 * @param gen the random number generator to be used. If null is passed the {@link #defaultGenerator} will be used instead.
 	 * @return the states to be used in reproduction
 	 */
-	private State [] statesForReproduction_Fitness_To_Rank(){
-		//TODO implemented not tested
+	private State [] statesForReproduction_Fitness_To_Rank(RandomNrGenerator gen){
+		
+		if(gen==null)gen=defaultGenerator;
 		
 		GeneticRandomGenerator.BubbleSort(population.states(), population.states().length,this.diversityUsageFactor);//sort states
 		
@@ -94,27 +112,32 @@ public class GeneticRandomGenerator {
 		double randomNumber;
 		double lowerBound=0;
 		double upperBound=(1.0-this.probToRankFactor);
+		State[] states=this.population.states();
 		
-		for(int i=0;i<this.population.states().length;i++){
+		while(statesForReproduction.size()<this.statesToPair){
 			
-			randomNumber=Math.random();
-			if(randomNumber>=lowerBound && randomNumber<=upperBound){
-				statesForReproduction.add(this.population.states()[i]);
+			randomNumber=gen.nextRandomNr();
+			for(int i=0;i<states.length;i++){
+				if(randomNumber>=this.lowerBound[i] && randomNumber<=this.upperBound[i]){
+					statesForReproduction.add(states[i]);
+					break;
+				}
 			}
 		}
 		
-		
-		
 		return statesForReproduction.toArray(new State[statesForReproduction.size()]);
+		
 	}
 
 	/**
 	 * 
 	 * A method that returns the states for reproduction using the method {@link #directFitnessToProbability}.
+	 * @param gen the random generator to be used. If null is passed the {@link #defaultGenerator} will be used.
 	 * @return the states to be used in reproduction
 	 */
-	public State [] statesForReproduction_Direct_Fitness_To_Probability(){
+	public State [] statesForReproduction_Direct_Fitness_To_Probability(RandomNrGenerator gen){
 		
+		if(gen==null)gen=this.defaultGenerator;
 		ArrayList<State> statesForReproduction=new ArrayList<State>();
 		
 		
@@ -126,7 +149,7 @@ public class GeneticRandomGenerator {
 		
 		while(statesForReproduction.size()<this.statesToPair){
 			
-			randomNumber=Math.random();
+			randomNumber=gen.nextRandomNr();
 			currentState=this.population.states()[stateIndex];
 			probForReproduction=currentState.fitness()/overallFitness;
 			if(randomNumber<=probForReproduction)statesForReproduction.add(currentState);
@@ -150,12 +173,15 @@ public class GeneticRandomGenerator {
 	 * 
 	 * A method that returns the index of the segments of the choromosome of a given state to be passed along to his first descendant
 	 * @param state the state whose chromosome is to be passed to his descendant
+	 * @param gen the random generator to be used. If null is passed the {@link #defaultGenerator} will be used.
 	 * @return the zero based index of the chromosome segments to be passed along to the passed state's first descendant
 	 */
-	public Integer[] segmentsOfState(State state){
+	public Integer[] segmentsOfState(State state,RandomNrGenerator gen){
+		
+		if(gen==null)gen=this.defaultGenerator;
 		
 		ArrayList<Integer> segments=new ArrayList<Integer>();
-		double randomNr=Math.random();
+		double randomNr=gen.nextRandomNr();
 		
 		for(int i=0;i<state.tiles.length;i++){
 			
@@ -190,22 +216,29 @@ public class GeneticRandomGenerator {
 	/**
 	 * 
 	 * A function return a value that is intended to make a state mutate or not. The best state is never mutated.
-	 * 
+	 * @param gen the random generator to be used. If null is passed the {@link #defaultGenerator} will be used.
 	 * @return a boolean stating if a state should mutate
 	 */
-	boolean stateShouldMutate(State s){
+	boolean stateShouldMutate(State s,RandomNrGenerator gen){
 		
+		if(gen==null)gen=this.defaultGenerator;
 		if(s==population.mostFitState())return false;//never mutates most fit state
-		if(Math.random()<mutationProbability)return true;
+		if(gen.nextRandomNr()<mutationProbability)return true;
 		
 
 		
 		return false;
 	}
-	
-	int mutatingSegmentForState(State s){
-		
-		return (int) Math.random()*s.tiles.length;
+	/**
+	 * 
+	 * A method that indicates a chromosome segment to be mutated for a particular state
+	 * @param s the state whose chromosome segment is to be chosen
+	 * @param gen the random generator to be used. If null is passed the {@link #defaultGenerator} will be used.
+	 * @return the zero based index of the chromossome segment to be mutated
+	 */
+	int mutatingSegmentForState(State s,RandomNrGenerator gen){
+		if(gen==null)gen=this.defaultGenerator;
+		return (int) gen.nextRandomNr()*s.tiles.length;
 		
 		
 	}
@@ -226,6 +259,7 @@ public class GeneticRandomGenerator {
 		this.population=pop;
 		this.mutationProbability=mutationProb;
 		this.statesToPair=statesToPair;
+		this.defaultGenerator=new DefaultRandomGenerator();
 		
 		
 	}
@@ -258,6 +292,21 @@ public class GeneticRandomGenerator {
 	
 	/**
 	 * 
+	 * 
+	 * A function that computes the sum over k from k=first till k=last of r to the kth. 
+	 * @param first the start of the sum
+	 * @param last the end of the sum
+	 * @param r the ratio of the sum
+	 * @return the sum
+	 */
+	public static double GeometricSum(int first,int last,double r){
+		
+		
+		return (Math.pow(r,first)-Math.pow(r,last+1))/(1-r);//geometric progression sum
+		
+	}
+	/**
+	 * 
 	 * A method to be called at each iteration. It updates the parameters necessary for algorithm to update.
 	 * This method should be explicitly called at the end of each iteration
 	 * 
@@ -266,7 +315,6 @@ public class GeneticRandomGenerator {
 	 public void updateParameters(){
 		 
 		 //FIXME probably more parameter should be updated;
-		 //FIXME this method should be called after an iteration
 		 this.mutationProbability=this.mutationProbability*this.mutationProbVarFactor;
 		 this.diversityUsageFactor*=0.90;//multiply diversityUsageFactorBy 0.9
 		 
@@ -291,7 +339,19 @@ public class GeneticRandomGenerator {
 	public void enableFitnessToRank(double rankProb){
 		
 		this.directFitnessToProbability=false;
-		this.probToRankFactor=rankProb;
+		this.probToRankFactor=1.0-rankProb;//directly calculate
+		this.lowerBound=new double[this.population.states().length];
+		this.upperBound=new double[this.population.states().length];
+
+		
+		for(int i=0;i<this.lowerBound.length;i++){
+			
+			this.lowerBound[i]=GeometricSum(1, i, this.probToRankFactor);
+			this.upperBound[i]=GeometricSum(1, i+1, this.probToRankFactor);
+		}
+		this.lowerBound[0]=0.0;
+		this.upperBound[upperBound.length-1]=1.0;
+	
 	}
 	
 	/**

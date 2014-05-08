@@ -42,6 +42,9 @@ public class Tile {
 	private SoilType soilType;
 	
 	
+	public Tile(){};
+	
+	
 	public Tile(SoilType soil, float area, int incl, float price){
 		this.soilType = soil;
 		this.area = area;
@@ -62,7 +65,7 @@ public class Tile {
 	 * @param tile the tile to add to the adjacencies array
 	 */
 	public void addAdjacentTile(Tile tile){
-		
+		//TODO test this method
 		if(this.isAdjacent(tile))return;
 		this.adjacencies.add(tile);
 		tile.addAdjacentTile(this);//add this tile as adjacent to the other one (adjacency is a bidirectional property)
@@ -85,6 +88,7 @@ public class Tile {
 		
 		
 	}
+
 	public int getMaxInclination() {
 		return maxInclination;
 	}
@@ -108,6 +112,15 @@ public class Tile {
 	}
 	public void setSoilType(SoilType soilType) {
 		this.soilType = soilType;
+	}
+
+
+	
+	//TODO document it
+	public Tile[] adjacencies(){
+		
+	
+		return adjacencies.toArray(new Tile[adjacencies.size()]);
 	}
 
 }

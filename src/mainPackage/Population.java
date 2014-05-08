@@ -151,7 +151,7 @@ public class Population {
 	public void pair(){
 		
 		
-		State[] statesToBePaired=coinTosser.statesForReproduction();
+		State[] statesToBePaired=coinTosser.statesForReproduction(null);
 		State st1,st2;
 		Integer[] segments;
 		State[] childs;
@@ -162,7 +162,7 @@ public class Population {
 		for(int i=0;i<statesToBePaired.length-1;i+=2){
 			st1=statesToBePaired[i];
 			st2=statesToBePaired[i+1];
-			segments=coinTosser.segmentsOfState(st1);
+			segments=coinTosser.segmentsOfState(st1,null);
 			childs=st1.pairWith(st2, segments);
 			statesAfterPairing.add(childs[0]);
 			statesAfterPairing.add(childs[1]);
@@ -194,9 +194,9 @@ public class Population {
 		
 		boolean mutate;
 		for(State s: states){
-			mutate=coinTosser.stateShouldMutate(s);
+			mutate=coinTosser.stateShouldMutate(s,null);
 			if(mutate){
-				s.mutate(coinTosser.mutatingSegmentForState(s));
+				s.mutate(coinTosser.mutatingSegmentForState(s,null));
 			}
 			
 		}
