@@ -103,18 +103,18 @@ public class State {
 	 * 
 	 * A method to mutate a given segment of the chromosome. This method does not prevent that the mutation leads to multiple states with the same chromosome representation.
 	 * @param segmentNr the number of the segment of the chromosome
+	 * @param bitToToggle the bit that is to be changed
 	 */
-	public void mutate(int segmentNr){
+	public void mutate(int segmentNr,int bitToToggle){
 		
 		if(segmentNr>=constructions.length)return;
 		
-		//FIXME not sure this is the correct formula
+		//TODO test this
 		
-		int nrMaxBit=currentID/2+1;//the number of the highest order bit used
+	
+
 		
-		int bitToBeOne= (int)(Math.random()*(nrMaxBit));
-		
-		int newSegment=(1<<bitToBeOne);
+		int newSegment=(1<<bitToToggle);
 		constructions[segmentNr]=Construction.constructionWithCromossome(newSegment);
 		
 		
@@ -194,7 +194,12 @@ public class State {
 	}
 
 	
-	//TODO document it
+	/**
+	 * 
+	 * A method that returns the construction in a given tile
+	 * @param t the tile whose constructions is to be returned
+	 * @return the construction that is to be placed on the passed tile
+	 */
 	
 	public Construction constructionForTile(Tile t){
 		

@@ -196,7 +196,7 @@ public class Population {
 		for(State s: states){
 			mutate=coinTosser.stateShouldMutate(s,null);
 			if(mutate){
-				s.mutate(coinTosser.mutatingSegmentForState(s,null));
+				s.mutate(coinTosser.mutatingSegmentForState(s,null),coinTosser.bitToToggle(null));
 			}
 			
 		}
