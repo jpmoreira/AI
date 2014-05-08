@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.sun.tools.javac.code.Attribute.Array;
 
 import mainPackage.State;
+import mainPackage.constructions.Construction;
 
 
 public class GeneticRandomGenerator {
@@ -385,5 +386,20 @@ public class GeneticRandomGenerator {
 		
 	}
 
+
+	/**
+	 * 
+	 * A method that randomly returns a bit to be toggled
+	 * @param gen the random generator to be used. If null is passed the {@link #defaultGenerator} will be used.
+	 * @return
+	 */
+	public int bitToToggle(RandomNrGenerator gen){
+		
+		if(gen==null)gen=defaultGenerator;
+		
+		int nrMaxBit=Construction.latestConstructionIndex()/2+1;//the number of the highest order bit used
+		return (int)(gen.nextRandomNr()*(nrMaxBit));
+		
+	}
 
 }

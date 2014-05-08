@@ -77,7 +77,11 @@ public class Tile {
 		
 	}
 	
-	//TODO document it
+	/**
+	 * 
+	 * A method that returns the adjacencies of a given Tile
+	 * @return
+	 */
 	public Tile[] adjacencies(){
 		
 	

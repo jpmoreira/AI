@@ -226,6 +226,37 @@ public class StateTests {
 	@Test
 	public void mutationToAcceptableConstruction() {
 
+		
+		Construction c1=new Construction("A") {
+			
+			@Override
+			public double affinityToTileInState(Tile tile, State state) {
+				return 0;
+			}
+		};
+		Construction c2=new Construction("B") {
+			
+			@Override
+			public double affinityToTileInState(Tile tile, State state) {
+				return 0;
+			}
+		};
+		Construction c3=new Construction("C") {
+			
+			@Override
+			public double affinityToTileInState(Tile tile, State state) {
+				return 0;
+			}
+		};
+		
+		Tile t1=new Tile();
+		Tile t2=new Tile();
+		Tile t3=new Tile();
+		
+		Construction[] constructions={c1,c2,c3};
+		Tile[] tiles={t1,t2,t3};
+		
+		State s=new State(constructions, tiles);
 		// TODO implement this test to assert if mutations are being made to
 		// only acceptable constructions
 	}

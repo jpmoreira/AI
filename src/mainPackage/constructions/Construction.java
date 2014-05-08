@@ -54,13 +54,46 @@ abstract public class Construction {
 		return nullConstruction;
 	};
 
+	/**
+	 * 
+	 * A variable to hold the value of the index for the next construction to be created.
+	 */
 	private static int indexForNextConstruction = 0;
 
+	/**
+	 * 
+	 * The id of the construction
+	 */
+	private int id;
+	
 	private static HashMap<Integer, Construction> constructions = new HashMap<Integer, Construction>();
 
 	/**
 	 * 
-	 * A property to hold the chromosome representation for the object
+	 * A method that returns the id of the construction
+	 * @return the id of the construction
+	 */
+	public int getID(){
+		
+		return id;
+	}
+
+	/**
+	 * 
+	 * A method that returns the largest index a construction has
+	 * @return the largest index a construction has
+	 */
+	public static int latestConstructionIndex(){
+		
+		return indexForNextConstruction-1;
+	}
+
+	
+
+	
+	/**
+	 * 
+	 * A property to hold the chromossome representation for the object
 	 * 
 	 * */
 	private int chromoRepresentation;
