@@ -56,7 +56,7 @@ public class Tile {
 	 * A property intended to keep track of the {@link mainPackage.Tile tiles} adjacent to this tile.
 	 * 
 	 * */
-	private ArrayList<Tile> adjacencies;
+	private ArrayList<Tile> adjacencies=new ArrayList<Tile>();
 	
 	/**
 	 * 
@@ -65,7 +65,7 @@ public class Tile {
 	 * @param tile the tile to add to the adjacencies array
 	 */
 	public void addAdjacentTile(Tile tile){
-		//TODO test this method
+		if(this==tile)return;
 		if(this.isAdjacent(tile))return;
 		this.adjacencies.add(tile);
 		tile.addAdjacentTile(this);//add this tile as adjacent to the other one (adjacency is a bidirectional property)

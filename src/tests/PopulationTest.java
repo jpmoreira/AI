@@ -248,7 +248,6 @@ public class PopulationTest {
 		Tile[] tiles = { tile1, tile2, tile3, tile4, tile5, tile6, tile7, tile8 };
 		Construction[] constructions = { c2, c3, c4, c3, c1 };
 		Population pop = new Population(tiles, constructions, 5, 0.01, 2);
-
 		State best = pop.mostFitState();
 
 		System.out.println("BEFORE " + best.fitness() + " "

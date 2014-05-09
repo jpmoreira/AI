@@ -230,15 +230,14 @@ public class GeneticRandomGeneratorTests {
 			State s2 = new State(constructions2, tiles);
 			State s3 = new State(constructions3, tiles);
 
-			Population pop = new Population(tiles, constructions, 3, 0.5, 2);
-
+			Population pop = new Population(tiles, constructions, 3, 0.5, 1);
 			// alter states not to be random
 			State[] states = pop.states();
 			states[0] = s1;
 			states[1] = s2;
 			states[2] = s3;
 
-			GeneticRandomGenerator gen = new GeneticRandomGenerator(pop, 1, 0.5);
+			GeneticRandomGenerator gen = new GeneticRandomGenerator(pop, 0.5);
 
 			State[] statesOfNextGen = gen.statesForNextGen();
 			State[] supposedStatesForNextGen = { s3, s2 };
@@ -370,4 +369,72 @@ public class GeneticRandomGeneratorTests {
 
 	}
 
+	
+	@Test
+	public void testBitToToggleFunction1(){
+		
+		Construction.resetConstructions();
+		Construction c1=new Construction("A") {
+			
+			@Override
+			public double affinityToTileInState(Tile tile, State state) {
+				return 0;
+			}
+		};
+		Construction c2=new Construction("B") {
+			
+			@Override
+			public double affinityToTileInState(Tile tile, State state) {
+				return 0;
+			}
+		};
+		Construction c3=new Construction("C") {
+			
+			@Override
+			public double affinityToTileInState(Tile tile, State state) {
+				return 0;
+			}
+		};
+		
+		Tile t1=new Tile();
+		Tile t2=new Tile();
+		Tile t3=new Tile();
+		
+		Construction[] constructions={c1,c2,c3};
+		Tile[] tiles={t1,t2,t3};
+		
+		Population pop=new Population(tiles, constructions, 2, 0.5, 1);
+		
+		int bit=pop.coinTosser.bitToToggle(new RandomNrGenerator() {
+			
+			@Override
+			public double nextRandomNr() {
+				return 1.0;
+			}
+		});
+		
+		assertEquals(bit, 2);
+		
+		bit=pop.coinTosser.bitToToggle(new RandomNrGenerator() {
+			
+			@Override
+			public double nextRandomNr() {
+				return 0.5;
+			}
+		});
+		
+		assertEquals(bit, 1);
+		
+		bit=pop.coinTosser.bitToToggle(new RandomNrGenerator() {
+			
+			@Override
+			public double nextRandomNr() {
+				return 0.4;
+			}
+		});
+		
+		assertEquals(bit, 0);
+		
+		
+	}
 }
