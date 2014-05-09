@@ -66,6 +66,33 @@ abstract public class Construction {
 	 */
 	private int id;
 	
+	/**
+	 * 
+	 * The penalty to be given to a construction placed near another construction of a forbidden class
+	 * 
+	 */
+	protected double forbiddenClassAdjacentPenalty=0.0;
+	/**
+	 * 
+	 * An array of the construction subclasses whose instances should not be near this class
+	 * 
+	 */
+	//TODO add this constraint to the constraint function
+	protected String[] forbiddenAdjacentClasses;
+	
+	/**
+	 * 
+	 * A variable to hold the minimum required area for this construction.
+	 * 
+	 */
+	private double minArea=0;
+	
+	/**
+	 * 
+	 * A variable to hold the maximum area required for this construction.
+	 */
+	private double maxArea=Integer.MAX_VALUE;
+	
 	private static HashMap<Integer, Construction> constructions = new HashMap<Integer, Construction>();
 
 	/**
@@ -88,8 +115,20 @@ abstract public class Construction {
 		return indexForNextConstruction-1;
 	}
 
-	
+	/**
+	 * 
+	 * The array of the constructions that should not be near this one. Only used in case a custom construction is created
+	 * 
+	 */
+	public Construction[] forbiddenAdjacencies=new Construction[0];
 
+	
+	/**
+	 * 
+	 * The penalty to be given by one of {@link #forbiddenAdjacencies} being adjacent to this construction
+	 * 
+	 */
+	protected double forbiddenInstancePenalty=0.0;
 	
 	/**
 	 * 
@@ -111,12 +150,11 @@ abstract public class Construction {
 
 	/**
 	 * 
-	 * A simple constructor.
+	 * A simple constructor. {@link #maxArea} is initialized with {@link Integer#MAX_VALUE} and {@link #minArea} is initialized to zero
 	 * 
 	 * @param theName
 	 *            an alias for the construction. This will be used in the state
 	 *            visual representation.
-	 * @throws ConstructionException
 	 */
 
 	public Construction(String theName) {
@@ -124,7 +162,24 @@ abstract public class Construction {
 		this.name = theName;
 		chromoRepresentation = (1 << indexForNextConstruction++);
 		constructions.put(this.chromoRepresentation, this);
-
+	}
+	
+	/**
+	 * 
+	 * A more complete constructor that initializes the name of the construction as well as both {@link #maxArea} and {@link #minArea}
+	 * @param theName the name of the construction
+	 * @param max_area the maximum acceptable value for the area for this construction
+	 * @param min_area the minimum acceptable value for the area for this construction
+	 */
+	public Construction(String theName,double max_area, double min_area,double forbClassAdjacentPenalty){
+		
+		this(theName);
+		this.maxArea=max_area;
+		this.minArea=min_area;
+		this.forbiddenClassAdjacentPenalty=forbClassAdjacentPenalty;
+		this.forbiddenAdjacentClasses=new String[0];
+		
+		
 	}
 
 	/**
@@ -155,15 +210,36 @@ abstract public class Construction {
 
 	}
 
-	// TODO document it
-	// TODO test it
+	//TODO document it
+	public void setForbiddenAdjacentClasses(String[] forbiddenAdjacentClasses){
+		
+		this.forbiddenAdjacentClasses=forbiddenAdjacentClasses;
+	} 
+	
+	/**
+	 * 
+	 * A method that returns a custom construction that has the specified constraints
+	 * @param name the name of the construction.
+	 * @param tileAdjPenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction with forbidden adjacencie
+	 * @param wrongTilePenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction placed in a forbidden tile
+	 * @param disallowedTiles an array of the disallowed tiles for this construction
+	 * @param areaPenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction in a tile with an incompatible area
+	 * @param minArea the minimum allowed area
+	 * @param maxArea the maximum allowed area
+	 * @param soilPenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction in a tile with a forbidden soil type
+	 * @param forbiddenTypes an array of the forbidden soil types
+	 * @param forbiddenClassPen the penalty to be given to this construction for sitting near a instance of the forbidden classes
+	 * @param forbiddenClasses an array of the classes whose instances should not be in the adjacent tiles
+	 * @return a construction that performs according to the specified constraints
+	 */
+	//TODO maybe more constraints required
 	static public Construction constructionWithConstraints(String name,
-			final double tileAdjPenalty, final Construction[] forbidenAdjacencies,
+			final double tileAdjPenalty,
 			final double wrongTilePenalty, final Tile[] disallowedTiles,
 			final double areaPenalty, final double minArea, final double maxArea,
-			final double soilPenalty, final Tile.SoilType[] forbiddenTypes) {
+			final double soilPenalty, final Tile.SoilType[] forbiddenTypes,double forbiddenClassPen,String[] forbiddenClasses) {
 
-		return new Construction(name) {
+		Construction c=new Construction(name,minArea,maxArea,forbiddenClassPen) {
 
 			@Override
 			public double affinityToTileInState(Tile tile,State s) {
@@ -179,11 +255,12 @@ abstract public class Construction {
 
 				}
 				
-				Construction c=s.constructionForTile(tile);
-				for (int i =0 ; i < forbidenAdjacencies.length; i++){
-					if(forbidenAdjacencies[i]==c){
-						currentAffinity-=tileAdjPenalty;
-					}
+				
+				for (Tile adjacentTile : tile.adjacencies()) {
+					
+					Construction c=s.constructionForTile(adjacentTile);
+					currentAffinity-=this.defaultPenaltyForAdjacentConstruction(c);
+					
 				}
 				
 				if(tile.area>maxArea || tile.area<minArea)currentAffinity-=areaPenalty;
@@ -204,6 +281,9 @@ abstract public class Construction {
 			}
 		};
 
+		c.setForbiddenAdjacentClasses(forbiddenClasses);
+		c.forbiddenInstancePenalty=tileAdjPenalty;
+		return c;
 	}
 
 	/**
@@ -218,6 +298,42 @@ abstract public class Construction {
 		indexForNextConstruction = 0;
 	}
 
+	//TODO document it
+	protected double defaultPenaltyForAdjacentConstruction(Construction c){
+		
+		double penalty=0.0;
+		
+		Class<?> theClass=c.getClass();
+		boolean classIsForbidden=false;
+		Class<?> forbiddenClass = null;
+		
+		for(String className: this.forbiddenAdjacentClasses){
+			
+			try {forbiddenClass=Class.forName(className);} catch (ClassNotFoundException e) {}
+			
+			classIsForbidden=forbiddenClass.isAssignableFrom(theClass);
+			if(classIsForbidden){
+				penalty+=forbiddenClassAdjacentPenalty;
+				break;
+			}
+			
+		}
+		
+		for(Construction forbiddenConstruction: this.forbiddenAdjacencies){
+			
+			if(c==forbiddenConstruction){
+				penalty+=forbiddenInstancePenalty;
+				break;
+			}
+			
+		}
+		
+		
+		return penalty;
+		
+		
+	}
+	
 	public String name() {
 
 		return this.name;

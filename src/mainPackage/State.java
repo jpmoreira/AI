@@ -108,10 +108,6 @@ public class State {
 	public void mutate(int segmentNr,int bitToToggle){
 		
 		if(segmentNr>=constructions.length)return;
-		
-		//TODO test this
-		
-	
 
 		
 		int newSegment=(1<<bitToToggle);
@@ -164,6 +160,7 @@ public class State {
 		
 		
 		for (State state : states) {
+			if(state==this)continue;
 			for(int i=0;i<state.constructions.length;i++){
 				iterations++;
 				if(state.constructions[i]!=this.constructions[i])diversity++;

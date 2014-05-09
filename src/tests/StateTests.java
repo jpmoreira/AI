@@ -175,7 +175,7 @@ public class StateTests {
 
 		State[] states = { state1, state2 };
 
-		assertEquals(2, state1.diversity(states),0.0001);
+		assertEquals(2/3.0, state1.diversity(states),0.0001);
 
 	}
 
@@ -217,9 +217,9 @@ public class StateTests {
 		State state1 = new State(constructions1, tiles);
 		State state2 = new State(constructions2, tiles);
 
-		State[] states = { state1, state2 };
+		State[] states = { state1,state2 };
 
-		assertEquals(1, state1.diversity(states),0.0001);
+		assertEquals(1/3.0, state1.diversity(states),0.0001);
 
 	}
 
@@ -227,6 +227,7 @@ public class StateTests {
 	public void mutationToAcceptableConstruction() {
 
 		
+		Construction.resetConstructions();
 		Construction c1=new Construction("A") {
 			
 			@Override
@@ -257,8 +258,13 @@ public class StateTests {
 		Tile[] tiles={t1,t2,t3};
 		
 		State s=new State(constructions, tiles);
-		// TODO implement this test to assert if mutations are being made to
-		// only acceptable constructions
+		
+		
+		assertEquals(s.constructions[0], c1);
+		s.mutate(0, 1);
+		
+		assertEquals(s.constructions[0], c2);
+
 	}
 
 	@Test
@@ -267,4 +273,5 @@ public class StateTests {
 		// TODO implement this to test if the fitness of a state is <=1 and >=0
 
 	}
+
 }

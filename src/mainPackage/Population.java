@@ -1,5 +1,5 @@
 package mainPackage;
-
+//TODO add statistics
 import java.util.ArrayList;
 
 
@@ -26,8 +26,19 @@ public class Population {
 	 */
 	public Tile[] tiles;
 	
+	/**
+	 * 
+	 * 
+	 * The object that controls all the random factors involved in the iteration process
+	 */
 	public GeneticRandomGenerator coinTosser;
 	
+	/**
+	 * 
+	 * The number of states to be paired in each iteration
+	 * 
+	 */
+	private int statesToPair;
 	
 	public int populationSize(){
 		
@@ -43,9 +54,6 @@ public class Population {
 		
 		return this.tiles;
 	}
-	
-	
-	
 	
 	
 	
@@ -86,7 +94,8 @@ public class Population {
 		states=new State[populationSize];//initialize the initial size as the double of the initial capacity
 		this.tiles=tiles;
 		this.constructions=constructions;
-		this.coinTosser=new GeneticRandomGenerator( this, statesToPair, mutationProb);
+		this.coinTosser=new GeneticRandomGenerator( this, mutationProb);
+		this.statesToPair=statesToPair;
 		for(int i=0;i<populationSize;i++){
 			State stateToAdd=new State(this.generateRandomConstructionArray(tiles.length),tiles);
 			states[i]=stateToAdd;
@@ -243,5 +252,21 @@ public class Population {
 		states[index2]=newOnes[1];
 		
 		return newOnes;
+	}
+
+	//TODO document it
+	public int statesToPair(){
+		
+		return this.statesToPair;
+	}
+	/**
+	 * 
+	 * A simple setter for {@link #statesToPair}
+	 * @param nr a number bigger than 0 and less or equal to the size of the population
+	 */
+	public void setStatesToPair(int nr){
+		
+		this.statesToPair=nr;
+		
 	}
 }
