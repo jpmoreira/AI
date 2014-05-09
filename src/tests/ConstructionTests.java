@@ -53,7 +53,7 @@ public class ConstructionTests {
 		Tile t2=new Tile();
 		Tile t3=new Tile();
 		Tile t4=new Tile();
-		t3.area=500;
+		t3.setArea(500);
 		t1.addAdjacentTile(t2);
 		t3.addAdjacentTile(t2);
 		t3.addAdjacentTile(t4);
