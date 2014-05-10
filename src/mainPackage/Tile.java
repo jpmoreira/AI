@@ -11,20 +11,20 @@ import java.util.ArrayList;
  * 
  * */
 public class Tile {
-	
+
 	/**
 	 * 
 	 * An enum to define the types of soil.
 	 * 
 	 * */
 	public enum SoilType {
-	    SoilType_Sandy,
-	    SoilType_Silty,
-	    SoilType_Clay,
-	    SoilType_Peaty
-	    //TODO don't know if this type of values make sense... review this
+		SoilType_Sandy,
+		SoilType_Silty,
+		SoilType_Clay,
+		SoilType_Peaty
+		//TODO don't know if this type of values make sense... review this
 	}
-	
+
 	/**
 	 * The maximum inclination of this tile. This value should represent the percentual inclination in a number >=0 and <= 100.
 	 * 
@@ -40,24 +40,35 @@ public class Tile {
 	 */
 	private float pricePerAreaUnit;
 	private SoilType soilType;
+
+
+	private static int idForNextTile = 0;
+
+	private int id;
+
+	public Tile(){
+		this.setId(idForNextTile);
+		idForNextTile++;
+	};
 	
-	
-	public Tile(){};
-	
-	
+	private int[] adjIDs;
+
+
 	public Tile(SoilType soil, float area, int incl, float price){
 		this.soilType = soil;
 		this.area = area;
 		this.maxInclination = incl;
 		this.pricePerAreaUnit = price;
+		this.setId(idForNextTile);
+		idForNextTile++;
 	}
-	
+
 	/**
 	 * A property intended to keep track of the {@link mainPackage.Tile tiles} adjacent to this tile.
 	 * 
 	 * */
 	private ArrayList<Tile> adjacencies=new ArrayList<Tile>();
-	
+
 	/**
 	 * 
 	 * A method that adds an adjacencie to this tile. If the adjacencie in the opposite direction is not already set, this method sets it too.
@@ -69,7 +80,7 @@ public class Tile {
 		if(this.isAdjacent(tile))return;
 		this.adjacencies.add(tile);
 		tile.addAdjacentTile(this);//add this tile as adjacent to the other one (adjacency is a bidirectional property)
-		
+
 	}
 	/**
 	 * 
@@ -78,15 +89,15 @@ public class Tile {
 	 * @param tile the tile whose adjacencie is to be tested against this tile
 	 */
 	public boolean isAdjacent(Tile tile){
-		
+
 		for (Tile adjacentTile : this.adjacencies) {
-			
+
 			if(adjacentTile==tile)return true;
-			
+
 		}
 		return false;
-		
-		
+
+
 	}
 
 	public int getMaxInclination() {
@@ -115,16 +126,26 @@ public class Tile {
 	}
 
 
-	
+
 	/**
 	 * 
 	 * A method that returns the adjacencies of a given Tile
 	 * @return
 	 */
 	public Tile[] adjacencies(){
-		
-	
+
+
 		return adjacencies.toArray(new Tile[adjacencies.size()]);
+	}
+
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 }

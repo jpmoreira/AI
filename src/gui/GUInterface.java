@@ -101,7 +101,7 @@ public class GUInterface {
 	private JLabel geneticLabel;
 
 	/** The pop settings button. */
-	private JButton popSettingsButton;
+	private JButton adjacenciesButton;
 
 	/** The sites settings button. */
 	private JButton sitesSettingsButton;
@@ -158,6 +158,9 @@ public class GUInterface {
 
 	/** The site dialog. */
 	private TileDialog siteDialog;
+	
+	/** The Tiles Adjacenties Dialog */
+	private AdjacenciesDialog adjacenciesDialog;
 
 	/** The state dialog. */
 	private StateDialog stateDialog;
@@ -263,7 +266,38 @@ public class GUInterface {
 	}
 
 	private void configAdjacencies() {
-		// TODO set adjacencies
+	
+		int id = 0;
+		adjacenciesDialog = new AdjacenciesDialog(frame, true, "Adjacencies Settings", getTiles(), id);
+
+		ArrayList <Integer> tempAdj = adjacenciesDialog.getAdjacencies();
+		
+		for (int i = 0; i < tempAdj.size(); i++) {
+			tiles[id].addAdjacentTile(tiles[tempAdj.get(i)]);
+		}
+		
+		id = adjacenciesDialog.getTileID();
+
+
+		while (!adjacenciesDialog.isFinished() && !adjacenciesDialog.isCanceled()){
+
+			adjacenciesDialog = new AdjacenciesDialog(frame, true, "Tile Settings", getTiles(), id);
+			if (!adjacenciesDialog.isCanceled()){
+				
+				tempAdj = adjacenciesDialog.getAdjacencies();
+				
+				for (int i = 0; i < tempAdj.size(); i++) {
+					tiles[id].addAdjacentTile(tiles[tempAdj.get(i)]);
+				}
+				
+				id = adjacenciesDialog.getTileID();
+				
+			} else {
+				break;
+			}
+
+		}
+		
 
 	}
 
@@ -316,7 +350,7 @@ public class GUInterface {
 
 		int id = 0;
 		siteDialog = new TileDialog(frame, true, "Tile Settings", getTiles(), id);
-
+		
 		getTiles()[id] = siteDialog.getTempTile();
 		id = siteDialog.getTileID();
 
@@ -339,8 +373,27 @@ public class GUInterface {
 		startDialog = new StartDialog(frame, true, "New Problem");
 
 		if (startDialog.getNewProblem()) {
+			
 			setTiles(new Tile[startDialog.getTilesNumber()]);
+			for (int i = 0; i < startDialog.getTilesNumber(); i++){
+				Tile tempTile = new Tile();
+				tiles[i] = tempTile;
+			}
+			
 			landuses = new Construction[startDialog.getLandUseNumber()];
+			
+			for (int i = 0; i < startDialog.getLandUseNumber();i++){
+				Construction tempConstruction = new Construction("NULL") {
+					
+					@Override
+					public double affinityToTileInState(Tile tile, State state) {
+						// TODO Auto-generated method stub
+						return 0;
+					}
+				};
+				landuses[i] = tempConstruction;
+			}
+			
 			popSize = startDialog.getPopulationSize();
 			pairingStates = popSize/2;
 		}	
@@ -381,8 +434,8 @@ public class GUInterface {
 
 		geneticPanel.add(geneticLabel);
 		//geneticPanel.add(stateSettingButton);
-		//geneticPanel.add(popSettingsButton);
 		geneticPanel.add(sitesSettingsButton);
+		geneticPanel.add(adjacenciesButton);
 		geneticPanel.add(landuseSettingButton);
 		geneticPanel.add(geneticButton);
 		leftPanel.add(geneticPanel,BorderLayout.NORTH);
@@ -448,10 +501,10 @@ public class GUInterface {
 		/*
 		stateSettingButton = new JButton("<html><center>State<br>Settings</center></html>");
 		stateSettingButton.addActionListener(new StateSettingsListener());
-
-		popSettingsButton = new JButton("<html><center>Population<br>Settings</center></html>");
-		popSettingsButton.addActionListener(new PopulationSettingsListener());
-		 */
+*/
+		adjacenciesButton = new JButton("<html><center>Adjacencies<br>Settings</center></html>");
+		adjacenciesButton.addActionListener(new AdjacenciesSettingsListener());
+		 
 		sitesSettingsButton = new JButton("<html><center>Tiles<br>Settings</center></html>");
 		sitesSettingsButton.addActionListener(new SiteSettingsListener());
 
@@ -476,11 +529,11 @@ public class GUInterface {
 		topPanel.setLayout(new BorderLayout(0,0));
 		topPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 
-		statusOuputLabel = new JLabel("Nr. of Tiles:  ND" + 
+		statusOuputLabel = new JLabel("Nr. of Sites:  ND" + 
 				";   Nr. of Landuses: ND" + 
 				";   Population Size: ND" +
-				";   Generation Nr: ND" +
-				";   Nr of Pairing states: ND");
+				";   Nr of Pairing states: ND" +
+				";   Generation Nr: ND");
 		statusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
 		statusOuputLabel.setVisible(true);
 
@@ -540,17 +593,13 @@ public class GUInterface {
 	}
 
 
-
-
-
-
 	private void updateStatusPanel() {
 
-		statusOuputLabel.setText("Nr. of Tiles: " +  tiles.length +
+		statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
 				";   Nr. of Landuses: " + landuses.length +
 				";   Population Size: " + popSize +
-				";   Generation Nr: " + generation +
-				";   Nr of Pairing states: " + pairingStates);
+				";   Nr of Pairing states: " + pairingStates +
+				";   Generation Nr: " + generation);
 
 		if (directFitnessToProb) {
 			genStatusOuputLabel.setText("Mutation Probability: " + mutationProb +
@@ -873,15 +922,20 @@ public class GUInterface {
 	 *
 	 * @see PopulationSettingsEvent
 	 */
-	public class PopulationSettingsListener implements ActionListener {
+	public class AdjacenciesSettingsListener implements ActionListener {
 
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			populationDialog = new PopulationDialog(frame, true, "Population Settings");	
-			popSize = populationDialog.getPopulationSize();
+			
+			if (getTiles() == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
+			
+			configAdjacencies();
 
 			centerPanel.repaint();
 		}

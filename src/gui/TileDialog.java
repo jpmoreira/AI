@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -83,7 +84,7 @@ public class TileDialog extends JDialog {
 		this.tiles = argTiles;
 		this.setTileID(tileID);
 		numTiles = tiles.length;
-
+		setTempTile(tiles[tileID]);
 
 		getContentPane().setLayout(new BorderLayout());
 
@@ -102,9 +103,6 @@ public class TileDialog extends JDialog {
 		tileIDPanel = new JPanel();
 		tileIDPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 		
-		tileIDLabel = new JLabel("Tile ID: " + tileID);
-	
-		
 		centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 		
@@ -113,9 +111,8 @@ public class TileDialog extends JDialog {
 		
 		soilLabel = new JLabel("Soil type:");
 		
-		String[] soilTypes = {"Clay", "Peaty", "Sandy", "Silty"};
-		soilCombo = new JComboBox(soilTypes);
-		soilCombo.setSize(100, 0);
+		soilCombo = new JComboBox();
+		soilCombo.setModel(new DefaultComboBoxModel(Tile.SoilType.values()));
 		
 		areaPanel = new JPanel();
 		areaPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
@@ -125,7 +122,8 @@ public class TileDialog extends JDialog {
 		priceLabel = new JLabel("Price/m2:");
 		
 		
-		if (tiles[tileID] == null){
+		if (tiles[tileID].getSoilType() == null){
+			tileIDLabel = new JLabel("Tile ID: " + tileID);
 			
 			inclinationField = new JTextField("0",4);
 			areaText = new JTextField("0",8);
@@ -134,14 +132,9 @@ public class TileDialog extends JDialog {
 			
 		} else {
 			
-			int index = 0;
+			tileIDLabel = new JLabel("Tile ID: " + tiles[tileID].getId());
 			
-			if (tiles[tileID].getSoilType() == SoilType.SoilType_Sandy) index = 0;
-			else if (tiles[tileID].getSoilType() == SoilType.SoilType_Silty) index = 1;
-			else if (tiles[tileID].getSoilType() == SoilType.SoilType_Clay) index = 2;
-			else if (tiles[tileID].getSoilType() == SoilType.SoilType_Peaty) index = 3;
-			
-			soilCombo.setSelectedIndex(index);
+			soilCombo.setSelectedItem(tiles[tileID].getSoilType());
 			
 			Integer incl = tiles[tileID].getMaxInclination();		
 			inclinationField = new JTextField(incl.toString(),4);
@@ -153,9 +146,6 @@ public class TileDialog extends JDialog {
 			priceField = new JTextField(tempPrice.toString(),4);
 			
 		}
-		
-		
-		
 
 		saveButton = new JButton("Save");
 		saveButton.addActionListener(new SaveButtonListener());
@@ -213,7 +203,6 @@ public class TileDialog extends JDialog {
 
 		centerPanel.add(soilTypePanel);
 		centerPanel.add(areaPanel);
-		//centerPanel.add(inclinationPanel);
 
 		contentPane.add(centerPanel,BorderLayout.CENTER);
 
@@ -231,21 +220,9 @@ public class TileDialog extends JDialog {
 	}
 
 
-	private void buildTile() throws Exception, NumberFormatException {
+	private void editTile() throws Exception, NumberFormatException {
 
-		SoilType tempSoilType;
-		
-		if (soilCombo.getSelectedIndex() == 0){
-			tempSoilType = SoilType.SoilType_Sandy;
-		} else if (soilCombo.getSelectedIndex() == 1) {
-			tempSoilType = SoilType.SoilType_Silty;
-		} else if (soilCombo.getSelectedIndex() == 2) {
-			tempSoilType = SoilType.SoilType_Clay;
-		} else if (soilCombo.getSelectedIndex() == 3) {
-			tempSoilType = SoilType.SoilType_Peaty;
-		} else {
-			throw new Exception("soil");
-		}
+		SoilType tempSoilType = (SoilType) soilCombo.getSelectedItem();
 
 
 		float tempArea;
@@ -261,12 +238,13 @@ public class TileDialog extends JDialog {
 		if (tempPrice < 0) throw new Exception("price");
 		if (tempIncl < 0 || tempIncl > 100) throw new Exception("incl");
 
-
-		setTempTile(new Tile(tempSoilType,tempArea,tempIncl,tempPrice));
-
+		tempTile.setArea(tempArea);
+		tempTile.setMaxInclination(tempIncl);
+		tempTile.setPricePerAreaUnit(tempPrice);
+		tempTile.setSoilType(tempSoilType);
+		
 		return;
 	}
-
 
 	public boolean isFinished() {
 		return finished;
@@ -328,10 +306,10 @@ public class TileDialog extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 			
 			try {
-				buildTile();
+				editTile();
 				
 				setTileID(getTileID() - 1);
-
+				
 				setVisible(false);
 			}
 			catch (NumberFormatException n) {
@@ -363,7 +341,8 @@ public class TileDialog extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 
 			try {
-				buildTile();
+				
+				editTile();	
 				
 				setTileID(getTileID() + 1);
 
@@ -401,7 +380,7 @@ public class TileDialog extends JDialog {
 
 			try {
 				
-				buildTile();
+				editTile();
 				
 				finished = true;
 
@@ -428,6 +407,12 @@ public class TileDialog extends JDialog {
 		}
 		
 
+	}
+
+
+
+	public Tile[] getTiles() {
+		return tiles;
 	}
 
 
