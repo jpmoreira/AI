@@ -46,6 +46,17 @@ public class LanduseDialog extends JDialog{
 
 	private JTextField landuseField;
 	
+	
+	private JPanel areaPanel;
+	
+	private JLabel minAreaLabel;
+	
+	private JTextField minAreaField;
+	
+	private JLabel maxAreaLabel;
+	
+	private JTextField maxAreaField;
+	
 
 	private JPanel buttonsPanel;
 
@@ -64,6 +75,7 @@ public class LanduseDialog extends JDialog{
 		this.setLanduseID(landuseID);
 		numLanduses = landuses.length;
 
+		frame.setTitle("LandUse Settings");
 
 		getContentPane().setLayout(new BorderLayout());
 
@@ -115,13 +127,24 @@ public class LanduseDialog extends JDialog{
 		
 		landuseLabel = new JLabel("Name:");
 		
+		areaPanel = new JPanel();
+		areaPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		
+		minAreaLabel = new JLabel("Area min:");
+		maxAreaLabel = new JLabel("Area max:");
+		
+		
 		if (landuses[getLanduseID()] == null){
 			
 			landuseField = new JTextField("Name",20);
+			minAreaField = new JTextField("0.0",8);
+			maxAreaField = new JTextField("0.0",8);
 			
 		} else {
 				
 			landuseField = new JTextField(landuses[landuseID].name(),20);
+			//minAreaField = new JTextField(landuses[landuseID].,8);
+			//maxAreaField = new JTextField("0.0",8);
 				
 		}
 		
@@ -201,6 +224,7 @@ public class LanduseDialog extends JDialog{
 		public void actionPerformed(ActionEvent e) {
 			
 			try {
+				
 				buildLanduse();
 				
 				landuseID--;

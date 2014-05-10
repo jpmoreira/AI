@@ -1,5 +1,7 @@
 package gui;
 
+import gui.GUInterface.PauseListener;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -95,13 +97,19 @@ public class GeneticGeneratorDialog extends JDialog{
 	private JPanel directFitnessPanel;
 
 
-	public GeneticGeneratorDialog(JFrame frame, boolean modal, String myMessage, int maxPairing){
+	public GeneticGeneratorDialog(JFrame frame, boolean modal, String myMessage, int maxPairing, int pairingStates2, double mutationProb2, double mutationProbVarFac2, double diversityUsageFac2, boolean directFitnessToProb2, double probToRank2){
 
 		super(frame,modal);
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 		
 		this.maxPairing = maxPairing;
+		this.pairingStates = pairingStates2/2;
+		this.mutationProb = mutationProb2;
+		this.mutationProbVarFac = mutationProbVarFac2;	
+		this.diversityUsageFac = diversityUsageFac2;
+		this.directFitnessToProb = directFitnessToProb2;
+		this.probToRank = probToRank2;
 
 		createWidgets();
 		addWidgets(getContentPane());
@@ -173,7 +181,7 @@ public class GeneticGeneratorDialog extends JDialog{
 		
 		
 		statesToPairLabel = new JLabel("Nr of Pairings:");	
-		statesToPairSlider = new JSlider(0, maxPairing, maxPairing/2);
+		statesToPairSlider = new JSlider(0, maxPairing, pairingStates);
 		statesToPairSlider.setSnapToTicks(true);
 		statesToPairSlider.setPaintTicks(true);
 		statesToPairSlider.setPaintLabels(true);
@@ -186,7 +194,7 @@ public class GeneticGeneratorDialog extends JDialog{
 //		mutationCheckBox.addActionListener(new MutationListener());
 
 		mutationProbLabel = new JLabel("Mutation probability (%):");
-		mutationProbSlider = new JSlider(0, 100, 50);
+		mutationProbSlider = new JSlider(0, 100, (int) (mutationProb*100));
 		mutationProbSlider.setSnapToTicks(true);
 		mutationProbSlider.setPaintTicks(true);
 		mutationProbSlider.setPaintLabels(true);
@@ -197,27 +205,27 @@ public class GeneticGeneratorDialog extends JDialog{
 				
 
 		mutationVarLabel = new JLabel("Mutation variation factor:");
-		mutationVarField = new JTextField("1.0", 4);
+		mutationVarField = new JTextField(((Double) mutationProbVarFac).toString(), 4);
 //		mutationVarSlider.setEnabled(mutationCheckBox.isSelected());
 
 		directFitnessCheckBox = new JCheckBox("Direct fitness to probability (%):");
-		directFitnessCheckBox.setSelected(true);
+		directFitnessCheckBox.setSelected(directFitnessToProb);
 		directFitnessCheckBox.addActionListener(new DirectFitnessListener());
 
 		probToRankLabel = new JLabel("Ranking Factor:");
-		probToRankSlider = new JSlider(0, 100, 50);
+		probToRankSlider = new JSlider(0, 100, (int) (probToRank*100));
 		probToRankSlider.setSnapToTicks(true);
 		probToRankSlider.setPaintTicks(true);
 		probToRankSlider.setPaintLabels(true);
 		probToRankSlider.setMinorTickSpacing(1);
 		probToRankSlider.setMajorTickSpacing(10);
 		probToRankSlider.setPaintTrack(true);
-		probToRankSlider.setEnabled(directFitnessCheckBox.isSelected());
+		probToRankSlider.setEnabled(!directFitnessCheckBox.isSelected());
 		probToRankSlider.setPreferredSize(new Dimension(500,40));
 	
 
 		diversityLabel = new JLabel("Diversity usage factor (%):");
-		diversitySlider = new JSlider(0, 100, 75);
+		diversitySlider = new JSlider(0, 100, (int) (diversityUsageFac*100));
 		diversitySlider.setSnapToTicks(true);
 		diversitySlider.setPaintTicks(true);
 		diversitySlider.setPaintLabels(true);
@@ -304,6 +312,20 @@ public class GeneticGeneratorDialog extends JDialog{
 
 
 
+	public boolean isNewSettings() {
+		return newSettings;
+	}
+
+
+	public void setNewSettings(boolean newSettings) {
+		this.newSettings = newSettings;
+	}
+
+
+
+
+
+
 	/**
 	 * The listener interface for receiving directFitness events.
 	 * The class that is interested in processing a directFitness
@@ -322,7 +344,7 @@ public class GeneticGeneratorDialog extends JDialog{
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			probToRankSlider.setEnabled(directFitnessCheckBox.isSelected());
+			probToRankSlider.setEnabled(!directFitnessCheckBox.isSelected());
 
 		}
 
@@ -332,7 +354,7 @@ public class GeneticGeneratorDialog extends JDialog{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			newSettings = false;
+			setNewSettings(false);
 			setVisible(false);
 
 		}
@@ -348,7 +370,7 @@ public class GeneticGeneratorDialog extends JDialog{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			
-			pairingStates = statesToPairSlider.getValue();
+			pairingStates = statesToPairSlider.getValue()*2;
 			
 			mutationProb = ((double) mutationProbSlider.getValue())/100;
 			
@@ -372,14 +394,16 @@ public class GeneticGeneratorDialog extends JDialog{
 					return;
 				}
 				
-				
-			setDirectFitnessToProb(directFitnessCheckBox.isSelected());
-			
-			probToRank = ((double) probToRankSlider.getValue())/100;
+			if (directFitnessCheckBox.isSelected()){
+				setDirectFitnessToProb(true);
+			} else {
+				setDirectFitnessToProb(false);
+				probToRank = ((double) probToRankSlider.getValue())/100;
+			}
 			
 			diversityUsageFac = ((double) diversitySlider.getValue())/100;
 			
-			newSettings = true;
+			setNewSettings(true);
 			setVisible(false);
 			
 		}
