@@ -26,7 +26,7 @@ public class HouseConstruction extends Construction {
 	public HouseConstruction(double minArea, double maxArea) {
 
 		super("House",minArea,maxArea,0.2);
-		this.setForbiddenAdjacentClasses(new String[]{PrisonConstruction.class.getCanonicalName()});
+		this.setForbiddenAdjacentClassesConstraint(new String[]{PrisonConstruction.class.getCanonicalName()}, 0.15);
 
 	}
 	

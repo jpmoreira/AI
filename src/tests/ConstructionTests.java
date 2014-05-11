@@ -57,15 +57,16 @@ public class ConstructionTests {
 		t1.addAdjacentTile(t2);
 		t3.addAdjacentTile(t2);
 		t3.addAdjacentTile(t4);
+		t3.setSoilType(Tile.SoilType.SoilType_Peaty);
 		Tile[] badTiles={t2};
 		
 		String[] forbClasses={PrisonConstruction.class.getCanonicalName()};
 		
-		Construction c1=Construction.constructionWithConstraints("A", 0.1, 0.0, new Tile[0], 0.0, 10, 20, 0.0, new Tile.SoilType[0],0.0,forbClasses);//1-0.1
-		Construction c2=Construction.constructionWithConstraints("B", 0.1, 0.1, badTiles, 0.0, 10, 20, 0.0, new Tile.SoilType[0],0.0,forbClasses);//1-0.1
-		Construction c3=Construction.constructionWithConstraints("C", 0.05, 0.1, new Tile[0], 0.025, 10, 100, 0.0, new Tile.SoilType[0],0.025,forbClasses);//1-0.05-0.025
+		Construction c1=Construction.constructionWithConstraints("A", 0.0, new Tile[0], 0.0, 10, 20, 0.0, new Tile.SoilType[0],0.0,forbClasses, 0.0, Integer.MAX_VALUE, 0.0);//1-0.1
+		Construction c2=Construction.constructionWithConstraints("B", 0.1, badTiles, 0.0, 10, 20, 0.0, new Tile.SoilType[0],0.0,forbClasses, 0.0, Integer.MAX_VALUE, 0.0);//1-0.1
+		Construction c3=Construction.constructionWithConstraints("C", 0.1, new Tile[0], 0.025, 10, 100, 0.05, new Tile.SoilType[]{Tile.SoilType.SoilType_Peaty},0.025,forbClasses, 0.0, Integer.MAX_VALUE, 0.0);//1-0.05-0.025-0.025
 		PrisonConstruction c4=new PrisonConstruction(0,10000);
-		
+		c1.setForbiddenAdjacentInstancesConstraint( new Construction[]{c2},0.1);
 
 		
 		Construction[] forbiddenForC1={c2};
