@@ -93,6 +93,36 @@ abstract public class Construction {
 	 */
 	private double maxArea=Integer.MAX_VALUE;
 	
+	/**
+	 * 
+	 * The penalty to be given to this constraint
+	 * 
+	 */
+	private double areaPenalty=0.0;
+	
+	/**
+	 * 
+	 * The minimum inclination allowed for this construction
+	 * 
+	 */
+	private double minInclination=0.0;
+	
+	/**
+	 * 
+	 * The maximum inclination allowed for this construction
+	 * 
+	 */
+	private double maxInclination=1.0;
+	
+	/**
+	 * 
+	 * The penalty to be given to a violation of the inclination values
+	 * 
+	 */
+	
+	private double inclinationPenalty=0.0;
+	
+	
 	private static HashMap<Integer, Construction> constructions = new HashMap<Integer, Construction>();
 
 	/**
@@ -105,6 +135,26 @@ abstract public class Construction {
 		return id;
 	}
 
+	/**
+	 * 
+	 * A method that sets the area penalty to be a applied to a given construction
+	 * @param min_Area the minimum area allowed for this construction
+	 * @param max_Area the maximum area allowed for this construction
+	 * @param areaPen the penalty to be given to a tile containing this construction, that has an inadequate area
+	 */
+	public void setAreaConstraint(double min_Area,double max_Area,double areaPen){
+		this.minArea=min_Area;
+		this.maxArea=max_Area;
+		this.areaPenalty=areaPen;
+		
+	}
+	
+	
+	public void setInclinationConstrain(double minIncl,double maxIncl,double penalty){
+		
+		//TODO implemen and comment
+	}
+	
 	/**
 	 * 
 	 * A method that returns the largest index a construction has
@@ -263,7 +313,8 @@ abstract public class Construction {
 					
 				}
 				
-				if(tile.getArea()>maxArea || tile.getArea()<minArea)currentAffinity-=areaPenalty;
+				currentAffinity-=this.defaultAreaPenalty(tile);
+				
 				
 				for(int i=0;i<forbiddenTypes.length;i++){
 					
@@ -283,6 +334,7 @@ abstract public class Construction {
 
 		c.setForbiddenAdjacentClasses(forbiddenClasses);
 		c.forbiddenInstancePenalty=tileAdjPenalty;
+		c.setAreaConstraint(minArea, maxArea, areaPenalty);
 		return c;
 	}
 
@@ -298,7 +350,12 @@ abstract public class Construction {
 		indexForNextConstruction = 0;
 	}
 
-	//TODO document it
+	/**
+	 * 
+	 * A method that return the standard penalty to be given to an adjacent construction passed. Either by being of a disallowed class or a disallowed instance.
+	 * @param c
+	 * @return
+	 */
 	protected double defaultPenaltyForAdjacentConstruction(Construction c){
 		
 		double penalty=0.0;
@@ -333,6 +390,18 @@ abstract public class Construction {
 		
 		
 	}
+
+	
+	/**
+	 * 
+	 * A method that returns the standard penalty to a tile based on his area and the bounds for this Construction
+	 * @param t the tile to be evaluated
+	 * @return the penalty to be applied to this Tile
+	 */
+	protected double defaultAreaPenalty(Tile t){
+		if(t.getArea()>maxArea || t.getArea()<minArea) return areaPenalty;
+		return 0;
+	}
 	
 	public String name() {
 
@@ -340,3 +409,4 @@ abstract public class Construction {
 	}
 
 }
+//TODO use inclination constraint in auto-function
