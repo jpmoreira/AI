@@ -1,12 +1,5 @@
 package gui;
 
-import gui.TileDialog.CancelButtonListener;
-import gui.TileDialog.NextButtonListener;
-import gui.TileDialog.PreviousButtonListener;
-import gui.TileDialog.SaveButtonListener;
-
-import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -20,10 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
 import mainPackage.Tile;
 
 public class AdjacenciesDialog extends JDialog{
@@ -160,7 +150,22 @@ public class AdjacenciesDialog extends JDialog{
 		checkBoxLabelPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 
 		adjPanel = new JPanel();
-		adjPanel.setLayout(new GridLayout(numTiles/5,5));
+		
+		int rows , cols;
+		
+		if (numTiles%5 > 0){
+			rows = numTiles/5+1;
+		} else {
+			rows = numTiles/5;
+		}
+		
+		if (numTiles > 5) {
+			cols = 5;
+		} else {
+			cols = numTiles;
+		}
+		
+		adjPanel.setLayout(new GridLayout(rows, cols));
 
 		for (int i = 0 ; i < numTiles; i++){
 			JCheckBox tempCheck = new JCheckBox("Lot " + i);

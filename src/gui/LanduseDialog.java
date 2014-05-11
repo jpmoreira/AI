@@ -115,7 +115,7 @@ public class LanduseDialog extends JDialog{
 		landuseIDPanel = new JPanel();
 		landuseIDPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 		
-		landuseIDLabel = new JLabel("Landuse ID: " + getLanduseID());
+		landuseIDLabel = new JLabel("Landuse ID: " + getLanduseID() + " - " + landuses[landuseID].toCromossome());
 	
 		
 		centerPanel = new JPanel();
@@ -142,9 +142,9 @@ public class LanduseDialog extends JDialog{
 		} else {
 				
 			landuseField = new JTextField(landuses[landuseID].name(),20);
-			//minAreaField = new JTextField(landuses[landuseID].,8);
-			//maxAreaField = new JTextField("0.0",8);
-				
+			minAreaField = new JTextField("0,0",8);
+			maxAreaField = new JTextField("0.0",8);
+			
 		}
 		
 		
