@@ -3,6 +3,7 @@ package mainPackage.constructions;
 import Exceptions.ConstructionException;
 import mainPackage.State;
 import mainPackage.Tile;
+import mainPackage.Tile.SoilType;
 
 /**
  * 
@@ -25,9 +26,12 @@ public class HouseConstruction extends Construction {
 	 */
 	public HouseConstruction(double minArea, double maxArea) {
 
-		super("House",minArea,maxArea,0.2);
-		this.setForbiddenAdjacentClassesConstraint(new String[]{PrisonConstruction.class.getCanonicalName()}, 0.15);
-
+		super("House");
+		this.setAreaConstraint(minArea, maxArea, 0.2);
+		this.setForbiddenAdjacenciesConstraint(new Construction[0], new String[]{PrisonConstruction.class.getCanonicalName(),FactoryConstruction.class.getCanonicalName()}, 0.5);
+		this.setInclinationConstrain(0.0, 0.2, 0.05);
+		this.setSoilConstraint(new SoilType[]{SoilType.SoilType_Clay}, 0.05);
+		this.setMustHaveAdjacenciesConstraint(new String[]{ParkConstruction.class.getCanonicalName()}, new Construction[0], 0.05);
 	}
 	
 	//TODO test this and prision
@@ -35,12 +39,13 @@ public class HouseConstruction extends Construction {
 	@Override
 	public double affinityToTileInState(Tile tile, State state) {
 		double currentAffinity=1.0;
-		for (Tile adjTile : tile.adjacencies()) {
-			Construction c=state.constructionForTile(adjTile);
-			currentAffinity-=this.defaultPenaltyForAdjacentConstruction(c);
-		}
+		
+		currentAffinity-=this.defaultPenaltyForAdjacentConstruction(tile.adjacencies(), state);
 		
 		currentAffinity-=defaultAreaPenalty(tile);
+		currentAffinity-=defaultSoilTilePenalty(tile);
+		currentAffinity-=defaultInclinationPenalty(tile);
+		currentAffinity-=defaultMustHaveAdjacenciesPenalty(tile.adjacencies(), state);
 		
 		if(currentAffinity<0)currentAffinity=0;
 		
