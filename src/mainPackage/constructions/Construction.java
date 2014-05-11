@@ -5,6 +5,7 @@ import java.util.HashMap;
 import mainPackage.ConstantManager;
 import mainPackage.State;
 import mainPackage.Tile;
+import mainPackage.Tile.SoilType;
 import Exceptions.ConstructionException;
 import Exceptions.ConstructionException.ConstructionExeptionCode;
 
@@ -77,9 +78,8 @@ abstract public class Construction {
 	 * An array of the construction subclasses whose instances should not be near this class
 	 * 
 	 */
-	//TODO add this constraint to the constraint function
-	protected String[] forbiddenAdjacentClasses;
-	
+	private String[] forbiddenAdjacentClasses=new String[0];
+
 	/**
 	 * 
 	 * A variable to hold the minimum required area for this construction.
@@ -122,6 +122,43 @@ abstract public class Construction {
 	
 	private double inclinationPenalty=0.0;
 	
+	/**
+	 * The tiles where this construction should not be placed
+	 * 
+	 */
+	private Tile[] forbiddenTiles=new Tile[0];
+	
+	/**
+	 * 
+	 * The penalty to be given to the to this construction to 
+	 * 
+	 */
+	private double forbiddenTilesPenalty=0.0;
+	
+	/**
+	 * 
+	 * The array of the constructions that should not be near this one. Only used in case a custom construction is created
+	 * 
+	 */
+	public Construction[] forbiddenAdjacencies=new Construction[0];
+
+	
+	/**
+	 * 
+	 * The penalty to be given by one of {@link #forbiddenAdjacencies} being adjacent to this construction
+	 * 
+	 */
+	private double forbiddenInstancePenalty=0.0;
+	/**
+	 * The penalty to be given to a state being in a tile with a forbidden soil.
+	 */
+	private double forbiddenSoilPenalty=0.0;
+	/**
+	 * 
+	 * An array with all the soilTypes that are forbidden for this construction.
+	 * 
+	 */
+	private SoilType[] forbiddenSoils=new SoilType[0];
 	
 	private static HashMap<Integer, Construction> constructions = new HashMap<Integer, Construction>();
 
@@ -149,12 +186,73 @@ abstract public class Construction {
 		
 	}
 	
-	
+	/**
+	 * 
+	 * 
+	 * A method that sets the inclination constraint parameters
+	 * @param minIncl the minimum inclination allowed. Should be bigger than 0 and less than 1. Is a percentual value.
+	 * @param maxIncl the maximum inclination allowe
+	 * @param penalty
+	 */
 	public void setInclinationConstrain(double minIncl,double maxIncl,double penalty){
 		
-		//TODO implemen and comment
+		this.minInclination=minIncl;
+		this.maxInclination=maxIncl;
+		this.inclinationPenalty=penalty;
 	}
 	
+	/**
+	 * 
+	 * A method that sets the bad tile constraint parameters
+	 * @param forbiddenTiles the tiles that are forbidden
+	 * @param penalty the penalty to be given to this construction by being in a forbidden tile.
+	 */
+	public void setTilesConstraint(Tile[] forbiddenTiles,double penalty){
+		
+		this.forbiddenTiles=forbiddenTiles;
+		this.forbiddenTilesPenalty=penalty;
+		
+	}
+	
+	
+	/**
+	 * 
+	 * A method that sets the soil constraint parameters
+	 * @param forbiddenTypes the types of soil that are forbidden for this construction
+	 * @param soilPenalty the penalty to be given to a tile having an inadequate soil type
+	 */
+	public void setSoilConstraint(SoilType[] forbiddenTypes, double soilPenalty) {
+		this.forbiddenSoils=forbiddenTypes;
+		this.forbiddenSoilPenalty=soilPenalty;
+		
+	}
+
+	/**
+	 * 
+	 * A method that sets the constraint related to the forbidden construction classes to be adjacent
+	 * @param forbiddenAdjacentClasses
+	 * @param penalty
+	 */
+	public void setForbiddenAdjacentClassesConstraint(String[] forbiddenAdjacentClasses,double penalty){
+		
+		this.forbiddenAdjacentClasses=forbiddenAdjacentClasses;
+		this.forbiddenClassAdjacentPenalty=penalty;
+	}
+	
+	/**
+	 * 
+	 * A method that sets the constraint related to the forbidden construction instances
+	 * @param forbConstructions the construction instances that are forbidden to be in the adjacent tiles
+	 * @param penalty the penalty to be given in case of a constraint violation
+	 */
+	public void setForbiddenAdjacentInstancesConstraint(Construction[] forbConstructions,double penalty){
+		
+		this.forbiddenAdjacencies=forbConstructions;
+		this.forbiddenInstancePenalty=penalty;
+	}
+	
+	
+
 	/**
 	 * 
 	 * A method that returns the largest index a construction has
@@ -165,21 +263,6 @@ abstract public class Construction {
 		return indexForNextConstruction-1;
 	}
 
-	/**
-	 * 
-	 * The array of the constructions that should not be near this one. Only used in case a custom construction is created
-	 * 
-	 */
-	public Construction[] forbiddenAdjacencies=new Construction[0];
-
-	
-	/**
-	 * 
-	 * The penalty to be given by one of {@link #forbiddenAdjacencies} being adjacent to this construction
-	 * 
-	 */
-	protected double forbiddenInstancePenalty=0.0;
-	
 	/**
 	 * 
 	 * A property to hold the chromossome representation for the object
@@ -260,17 +343,10 @@ abstract public class Construction {
 
 	}
 
-	//TODO document it
-	public void setForbiddenAdjacentClasses(String[] forbiddenAdjacentClasses){
-		
-		this.forbiddenAdjacentClasses=forbiddenAdjacentClasses;
-	} 
-	
 	/**
 	 * 
 	 * A method that returns a custom construction that has the specified constraints
-	 * @param name the name of the construction.
-	 * @param tileAdjPenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction with forbidden adjacencie
+	 * @param name the name of the construction
 	 * @param wrongTilePenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction placed in a forbidden tile
 	 * @param disallowedTiles an array of the disallowed tiles for this construction
 	 * @param areaPenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction in a tile with an incompatible area
@@ -284,27 +360,23 @@ abstract public class Construction {
 	 */
 	//TODO maybe more constraints required
 	static public Construction constructionWithConstraints(String name,
-			final double tileAdjPenalty,
 			final double wrongTilePenalty, final Tile[] disallowedTiles,
 			final double areaPenalty, final double minArea, final double maxArea,
-			final double soilPenalty, final Tile.SoilType[] forbiddenTypes,double forbiddenClassPen,String[] forbiddenClasses) {
+			final double soilPenalty, final Tile.SoilType[] forbiddenTypes,
+			double forbiddenClassPen,String[] forbiddenClasses,
+			double minInclination,double maxInclination, double inclinationPenalty) {
 
-		Construction c=new Construction(name,minArea,maxArea,forbiddenClassPen) {
+		Construction c=new Construction(name) {
 
 			@Override
 			public double affinityToTileInState(Tile tile,State s) {
 
 				double currentAffinity = 1.0;
 
-				// Apply wrong tile penalty
-				for (int i = 0; i < disallowedTiles.length; i++) {
-					if (tile == disallowedTiles[i]) {
-						currentAffinity -= wrongTilePenalty;
-						break;
-					}
-
-				}
-				
+	
+				currentAffinity-=this.defaultBadTilePenalty(tile);
+				currentAffinity-=this.defaultAreaPenalty(tile);
+				currentAffinity-=this.defaultSoilTilePenalty(tile);
 				
 				for (Tile adjacentTile : tile.adjacencies()) {
 					
@@ -313,16 +385,8 @@ abstract public class Construction {
 					
 				}
 				
-				currentAffinity-=this.defaultAreaPenalty(tile);
 				
 				
-				for(int i=0;i<forbiddenTypes.length;i++){
-					
-					if(tile.getSoilType()==forbiddenTypes[i]){
-						currentAffinity-=soilPenalty;
-						break;
-					}
-				}
 				
 				if(currentAffinity<0.0)currentAffinity=0.0;
 				
@@ -332,9 +396,11 @@ abstract public class Construction {
 			}
 		};
 
-		c.setForbiddenAdjacentClasses(forbiddenClasses);
-		c.forbiddenInstancePenalty=tileAdjPenalty;
+		c.setForbiddenAdjacentClassesConstraint(forbiddenClasses,forbiddenClassPen);
 		c.setAreaConstraint(minArea, maxArea, areaPenalty);
+		c.setSoilConstraint(forbiddenTypes,soilPenalty);
+		c.setInclinationConstrain(minInclination, maxInclination, inclinationPenalty);
+		c.setTilesConstraint(disallowedTiles, wrongTilePenalty);
 		return c;
 	}
 
@@ -401,6 +467,42 @@ abstract public class Construction {
 	protected double defaultAreaPenalty(Tile t){
 		if(t.getArea()>maxArea || t.getArea()<minArea) return areaPenalty;
 		return 0;
+	}
+	
+	/**
+	 * 
+	 * A method that returns the default inclination penalty to be given to this construction.
+	 * @param t the tile whose inclination is to be tested.
+	 * @return the inclination to be applied.
+	 */
+	protected double defaultInclinationPenalty(Tile t){
+		
+		double tileInclination=t.getMaxInclination();
+		
+		if(tileInclination>this.maxInclination || tileInclination<this.minInclination)return this.inclinationPenalty;
+		return 0;
+	}
+	
+	/**
+	 * 
+	 * A method that applies the bad tile penalty
+	 * @param t the tile to be tested
+	 * @return the penalty to be given
+	 */
+	protected double defaultBadTilePenalty(Tile t){
+		for (Tile forbidden : this.forbiddenTiles) {
+			if(forbidden==t)return this.forbiddenTilesPenalty;
+		}
+		return 0;
+	}
+	
+	protected double defaultSoilTilePenalty(Tile t){
+		
+		for (SoilType type : this.forbiddenSoils) {
+			if(type==t.getSoilType())return this.forbiddenSoilPenalty;
+		}
+		return 0;
+		
 	}
 	
 	public String name() {
