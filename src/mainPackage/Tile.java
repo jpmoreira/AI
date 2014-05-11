@@ -21,7 +21,8 @@ public class Tile {
 		SoilType_Sandy,
 		SoilType_Silty,
 		SoilType_Clay,
-		SoilType_Peaty
+		SoilType_Peaty,
+		SoilType_Rocky
 		//TODO don't know if this type of values make sense... review this
 	}
 

@@ -12,19 +12,12 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-
-import com.sun.tools.internal.ws.processor.generator.GeneratorBase;
 
 import mainPackage.Population;
 import mainPackage.State;
