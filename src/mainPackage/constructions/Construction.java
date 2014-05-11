@@ -602,15 +602,15 @@ abstract public class Construction {
 		
 	}
 
-	public Double getAreaPenalty() {
+	public double getAreaPenalty() {
 		return areaPenalty;
 	}
 
-	public Double getInclPenalty() {
+	public double getInclPenalty() {
 		return inclinationPenalty;
 	}
 
-	public Double getSoilTypePen() {
+	public double getSoilTypePen() {
 		return forbiddenSoilPenalty;
 	}
 	
