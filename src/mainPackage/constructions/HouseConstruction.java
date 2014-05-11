@@ -40,6 +40,10 @@ public class HouseConstruction extends Construction {
 			currentAffinity-=this.defaultPenaltyForAdjacentConstruction(c);
 		}
 		
+		currentAffinity-=defaultAreaPenalty(tile);
+		
+		if(currentAffinity<0)currentAffinity=0;
+		
 		return currentAffinity;
 
 	}
