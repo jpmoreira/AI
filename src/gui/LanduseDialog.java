@@ -75,9 +75,8 @@ public class LanduseDialog extends JDialog{
 		this.setLanduseID(landuseID);
 		numLanduses = landuses.length;
 
-		frame.setTitle("LandUse Settings");
-
 		getContentPane().setLayout(new BorderLayout());
+		this.setTitle("LandUse Settings");
 
 		createWidgets();
 		addWidgets(getContentPane());

@@ -102,6 +102,8 @@ public class GeneticGeneratorDialog extends JDialog{
 		super(frame,modal);
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
+		this.setTitle("Genetic Generator Settings");
+		
 		
 		this.maxPairing = maxPairing;
 		this.pairingStates = pairingStates2/2;

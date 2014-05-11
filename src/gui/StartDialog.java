@@ -66,6 +66,7 @@ public class StartDialog extends JDialog{
 		super(frame,modal);
 
 		getContentPane().setLayout(new BorderLayout());
+		this.setTitle("New Problem");
 
 		createWidgets();
 		addWidgets(getContentPane());

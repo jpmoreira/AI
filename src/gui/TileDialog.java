@@ -87,6 +87,7 @@ public class TileDialog extends JDialog {
 		setTempTile(tiles[tileID]);
 
 		getContentPane().setLayout(new BorderLayout());
+		this.setTitle("Sites Settings");
 
 		createWidgets();
 		addWidgets(getContentPane());

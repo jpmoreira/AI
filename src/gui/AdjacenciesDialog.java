@@ -22,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import mainPackage.Tile;
 
@@ -50,7 +51,11 @@ public class AdjacenciesDialog extends JDialog{
 	private JPanel adjPanel;
 
 	private JLabel checkBoxLabel;
+	
+	private JPanel checkBoxLabelPanel;	
 
+	private JPanel tileIDPanel;
+	
 	private JLabel tileIDLabel;
 
 
@@ -62,7 +67,9 @@ public class AdjacenciesDialog extends JDialog{
 
 	private JButton nextButton;
 
-	private JButton previousButton;	
+	private JButton previousButton;
+
+
 
 
 
@@ -79,7 +86,8 @@ public class AdjacenciesDialog extends JDialog{
 		updateAdj();
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-
+		this.setTitle("Adjacencies Settings");
+		
 		createWidgets();
 		addWidgets(getContentPane());
 
@@ -110,9 +118,12 @@ public class AdjacenciesDialog extends JDialog{
 
 
 	private void addWidgets(Container contentPane) {
-		contentPane.add(tileIDLabel);
+		
+		tileIDPanel.add(tileIDLabel);
+		contentPane.add(tileIDPanel);
 
-		contentPane.add(checkBoxLabel);
+		checkBoxLabelPanel.add(checkBoxLabel);
+		contentPane.add(checkBoxLabelPanel);
 
 		for (int i = 0;i < numTiles; i++){
 			adjPanel.add(adjCheckboxes.get(i));
@@ -138,9 +149,15 @@ public class AdjacenciesDialog extends JDialog{
 
 	private void createWidgets() {
 
+		tileIDPanel = new JPanel();
+		tileIDPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		
 		tileIDLabel = new JLabel("Tile ID: " + tileID);
 
 		checkBoxLabel = new JLabel("Adjacencies");
+		
+		checkBoxLabelPanel = new JPanel();
+		checkBoxLabelPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 
 		adjPanel = new JPanel();
 		adjPanel.setLayout(new GridLayout(numTiles/5,5));
@@ -215,7 +232,6 @@ public class AdjacenciesDialog extends JDialog{
 
 
 	public ArrayList<Integer> getAdjacencies() {
-		// TODO Auto-generated method stub
 		return adjacencies;
 	}
 
@@ -224,7 +240,6 @@ public class AdjacenciesDialog extends JDialog{
 
 
 	public int getTileID() {
-		// TODO Auto-generated method stub
 		return tileID;
 	}
 
