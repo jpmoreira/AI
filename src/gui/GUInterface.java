@@ -30,24 +30,41 @@ import mainPackage.constructions.Construction;
  */
 public class GUInterface {
 
+	/** The generation. */
 	private int generation = 0;
 
+	/** The landuses. */
 	Construction[] landuses;
 
+	/** The tiles. */
 	private Tile[] tiles;
 
+	/** The population. */
 	private Population population;
 
+	/** The pop size. */
 	private int popSize;
 
+	/** The pause. */
 	boolean pause = false;
 
 	/* Genetic Generator Settings */
+	/** The mutation prob. */
 	private double mutationProb = 0.75;
+	
+	/** The mutation prob var fac. */
 	private double mutationProbVarFac = 1.0;
+	
+	/** The prob to rank. */
 	private double probToRank = 0.5;
+	
+	/** The diversity usage fac. */
 	private double diversityUsageFac = 0;
+	
+	/** The direct fitness to prob. */
 	private boolean directFitnessToProb = true;
+	
+	/** The pairing states. */
 	private int pairingStates;
 
 
@@ -73,10 +90,10 @@ public class GUInterface {
 	/** The center panel. */
 	private JPanel centerPanel;
 
-	/** The population status output */
+	/**  The population status output. */
 	private JLabel statusOuputLabel;
 
-	/** The generator status output */
+	/**  The generator status output. */
 	private JLabel genStatusOuputLabel;
 
 	/** The run panel. */
@@ -90,7 +107,7 @@ public class GUInterface {
 
 
 
-	/** Genetic Algorithm Label */
+	/**  Genetic Algorithm Label. */
 	private JLabel geneticLabel;
 
 	/** The pop settings button. */
@@ -105,7 +122,7 @@ public class GUInterface {
 	/** The state setting button. */
 	private JButton stateSettingButton;
 
-	/** The genetic generator setting button*/
+	/**  The genetic generator setting button. */
 	private JButton geneticButton;
 
 	/** The new problem button. */
@@ -152,14 +169,16 @@ public class GUInterface {
 	/** The site dialog. */
 	private TileDialog siteDialog;
 	
-	/** The Tiles Adjacenties Dialog */
+	/**  The Tiles Adjacenties Dialog. */
 	private AdjacenciesDialog adjacenciesDialog;
 
 	/** The state dialog. */
 	private StateDialog stateDialog;
 
+	/** The start dialog. */
 	private StartDialog startDialog;
 
+	/** The genetic generator dialog. */
 	private GeneticGeneratorDialog geneticGeneratorDialog;
 
 
@@ -217,6 +236,9 @@ public class GUInterface {
 
 
 
+	/**
+	 * Start new problem.
+	 */
 	private void startNewProblem() {
 
 		//TODO 
@@ -253,11 +275,17 @@ public class GUInterface {
 
 
 
+	/**
+	 * Config restrictions.
+	 */
 	private void configRestrictions() {
 		// TODO Auto-generated method stub
 
 	}
 
+	/**
+	 * Config adjacencies.
+	 */
 	private void configAdjacencies() {
 	
 		int id = 0;
@@ -294,6 +322,9 @@ public class GUInterface {
 
 	}
 
+	/**
+	 * Config genetic generator.
+	 */
 	private void configGeneticGenerator() {
 
 		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", popSize/2, pairingStates, mutationProb, mutationProbVarFac, diversityUsageFac, directFitnessToProb, probToRank);
@@ -317,6 +348,9 @@ public class GUInterface {
 
 	}
 
+	/**
+	 * Config land uses.
+	 */
 	private void configLandUses() {
 
 		int id = 0;
@@ -339,6 +373,9 @@ public class GUInterface {
 
 	}
 
+	/**
+	 * Config sites.
+	 */
 	private void configSites() {
 
 		int id = 0;
@@ -362,6 +399,9 @@ public class GUInterface {
 
 	}
 
+	/**
+	 * Config population.
+	 */
 	private void configPopulation() {
 		startDialog = new StartDialog(frame, true, "New Problem");
 
@@ -395,10 +435,20 @@ public class GUInterface {
 
 	}
 
+	/**
+	 * Gets the population.
+	 *
+	 * @return the population
+	 */
 	public Population getPopulation() {
 		return population;
 	}
 
+	/**
+	 * Sets the population.
+	 *
+	 * @param population the new population
+	 */
 	public void setPopulation(Population population) {
 		this.population = population;
 	}
@@ -408,10 +458,20 @@ public class GUInterface {
 
 
 
+	/**
+	 * Gets the tiles.
+	 *
+	 * @return the tiles
+	 */
 	public Tile[] getTiles() {
 		return tiles;
 	}
 
+	/**
+	 * Sets the tiles.
+	 *
+	 * @param tiles the new tiles
+	 */
 	public void setTiles(Tile[] tiles) {
 		this.tiles = tiles;
 	}
@@ -586,6 +646,9 @@ public class GUInterface {
 	}
 
 
+	/**
+	 * Update status panel.
+	 */
 	private void updateStatusPanel() {
 
 		statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
@@ -1008,8 +1071,22 @@ public class GUInterface {
 
 
 
+	/**
+	 * The listener interface for receiving genetic events.
+	 * The class that is interested in processing a genetic
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addGeneticListener<code> method. When
+	 * the genetic event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see GeneticEvent
+	 */
 	public class GeneticListener implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 

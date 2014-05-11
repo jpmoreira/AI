@@ -21,17 +21,35 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GeneticGeneratorDialog.
+ */
 public class GeneticGeneratorDialog extends JDialog{
 
+	/** The new settings. */
 	private boolean newSettings = false;
 
 
+	/** The mutation prob. */
 	private double mutationProb;
+	
+	/** The mutation prob var fac. */
 	private double mutationProbVarFac;
+	
+	/** The prob to rank. */
 	private double probToRank;
+	
+	/** The diversity usage fac. */
 	private double diversityUsageFac;
+	
+	/** The direct fitness to prob. */
 	private boolean directFitnessToProb;
+	
+	/** The pairing states. */
 	private int pairingStates;
+	
+	/** The max pairing. */
 	private int maxPairing;
 	
 
@@ -59,12 +77,16 @@ public class GeneticGeneratorDialog extends JDialog{
 	/** The direct fitness check box. */
 	private JCheckBox directFitnessCheckBox;
 
+	/** The prob to rank label. */
 	private JLabel probToRankLabel;
 
+	/** The prob to rank slider. */
 	private JSlider probToRankSlider;
 
+	/** The diversity label. */
 	private JLabel diversityLabel;
 
+	/** The diversity slider. */
 	private JSlider diversitySlider;
 
 
@@ -79,24 +101,44 @@ public class GeneticGeneratorDialog extends JDialog{
 	private JLabel geneticLabel;
 
 
-	/** The Ok Panel */
+	/**  The Ok Panel. */
 	private JPanel okPanel;
 
-	/** The Ok button */
+	/**  The Ok button. */
 	private JButton okButton;
 
-	/** The Cancel button */
+	/**  The Cancel button. */
 	private JButton cancelButton;
 
 
+	/** The diversity panel. */
 	private JPanel diversityPanel;
 	
 	
+	/** The mutation pro panel. */
 	private JPanel mutationProPanel;
+	
+	/** The mutation var panel. */
 	private JPanel mutationVarPanel;
+	
+	/** The direct fitness panel. */
 	private JPanel directFitnessPanel;
 
 
+	/**
+	 * Instantiates a new genetic generator dialog.
+	 *
+	 * @param frame the frame
+	 * @param modal the modal
+	 * @param myMessage the my message
+	 * @param maxPairing the max pairing
+	 * @param pairingStates2 the pairing states2
+	 * @param mutationProb2 the mutation prob2
+	 * @param mutationProbVarFac2 the mutation prob var fac2
+	 * @param diversityUsageFac2 the diversity usage fac2
+	 * @param directFitnessToProb2 the direct fitness to prob2
+	 * @param probToRank2 the prob to rank2
+	 */
 	public GeneticGeneratorDialog(JFrame frame, boolean modal, String myMessage, int maxPairing, int pairingStates2, double mutationProb2, double mutationProbVarFac2, double diversityUsageFac2, boolean directFitnessToProb2, double probToRank2){
 
 		super(frame,modal);
@@ -123,6 +165,11 @@ public class GeneticGeneratorDialog extends JDialog{
 	}
 
 
+	/**
+	 * Adds the widgets.
+	 *
+	 * @param contentPane the content pane
+	 */
 	private void addWidgets(Container contentPane) {
 		
 		pairingPanel.add(statesToPairLabel);
@@ -157,6 +204,9 @@ public class GeneticGeneratorDialog extends JDialog{
 	}
 
 
+	/**
+	 * Creates the widgets.
+	 */
 	private void createWidgets() {
 		
 		FlowLayout centerLineLayout = new FlowLayout(FlowLayout.CENTER,5,5);
@@ -250,61 +300,121 @@ public class GeneticGeneratorDialog extends JDialog{
 	}
 
 
+	/**
+	 * Gets the mutation prob.
+	 *
+	 * @return the mutation prob
+	 */
 	public double getMutationProb() {
 		return mutationProb;
 	}
 
 
+	/**
+	 * Sets the mutation prob.
+	 *
+	 * @param mutationProb the new mutation prob
+	 */
 	public void setMutationProb(double mutationProb) {
 		this.mutationProb = mutationProb;
 	}
 
 
+	/**
+	 * Gets the mutation prob var fac.
+	 *
+	 * @return the mutation prob var fac
+	 */
 	public double getMutationProbVarFac() {
 		return mutationProbVarFac;
 	}
 
 
+	/**
+	 * Sets the mutation prob var fac.
+	 *
+	 * @param mutationProbVarFac the new mutation prob var fac
+	 */
 	public void setMutationProbVarFac(double mutationProbVarFac) {
 		this.mutationProbVarFac = mutationProbVarFac;
 	}
 
 
+	/**
+	 * Gets the prob to rank.
+	 *
+	 * @return the prob to rank
+	 */
 	public double getProbToRank() {
 		return probToRank;
 	}
 
 
+	/**
+	 * Sets the prob to rank.
+	 *
+	 * @param probToRank the new prob to rank
+	 */
 	public void setProbToRank(double probToRank) {
 		this.probToRank = probToRank;
 	}
 
 
+	/**
+	 * Gets the diversity usage fac.
+	 *
+	 * @return the diversity usage fac
+	 */
 	public double getDiversityUsageFac() {
 		return diversityUsageFac;
 	}
 
 
+	/**
+	 * Sets the diversity usage fac.
+	 *
+	 * @param diversityUsageFac the new diversity usage fac
+	 */
 	public void setDiversityUsageFac(double diversityUsageFac) {
 		this.diversityUsageFac = diversityUsageFac;
 	}
 
 
+	/**
+	 * Checks if is direct fitness to prob.
+	 *
+	 * @return true, if is direct fitness to prob
+	 */
 	public boolean isDirectFitnessToProb() {
 		return directFitnessToProb;
 	}
 
 
+	/**
+	 * Sets the direct fitness to prob.
+	 *
+	 * @param directFitnessToProb the new direct fitness to prob
+	 */
 	public void setDirectFitnessToProb(boolean directFitnessToProb) {
 		this.directFitnessToProb = directFitnessToProb;
 	}
 
 
+	/**
+	 * Gets the pairing states.
+	 *
+	 * @return the pairing states
+	 */
 	public int getPairingStates() {
 		return pairingStates;
 	}
 
 
+	/**
+	 * Sets the pairing states.
+	 *
+	 * @param pairingStates the new pairing states
+	 */
 	public void setPairingStates(int pairingStates) {
 		this.pairingStates = pairingStates;
 	}
@@ -314,11 +424,21 @@ public class GeneticGeneratorDialog extends JDialog{
 
 
 
+	/**
+	 * Checks if is new settings.
+	 *
+	 * @return true, if is new settings
+	 */
 	public boolean isNewSettings() {
 		return newSettings;
 	}
 
 
+	/**
+	 * Sets the new settings.
+	 *
+	 * @param newSettings the new new settings
+	 */
 	public void setNewSettings(boolean newSettings) {
 		this.newSettings = newSettings;
 	}
@@ -352,8 +472,22 @@ public class GeneticGeneratorDialog extends JDialog{
 
 	}
 
+	/**
+	 * The listener interface for receiving cancel events.
+	 * The class that is interested in processing a cancel
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addCancelListener<code> method. When
+	 * the cancel event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see CancelEvent
+	 */
 	public class CancelListener implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			setNewSettings(false);
@@ -367,8 +501,22 @@ public class GeneticGeneratorDialog extends JDialog{
 
 
 
+	/**
+	 * The listener interface for receiving ok events.
+	 * The class that is interested in processing a ok
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addOkListener<code> method. When
+	 * the ok event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see OkEvent
+	 */
 	public class OkListener implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			

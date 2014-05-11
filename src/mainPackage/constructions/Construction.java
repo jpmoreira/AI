@@ -2,6 +2,7 @@ package mainPackage.constructions;
 
 import java.util.HashMap;
 
+import sun.security.util.PendingException;
 import mainPackage.ConstantManager;
 import mainPackage.State;
 import mainPackage.Tile;
@@ -552,5 +553,34 @@ abstract public class Construction {
 		return this.name;
 	}
 
+	public double getMinArea(){
+		return minArea;
+	}
+	
+	public double getMaxArea(){
+		return maxArea;
+	}
+	
+	public double getMinIncl(){
+		return minInclination;
+	}
+	
+	public double getMaxIncl(){
+		return maxInclination;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+		
+	}
+
+	public Double getAreaPenalty() {
+		return areaPenalty;
+	}
+
+	public Double getInclPenalty() {
+		return inclinationPenalty;
+	}
+	
 }
 //TODO use inclination constraint in auto-function
