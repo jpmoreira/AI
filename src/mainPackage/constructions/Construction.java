@@ -404,6 +404,48 @@ abstract public class Construction {
 		return c;
 	}
 
+	
+	//TODO test
+	/**
+	 * 
+	 * 
+	 * A method that creates an anonimous construction subclass instance with all default parameters for constraints
+	 * @param name the name of the construction
+	 * @return the construction to be returned
+	 */
+	static public Construction anonymousConstruction(String name){
+		
+		return new Construction(name) {
+
+			@Override
+			public double affinityToTileInState(Tile tile,State s) {
+
+				double currentAffinity = 1.0;
+
+	
+				currentAffinity-=this.defaultBadTilePenalty(tile);
+				currentAffinity-=this.defaultAreaPenalty(tile);
+				currentAffinity-=this.defaultSoilTilePenalty(tile);
+				
+				for (Tile adjacentTile : tile.adjacencies()) {
+					
+					Construction c=s.constructionForTile(adjacentTile);
+					currentAffinity-=this.defaultPenaltyForAdjacentConstruction(c);
+					
+				}
+				
+				
+				
+				
+				if(currentAffinity<0.0)currentAffinity=0.0;
+				
+				
+
+				return currentAffinity;
+			}
+		};
+	}
+	
 	/**
 	 * 
 	 * A method that removes all previously used constructions and resets the
