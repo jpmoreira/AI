@@ -64,18 +64,6 @@ abstract public class Construction {
 
 	/**
 	 * 
-	 * The id of the construction
-	 */
-	private int id;
-	
-	/**
-	 * 
-	 * The penalty to be given to a construction placed near another construction of a forbidden class
-	 * 
-	 */
-	protected double forbiddenClassAdjacentPenalty=0.0;
-	/**
-	 * 
 	 * An array of the construction subclasses whose instances should not be near this class
 	 * 
 	 */
@@ -141,7 +129,7 @@ abstract public class Construction {
 	 * The array of the constructions that should not be near this one. Only used in case a custom construction is created
 	 * 
 	 */
-	public Construction[] forbiddenAdjacencies=new Construction[0];
+	private Construction[] forbiddenAdjacencies=new Construction[0];
 
 	
 	/**
@@ -149,7 +137,29 @@ abstract public class Construction {
 	 * The penalty to be given by one of {@link #forbiddenAdjacencies} being adjacent to this construction
 	 * 
 	 */
-	private double forbiddenInstancePenalty=0.0;
+	private double forbiddenConstructionPenalty=0.0;
+	
+	/**
+	 * An array with the constructions that should be nearby.
+	 * 
+	 */
+	private Construction[] mustHaveAdjacenciesInstances=new Construction[0];
+	
+
+	
+	/**
+	 * An array with the name of the classes whose instances should be nearby.
+	 * 
+	 */
+	private String[] mustHaveAdjacentClasses=new String[0];
+	
+	/**
+	 * 
+	 * The penalty given to the must have adjacencies not being present
+	 * 
+	 */
+	private double missingMustHaveAdjacenciePenalty=0.0;
+	
 	/**
 	 * The penalty to be given to a state being in a tile with a forbidden soil.
 	 */
@@ -161,17 +171,32 @@ abstract public class Construction {
 	 */
 	private SoilType[] forbiddenSoils=new SoilType[0];
 	
-	private static HashMap<Integer, Construction> constructions = new HashMap<Integer, Construction>();
-
+	
 	/**
 	 * 
-	 * A method that returns the id of the construction
-	 * @return the id of the construction
+	 * The maximum price a tile should have to fit this construction
+	 * 
 	 */
-	public int getID(){
-		
-		return id;
-	}
+	private double maxPrice=Integer.MAX_VALUE;
+	
+	/**
+	 * 
+	 * The minimum price a tile must have in order to fit this construction
+	 * 
+	 */
+	private double minPrice=0.0;
+	
+	/**
+	 * 
+	 * The penalty to be given to a construction in a tile that violates the price constraint
+	 * 
+	 */
+	private double pricePenalty=0.0;
+	
+	
+	private static HashMap<Integer, Construction> constructions = new HashMap<Integer, Construction>();
+
+
 
 	/**
 	 * 
@@ -230,30 +255,47 @@ abstract public class Construction {
 
 	/**
 	 * 
-	 * A method that sets the constraint related to the forbidden construction classes to be adjacent
-	 * @param forbiddenAdjacentClasses
-	 * @param penalty
+	 * A method that sets all constraint related to forbidden adjacencies
+	 * @param forbInstances the construction instances that should not be placed in adjacent tiles
+	 * @param forbClassesNames the construction subclasses whose instances should not be placed in adjacent tiles
+	 * @param penalty the penalty to be attributed
 	 */
-	public void setForbiddenAdjacentClassesConstraint(String[] forbiddenAdjacentClasses,double penalty){
+	public void setForbiddenAdjacenciesConstraint(Construction[] forbInstances, String[] forbClassesNames,double penalty){
 		
-		this.forbiddenAdjacentClasses=forbiddenAdjacentClasses;
-		this.forbiddenClassAdjacentPenalty=penalty;
+		this.forbiddenAdjacentClasses=forbClassesNames;
+		this.forbiddenAdjacencies=forbInstances;
+		this.forbiddenConstructionPenalty=penalty;
+		
 	}
 	
 	/**
-	 * 
-	 * A method that sets the constraint related to the forbidden construction instances
-	 * @param forbConstructions the construction instances that are forbidden to be in the adjacent tiles
-	 * @param penalty the penalty to be given in case of a constraint violation
+	 * A method to set the constraint parameters related to the adjacencies that should be present.
+	 * @param adjacentClasses a list of the name of the classes that should be present
+	 * @param adjacentInstances a list of the instances that should be present
+	 * @param penalty the penalty to be given to every class or instance specified that is not present
 	 */
-	public void setForbiddenAdjacentInstancesConstraint(Construction[] forbConstructions,double penalty){
+	public void setMustHaveAdjacenciesConstraint(String[] adjacentClasses,Construction[] adjacentInstances, double penalty){
 		
-		this.forbiddenAdjacencies=forbConstructions;
-		this.forbiddenInstancePenalty=penalty;
+		this.mustHaveAdjacenciesInstances=adjacentInstances;
+		this.mustHaveAdjacentClasses=adjacentClasses;
+		
+		this.missingMustHaveAdjacenciePenalty=penalty;
+	}
+
+	/**
+	 * 
+	 * A method to set the constraint parameters related to tile pricing
+	 * @param min_price the minimum price allowed
+	 * @param max_price the maximum price allowed
+	 * @param penalty the penalty to be given in case this constraint is violated
+	 */
+	public void setPriceConstraint(double min_price,double max_price,double penalty){
+		
+		this.minPrice=min_price;
+		this.maxPrice=max_price;
+		this.pricePenalty=penalty;
 	}
 	
-	
-
 	/**
 	 * 
 	 * A method that returns the largest index a construction has
@@ -298,23 +340,7 @@ abstract public class Construction {
 		constructions.put(this.chromoRepresentation, this);
 	}
 	
-	/**
-	 * 
-	 * A more complete constructor that initializes the name of the construction as well as both {@link #maxArea} and {@link #minArea}
-	 * @param theName the name of the construction
-	 * @param max_area the maximum acceptable value for the area for this construction
-	 * @param min_area the minimum acceptable value for the area for this construction
-	 */
-	public Construction(String theName,double max_area, double min_area,double forbClassAdjacentPenalty){
-		
-		this(theName);
-		this.maxArea=max_area;
-		this.minArea=min_area;
-		this.forbiddenClassAdjacentPenalty=forbClassAdjacentPenalty;
-		this.forbiddenAdjacentClasses=new String[0];
-		
-		
-	}
+
 
 	/**
 	 * 
@@ -344,69 +370,7 @@ abstract public class Construction {
 
 	}
 
-	/**
-	 * 
-	 * A method that returns a custom construction that has the specified constraints
-	 * @param name the name of the construction
-	 * @param wrongTilePenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction placed in a forbidden tile
-	 * @param disallowedTiles an array of the disallowed tiles for this construction
-	 * @param areaPenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction in a tile with an incompatible area
-	 * @param minArea the minimum allowed area
-	 * @param maxArea the maximum allowed area
-	 * @param soilPenalty a number between 0 and 1 that defines the penalty to be given to a state having a construction in a tile with a forbidden soil type
-	 * @param forbiddenTypes an array of the forbidden soil types
-	 * @param forbiddenClassPen the penalty to be given to this construction for sitting near a instance of the forbidden classes
-	 * @param forbiddenClasses an array of the classes whose instances should not be in the adjacent tiles
-	 * @return a construction that performs according to the specified constraints
-	 */
-	//TODO maybe more constraints required
-	static public Construction constructionWithConstraints(String name,
-			final double wrongTilePenalty, final Tile[] disallowedTiles,
-			final double areaPenalty, final double minArea, final double maxArea,
-			final double soilPenalty, final Tile.SoilType[] forbiddenTypes,
-			double forbiddenClassPen,String[] forbiddenClasses,
-			double minInclination,double maxInclination, double inclinationPenalty) {
-
-		Construction c=new Construction(name) {
-
-			@Override
-			public double affinityToTileInState(Tile tile,State s) {
-
-				double currentAffinity = 1.0;
-
 	
-				currentAffinity-=this.defaultBadTilePenalty(tile);
-				currentAffinity-=this.defaultAreaPenalty(tile);
-				currentAffinity-=this.defaultSoilTilePenalty(tile);
-				
-				for (Tile adjacentTile : tile.adjacencies()) {
-					
-					Construction c=s.constructionForTile(adjacentTile);
-					currentAffinity-=this.defaultPenaltyForAdjacentConstruction(c);
-					
-				}
-				
-				
-				
-				
-				if(currentAffinity<0.0)currentAffinity=0.0;
-				
-				
-
-				return currentAffinity;
-			}
-		};
-
-		c.setForbiddenAdjacentClassesConstraint(forbiddenClasses,forbiddenClassPen);
-		c.setAreaConstraint(minArea, maxArea, areaPenalty);
-		c.setSoilConstraint(forbiddenTypes,soilPenalty);
-		c.setInclinationConstrain(minInclination, maxInclination, inclinationPenalty);
-		c.setTilesConstraint(disallowedTiles, wrongTilePenalty);
-		return c;
-	}
-
-	
-	//TODO test
 	/**
 	 * 
 	 * 
@@ -428,15 +392,12 @@ abstract public class Construction {
 				currentAffinity-=this.defaultAreaPenalty(tile);
 				currentAffinity-=this.defaultSoilTilePenalty(tile);
 				
-				for (Tile adjacentTile : tile.adjacencies()) {
-					
-					Construction c=s.constructionForTile(adjacentTile);
-					currentAffinity-=this.defaultPenaltyForAdjacentConstruction(c);
-					
-				}
 				
+				currentAffinity-=this.defaultPenaltyForAdjacentConstruction(tile.adjacencies(), s);
 				
+				currentAffinity-=this.defaultMustHaveAdjacenciesPenalty(tile.adjacencies(), s);
 				
+				currentAffinity-=this.defaultPricePenalty(tile);
 				
 				if(currentAffinity<0.0)currentAffinity=0.0;
 				
@@ -446,6 +407,8 @@ abstract public class Construction {
 			}
 		};
 	}
+	
+	
 	
 	/**
 	 * 
@@ -465,34 +428,41 @@ abstract public class Construction {
 	 * @param c
 	 * @return
 	 */
-	protected double defaultPenaltyForAdjacentConstruction(Construction c){
+	protected double defaultPenaltyForAdjacentConstruction(Tile[] adjacentTiles, State s){
 		
 		double penalty=0.0;
 		
-		Class<?> theClass=c.getClass();
-		boolean classIsForbidden=false;
-		Class<?> forbiddenClass = null;
-		
-		for(String className: this.forbiddenAdjacentClasses){
+		for(Tile t:adjacentTiles){
 			
-			try {forbiddenClass=Class.forName(className);} catch (ClassNotFoundException e) {}
+			Construction c=s.constructionForTile(t);
 			
-			classIsForbidden=forbiddenClass.isAssignableFrom(theClass);
-			if(classIsForbidden){
-				penalty+=forbiddenClassAdjacentPenalty;
-				break;
+			Class<?> theClass=c.getClass();
+			boolean classIsForbidden=false;
+			Class<?> forbiddenClass = null;
+			
+			for(String className: this.forbiddenAdjacentClasses){
+				
+				try {forbiddenClass=Class.forName(className);} catch (ClassNotFoundException e) {}
+				
+				classIsForbidden=forbiddenClass.isAssignableFrom(theClass);
+				if(classIsForbidden){
+					penalty+=forbiddenConstructionPenalty;
+					break;
+				}
+				
+			}
+			
+			for(Construction forbiddenConstruction: this.forbiddenAdjacencies){
+				
+				if(c==forbiddenConstruction){
+					penalty+=forbiddenConstructionPenalty;
+					break;
+				}
+				
 			}
 			
 		}
 		
-		for(Construction forbiddenConstruction: this.forbiddenAdjacencies){
-			
-			if(c==forbiddenConstruction){
-				penalty+=forbiddenInstancePenalty;
-				break;
-			}
-			
-		}
 		
 		
 		return penalty;
@@ -539,12 +509,70 @@ abstract public class Construction {
 		return 0;
 	}
 	
+	/**
+	 * 
+	 * A method that applies the soil penalty
+	 * @param t the tile to be tested
+	 * @return the penalty to be applied to this construction.
+	 */
 	protected double defaultSoilTilePenalty(Tile t){
 		
 		for (SoilType type : this.forbiddenSoils) {
 			if(type==t.getSoilType())return this.forbiddenSoilPenalty;
 		}
 		return 0;
+		
+	}
+	
+	
+	/**
+	 * 
+	 * 
+	 * A method that applies the constraint related to the requirement of having some constructions in adjacent tiles
+	 * @param adjacentTiles a list of the adjacent tiles
+	 * @param s the state for the constraint to be evaluated
+	 * @return the value of the penalty to be given to this construction
+	 */
+	protected double defaultMustHaveAdjacenciesPenalty(Tile[] adjacentTiles,State s){
+		
+		boolean instancesMatches[]=new boolean[this.mustHaveAdjacenciesInstances.length];//initialized to false
+		boolean classesMatches[]=new boolean[this.mustHaveAdjacentClasses.length];
+		
+		double valueToReturn=0.0;
+		
+		for (Tile tile : adjacentTiles) {
+			Construction c=s.constructionForTile(tile);
+			for(int i=0;i<mustHaveAdjacenciesInstances.length;i++){
+				if(c==mustHaveAdjacenciesInstances[i])instancesMatches[i]=true;
+			}
+			for(int i=0;i<mustHaveAdjacentClasses.length;i++){
+				
+				Class<?> mustHaveClass=null;
+				
+				try {mustHaveClass=Class.forName(mustHaveAdjacentClasses[i]);}
+				catch (ClassNotFoundException e) {e.printStackTrace();}
+				
+				if(mustHaveClass.isAssignableFrom(c.getClass()))classesMatches[i]=true;
+			}
+			
+			
+			
+		}
+		
+		for (boolean b : classesMatches) {
+			if(!b)valueToReturn+=missingMustHaveAdjacenciePenalty;
+		}
+		for(boolean b: instancesMatches){
+			if(!b)valueToReturn+=missingMustHaveAdjacenciePenalty;
+		}
+		
+		return valueToReturn;
+	}
+	
+	protected double defaultPricePenalty(Tile t){
+		
+		if(t.getPricePerAreaUnit()>maxPrice|| t.getPricePerAreaUnit()<minPrice)return pricePenalty;
+		return 0.0;
 		
 	}
 	
@@ -588,3 +616,4 @@ abstract public class Construction {
 	
 }
 //TODO use inclination constraint in auto-function
+
