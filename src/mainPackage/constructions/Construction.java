@@ -581,6 +581,10 @@ abstract public class Construction {
 	public Double getInclPenalty() {
 		return inclinationPenalty;
 	}
+
+	public Double getSoilTypePen() {
+		return forbiddenSoilPenalty;
+	}
 	
 }
 //TODO use inclination constraint in auto-function
