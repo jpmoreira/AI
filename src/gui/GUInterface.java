@@ -120,7 +120,7 @@ public class GUInterface {
 	private JButton landuseSettingButton;
 
 	/** The state setting button. */
-	private JButton stateSettingButton;
+	private JButton restrictionsButton;
 
 	/**  The genetic generator setting button. */
 	private JButton geneticButton;
@@ -173,7 +173,7 @@ public class GUInterface {
 	private AdjacenciesDialog adjacenciesDialog;
 
 	/** The state dialog. */
-	private StateDialog stateDialog;
+	private RestrictionsDialog restrictionsDialog;
 
 	/** The start dialog. */
 	private StartDialog startDialog;
@@ -279,7 +279,25 @@ public class GUInterface {
 	 * Config restrictions.
 	 */
 	private void configRestrictions() {
-		// TODO Auto-generated method stub
+		
+		int id = 0;
+		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);
+
+		
+		landuses[id] = restrictionsDialog.getTempLanduse();
+		id = restrictionsDialog.getLanduseID();
+
+		while (!restrictionsDialog.isFinished() && !restrictionsDialog.isCanceled()){
+
+			restrictionsDialog = new RestrictionsDialog(frame, true, "Landuse Settings", landuses, id);
+			if (!restrictionsDialog.isCanceled()){
+				landuses[id] = restrictionsDialog.getTempLanduse();
+				id = restrictionsDialog.getLanduseID();
+			} else {
+				break;
+			}
+
+		}
 
 	}
 
@@ -486,10 +504,10 @@ public class GUInterface {
 	private void addWidgets(Container contentPane) {
 
 		geneticPanel.add(geneticLabel);
-		//geneticPanel.add(stateSettingButton);
 		geneticPanel.add(sitesSettingsButton);
 		geneticPanel.add(adjacenciesButton);
 		geneticPanel.add(landuseSettingButton);
+		geneticPanel.add(restrictionsButton);
 		geneticPanel.add(geneticButton);
 		leftPanel.add(geneticPanel,BorderLayout.NORTH);
 
@@ -544,17 +562,17 @@ public class GUInterface {
 
 		/* Genetic Algorithm Panel */
 		geneticPanel = new JPanel();
-		geneticPanel.setLayout(new GridLayout(5,1,1,1));
+		geneticPanel.setLayout(new GridLayout(6,1,1,1));
 		//		geneticPanel.setLayout(new BoxLayout(geneticPanel,BoxLayout.Y_AXIS));
 
 		geneticLabel = new JLabel("Genetic Algorithms");
 		geneticLabel.setHorizontalAlignment(JLabel.CENTER);
 		geneticLabel.setVerticalAlignment(JLabel.CENTER);
 		geneticPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		/*
-		stateSettingButton = new JButton("<html><center>State<br>Settings</center></html>");
-		stateSettingButton.addActionListener(new StateSettingsListener());
-*/
+
+		restrictionsButton = new JButton("<html><center>LandUses<br>Restrictions</center></html>");
+		restrictionsButton.addActionListener(new LandUseRestrictionsListener());
+
 		adjacenciesButton = new JButton("<html><center>Adjacencies<br>Settings</center></html>");
 		adjacenciesButton.addActionListener(new AdjacenciesSettingsListener());
 		 
@@ -947,7 +965,7 @@ public class GUInterface {
 	 *
 	 * @see StateSettingsEvent
 	 */
-	public class StateSettingsListener implements ActionListener {
+	public class LandUseRestrictionsListener implements ActionListener {
 
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -958,7 +976,9 @@ public class GUInterface {
 				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
 				return;
 			}
-			// TODO Auto-generated method stub
+			configRestrictions();
+
+			centerPanel.repaint();
 
 		}
 
