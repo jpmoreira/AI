@@ -1,5 +1,8 @@
 package gui;
 
+import gui.StartDialog.CancelButton;
+import gui.StartDialog.OkListener;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -12,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -19,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -26,14 +31,19 @@ import javax.swing.border.EmptyBorder;
 
 import Exceptions.ConstructionException;
 import mainPackage.Tile.SoilType;
+import mainPackage.constructions.AirportConstruction;
 import mainPackage.constructions.Construction;
+import mainPackage.constructions.FactoryConstruction;
+import mainPackage.constructions.HouseConstruction;
+import mainPackage.constructions.ParkConstruction;
+import mainPackage.constructions.PrisonConstruction;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class LanduseDialog.
  */
 public class LanduseDialog extends JDialog{
-	
+
 	/** The landuse id. */
 	private int landuseID;
 
@@ -164,7 +174,8 @@ public class LanduseDialog extends JDialog{
 	/** The previous button. */
 	private JButton previousButton;
 
-		
+	/** Construction type initialization */
+	private TypeDialog constructionTypeDialog;
 	
 	/**
 	 * Instantiates a new landuse dialog.
@@ -181,7 +192,16 @@ public class LanduseDialog extends JDialog{
 		this.landuses = landuses;
 		this.setLanduseID(landuseID);
 		numLanduses = landuses.length;
-		this.tempLanduse = landuses[landuseID];
+		
+		if (landuses[landuseID] == null) {
+			constructionTypeDialog = new TypeDialog(frame, true, "ConstructionType");
+			if (canceled) {
+				setVisible(false);
+			}
+		} else {
+			this.tempLanduse = landuses[landuseID];
+		}
+		
 		soilTypes = SoilType.values();
 		
 		soilCheckboxes = new ArrayList<JCheckBox>();
@@ -666,5 +686,175 @@ public class LanduseDialog extends JDialog{
 		return finished;
 	}
 	
-	
+	public class TypeDialog extends JDialog{
+		
+		
+		/** Dialog label */
+		private JLabel dialogLabel;
+		/** Dialog Panel */
+		private JPanel dialogPanel;
+		
+		/** Airport radioButton */
+		private JRadioButton airportRadio;
+		/** Airport radioButton */
+		private JRadioButton factoryRadio;
+		/** Airport radioButton */
+		private JRadioButton houseRadio;
+		/** Airport radioButton */
+		private JRadioButton parkRadio;
+		/** Airport radioButton */
+		private JRadioButton prisonRadio;
+		/** Airport radioButton */
+		private JRadioButton otherRadio;
+		
+		/** Constructions Panel */
+		private JPanel constructionPanel;
+		
+		/** The ok input button. */
+		private JButton okButton;
+		
+		/** The cancel input button. */
+		private JButton cancelDialogButton;
+		
+		/** The input buttons panel. */
+		private JPanel inputButtonsPanel;
+		
+		/** Button Group */
+		private ButtonGroup buttonGroup;
+		
+		
+		public TypeDialog(JFrame frame, boolean modal, String myMessage){
+			super(frame,modal);
+			
+			getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
+			this.setTitle("LandUse Settings");
+
+			createTypeWidgets();
+			addTypeWidgets(getContentPane());
+
+			pack();
+			setLocationRelativeTo(frame);
+			setVisible(true);
+			
+		}
+
+		private void createTypeWidgets() {
+			
+			dialogPanel = new JPanel();
+			dialogPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+			
+			dialogLabel = new JLabel("Select the type of construction;");
+			
+			constructionPanel = new JPanel();
+			constructionPanel.setLayout(new GridLayout(2, 3));
+			
+			airportRadio = new JRadioButton("Airport");
+			factoryRadio = new JRadioButton("Factory");
+			houseRadio = new JRadioButton("House");
+			parkRadio = new JRadioButton("Park");
+			prisonRadio = new JRadioButton("Prison");
+			otherRadio = new JRadioButton("Other");
+			
+			buttonGroup = new ButtonGroup();
+			
+			buttonGroup.add(airportRadio);
+			buttonGroup.add(factoryRadio);
+			buttonGroup.add(houseRadio);
+			buttonGroup.add(parkRadio);
+			buttonGroup.add(prisonRadio);
+			buttonGroup.add(otherRadio);
+			
+			// Button Panel
+			inputButtonsPanel = new JPanel();
+			inputButtonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT,5,5));
+
+			// Button - OK
+			okButton = new JButton("OK");
+			okButton.addActionListener(new OkListener());
+
+			// Button - CANCEL
+			cancelDialogButton = new JButton("Cancel");	
+			cancelDialogButton.addActionListener(new CancelDialogButton());
+		}
+
+		private void addTypeWidgets(Container contentPane) {
+			
+			dialogPanel.add(dialogLabel);
+			contentPane.add(dialogPanel);
+			
+			constructionPanel.add(airportRadio);
+			constructionPanel.add(factoryRadio);
+			constructionPanel.add(houseRadio);
+			constructionPanel.add(parkRadio);
+			constructionPanel.add(prisonRadio);
+			constructionPanel.add(otherRadio);
+			contentPane.add(constructionPanel);
+			
+			inputButtonsPanel.add(okButton);
+			inputButtonsPanel.add(cancelDialogButton);
+			contentPane.add(inputButtonsPanel);
+			
+		}
+		
+		
+		
+		
+		public class OkListener implements ActionListener {
+
+				
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				if (otherRadio.isSelected()){
+					
+					tempLanduse = Construction.anonymousConstruction("NULL");
+					
+				} else if (airportRadio.isSelected()){
+					
+					tempLanduse = new AirportConstruction("Airport");
+					
+				} else if (factoryRadio.isSelected()){
+					
+					tempLanduse = new FactoryConstruction("Factory");
+					
+				} else if (houseRadio.isSelected()){
+					
+					tempLanduse = new HouseConstruction(0.0, 0.0);
+					
+				} else if (parkRadio.isSelected()){
+					
+					tempLanduse = new ParkConstruction();
+					
+				} else if (prisonRadio.isSelected()){
+					
+					tempLanduse = new PrisonConstruction(0.0, 0.0);
+					
+				} else {
+					JOptionPane.showMessageDialog(getParent(), "Select a construction type");
+					return;
+				}
+				
+				landuses[landuseID] = tempLanduse;
+				
+				setVisible(false);
+				
+			}
+		
+		}
+
+
+
+		public class CancelDialogButton implements ActionListener {
+
+			/* (non-Javadoc)
+			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+			 */
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				canceled = true;
+				setVisible(false);
+			}
+
+		}
+	}	
 }

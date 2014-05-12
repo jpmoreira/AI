@@ -415,17 +415,17 @@ public class GUInterface {
 			
 			landuses = new Construction[startDialog.getLandUseNumber()];
 			
-			for (int i = 0; i < startDialog.getLandUseNumber();i++){
-				Construction tempConstruction = new Construction("NULL") {
-					
-					@Override
-					public double affinityToTileInState(Tile tile, State state) {
-						// TODO Auto-generated method stub
-						return 0;
-					}
-				};
-				landuses[i] = tempConstruction;
-			}
+//			for (int i = 0; i < startDialog.getLandUseNumber();i++){
+//				Construction tempConstruction = new Construction("NULL") {
+//					
+//					@Override
+//					public double affinityToTileInState(Tile tile, State state) {
+//						// TODO Auto-generated method stub
+//						return 0;
+//					}
+//				};
+//				landuses[i] = tempConstruction;
+//			}
 			
 			popSize = startDialog.getPopulationSize();
 			pairingStates = popSize/2;
