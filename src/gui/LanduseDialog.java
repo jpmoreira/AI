@@ -1,23 +1,14 @@
 package gui;
 
-import gui.StartDialog.CancelButton;
-import gui.StartDialog.OkListener;
-
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,11 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import Exceptions.ConstructionException;
-import mainPackage.Tile.SoilType;
 import mainPackage.constructions.AirportConstruction;
 import mainPackage.constructions.Construction;
 import mainPackage.constructions.FactoryConstruction;
@@ -146,6 +135,17 @@ public class LanduseDialog extends JDialog{
 	private JPanel pricePenPanel;
 
 	
+	private JPanel pricePanel;
+	
+	private JLabel minPriceLabel;
+
+	private JLabel maxPriceLabel;
+
+	private JTextField minPriceField;
+
+	private JTextField maxPriceField;
+	
+	
 	/** The buttons panel. */
 	private JPanel buttonsPanel;
 
@@ -163,6 +163,10 @@ public class LanduseDialog extends JDialog{
 
 	/** Construction type initialization */
 	private TypeDialog constructionTypeDialog;
+
+
+
+
 	
 	/**
 	 * Instantiates a new landuse dialog.
@@ -237,6 +241,12 @@ public class LanduseDialog extends JDialog{
 		inclPenPanel.add(inclPenSlider);
 		contentPane.add(inclPenPanel);
 		
+		pricePanel.add(minPriceLabel);
+		pricePanel.add(minPriceField);
+		pricePanel.add(maxPriceLabel);
+		pricePanel.add(maxPriceField);
+		contentPane.add(pricePanel);
+			
 		pricePenPanel.add(pricePenLabel);
 		pricePenPanel.add(pricePenSlider);
 		contentPane.add(pricePenPanel);
@@ -255,24 +265,27 @@ public class LanduseDialog extends JDialog{
 	 */
 	private void createWidgets() {
 		
+		FlowLayout flowLeading = new FlowLayout(FlowLayout.LEADING, 5, 5);
+		FlowLayout flowCenter = new FlowLayout(FlowLayout.CENTER, 5, 5);
+		
 		landuseIDPanel = new JPanel();
-		landuseIDPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		landuseIDPanel.setLayout(flowLeading);
 		landuseIDPanel.setBorder(new EmptyBorder(10, 0, 5, 0));
 		
 		landuseIDLabel = new JLabel("Landuse ID: " + getLanduseID() + "  Chromosome: " + landuses[landuseID].toCromossome());
 		
 		landusePanel = new JPanel();
-		landusePanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		landusePanel.setLayout(flowLeading);
 		
 		landuseLabel = new JLabel("Name:");
 		landuseField = new JTextField(landuses[landuseID].name(),20);
 		
 		areaPanel = new JPanel();
-		areaPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		areaPanel.setLayout(flowLeading);
 		areaPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
 		
 		areaPenPanel = new JPanel();
-		areaPenPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		areaPenPanel.setLayout(flowCenter);
 		
 		minAreaLabel = new JLabel("Min area:");
 		maxAreaLabel = new JLabel("Max area:");
@@ -328,6 +341,15 @@ public class LanduseDialog extends JDialog{
 		inclPenSlider.setPreferredSize(new Dimension(500,40));
 	
 		
+		pricePanel = new JPanel();
+		pricePanel.setLayout(flowLeading);
+		
+		minPriceLabel = new JLabel("Min price:");
+		maxPriceLabel = new JLabel("Max price:");
+		
+		minPriceField = new JTextField(((Double) landuses[landuseID].getMinPrice()).toString(),6);
+		maxPriceField = new JTextField(((Double) landuses[landuseID].getMaxPrice()).toString(),12);
+		
 		pricePenLabel = new JLabel("Price penalty:");	
 		
 		pricePenSlider = new JSlider(0,100,(int)(landuses[landuseID].getSoilTypePen()*100));
@@ -339,7 +361,7 @@ public class LanduseDialog extends JDialog{
 		pricePenSlider.setPreferredSize(new Dimension(500,40));
 		
 		pricePenPanel = new JPanel();
-		pricePenPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		pricePenPanel.setLayout(flowCenter);
 		
 		
 		saveButton = new JButton("Save");
@@ -390,15 +412,18 @@ public class LanduseDialog extends JDialog{
 		
 		double tempMinArea;
 		double tempMaxArea;
+		double tempMinPrice;
+		double tempMaxPrice;
 		
 		tempMinArea = Double.parseDouble(minAreaField.getText());
 		tempMaxArea = Double.parseDouble(maxAreaField.getText());
+		tempMinPrice = Double.parseDouble(minPriceField.getText());
+		tempMaxPrice = Double.parseDouble(maxPriceField.getText());
 		
 		tempLanduse.setName(landuseField.getText());
 		tempLanduse.setAreaConstraint(tempMinArea, tempMaxArea, ((double) areaPenSlider.getValue())/100);
 		tempLanduse.setInclinationConstrain(((double) minInclSlider.getValue())/100, ((double) maxInclSlider.getValue())/100, ((double) inclPenSlider.getValue())/100);
-		
-
+		tempLanduse.setPriceConstraint(tempMinPrice, tempMaxPrice, ((double) pricePenSlider.getValue())/100);
 		
 	}
 	
@@ -705,8 +730,8 @@ public class LanduseDialog extends JDialog{
 			constructionPanel.add(otherRadio);
 			contentPane.add(constructionPanel);
 			
-			inputButtonsPanel.add(okButton);
 			inputButtonsPanel.add(cancelDialogButton);
+			inputButtonsPanel.add(okButton);
 			contentPane.add(inputButtonsPanel);
 			
 		}

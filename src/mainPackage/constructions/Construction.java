@@ -617,6 +617,14 @@ abstract public class Construction {
 	public SoilType[] getForbiddenSoil() {
 		return forbiddenSoils;
 	}
+
+	public double getMinPrice() {
+		return minPrice;
+	}
+
+	public double getMaxPrice() {
+		return maxPrice;
+	}
 	
 }
 //TODO use inclination constraint in auto-function
