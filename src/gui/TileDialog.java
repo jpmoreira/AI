@@ -177,10 +177,10 @@ public class TileDialog extends JDialog {
 			
 			soilCombo.setSelectedItem(tiles[tileID].getSoilType());
 			
-			Integer incl = tiles[tileID].getMaxInclination();		
+			Double incl = tiles[tileID].getMaxInclination();		
 			inclinationField = new JTextField(incl.toString(),4);
 			
-			Float tempArea = tiles[tileID].getArea();		
+			Double tempArea = tiles[tileID].getArea();		
 			areaText = new JTextField(tempArea.toString(),4);
 			
 			Float tempPrice = tiles[tileID].getPricePerAreaUnit();		

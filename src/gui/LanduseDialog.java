@@ -1,8 +1,12 @@
 package gui;
 
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -15,7 +19,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import Exceptions.ConstructionException;
@@ -86,30 +92,38 @@ public class LanduseDialog extends JDialog{
 	/** Area penalty label. */
 	private JLabel areaPenLabel;
 	
-	/** Area penalty text field. */
-	private JTextField areaPenField;
+	/** Area penalty panel */
+	private JPanel areaPenPanel;
 	
+	/** Area penalty text slider. */
+	private JSlider areaPenSlider;	
 
-	/** The incl panel. */
-	private JPanel inclPanel;
+	/** The incl min panel. */
+	private JPanel inclMinPanel;
+	
+	/** The incl max panel. */
+	private JPanel inclMaxPanel;
 	
 	/** The min incl label. */
 	private JLabel minInclLabel;
 	
 	/** The min incl field. */
-	private JTextField minInclField;
+	private JSlider minInclSlider;
 	
 	/** The max incl label. */
 	private JLabel maxInclLabel;
 	
 	/** The max incl field. */
-	private JTextField maxInclField;
+	private JSlider maxInclSlider;
 	
 	/** Inclination penalty label. */
 	private JLabel inclPenLabel;
 	
-	/** Inclination penalty text field. */
-	private JTextField inclPenField;
+	/** Inclination penalty slider. */
+	private JSlider inclPenSlider;
+	
+	/** Inclination penalty panel */
+	private JPanel inclPenPanel;
 	
 	/** SoilTypes restrictions panel. */
 	private JPanel soilTypePanel;
@@ -120,8 +134,8 @@ public class LanduseDialog extends JDialog{
 	/** SoilTypes restrictions panel. */
 	private JLabel soilTypePenLabel;
 	
-	/** SoilType penalty. */
-	private JTextField soilTypePenField;
+	/** SoilType penalty slider. */
+	private JSlider soilTypePenSlider;
 	
 	/** SoilTypes restrictions panel. */
 	private ArrayList<JCheckBox> soilCheckboxes;
@@ -205,17 +219,23 @@ public class LanduseDialog extends JDialog{
 		areaPanel.add(minAreaField);
 		areaPanel.add(maxAreaLabel);
 		areaPanel.add(maxAreaField);
-		areaPanel.add(areaPenLabel);
-		areaPanel.add(areaPenField);
 		contentPane.add(areaPanel);
 		
-		inclPanel.add(minInclLabel);
-		inclPanel.add(minInclField);
-		inclPanel.add(maxInclLabel);
-		inclPanel.add(maxInclField);
-		inclPanel.add(inclPenLabel);
-		inclPanel.add(inclPenField);
-		contentPane.add(inclPanel);
+		areaPenPanel.add(areaPenLabel);
+		areaPenPanel.add(areaPenSlider);
+		contentPane.add(areaPenPanel);
+		
+		inclMinPanel.add(minInclLabel);
+		inclMinPanel.add(minInclSlider);
+		contentPane.add(inclMinPanel);
+		
+		inclMaxPanel.add(maxInclLabel);
+		inclMaxPanel.add(maxInclSlider);
+		contentPane.add(inclMaxPanel);
+		
+		inclPenPanel.add(inclPenLabel);
+		inclPenPanel.add(inclPenSlider);
+		contentPane.add(inclPenPanel);
 		
 		
 		soilTypePanel.add(soilTypeLabel);
@@ -227,7 +247,7 @@ public class LanduseDialog extends JDialog{
 		contentPane.add(soilCheckboxesPanel);
 		
 		soilTypePenPanel.add(soilTypePenLabel);
-		soilTypePenPanel.add(soilTypePenField);
+		soilTypePenPanel.add(soilTypePenSlider);
 		contentPane.add(soilTypePenPanel);
 		
 		buttonsPanel.add(cancelButton);
@@ -258,40 +278,85 @@ public class LanduseDialog extends JDialog{
 		
 		areaPanel = new JPanel();
 		areaPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
-		areaPanel.setBorder(new EmptyBorder(10, 0, 5, 0));
+		areaPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+		
+		areaPenPanel = new JPanel();
+		areaPenPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		minAreaLabel = new JLabel("Min area:");
 		maxAreaLabel = new JLabel("Max area:");
 		areaPenLabel = new JLabel("Area penalty:");
 		
-		minAreaField = new JTextField(((Double) landuses[landuseID].getMinArea()).toString(),8);
-		maxAreaField = new JTextField(((Double) landuses[landuseID].getMaxArea()).toString(),8);
-		areaPenField = new JTextField(((Double) landuses[landuseID].getAreaPenalty()).toString(),4);
+		minAreaField = new JTextField(((Double) landuses[landuseID].getMinArea()).toString(),6);
+		maxAreaField = new JTextField(((Double) landuses[landuseID].getMaxArea()).toString(),12);
 		
+		areaPenSlider = new JSlider(0,100,(int)(landuses[landuseID].getAreaPenalty()*100));
+		areaPenSlider.setSnapToTicks(true);
+		areaPenSlider.setPaintTicks(true);
+		areaPenSlider.setPaintLabels(true);
+		areaPenSlider.setMinorTickSpacing(1);
+		areaPenSlider.setMajorTickSpacing(10);
+		areaPenSlider.setPreferredSize(new Dimension(500,40));
+		
+		
+		//TODO add price restrictions
 			
-		inclPanel = new JPanel();
-		inclPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
-		inclPanel.setBorder(new EmptyBorder(10, 0, 5, 0));
+		inclMinPanel = new JPanel();
+		inclMinPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		inclMinPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+		
+		inclMaxPanel = new JPanel();
+		inclMaxPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		inclPenPanel = new JPanel();
+		inclPenPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		minInclLabel = new JLabel("Min inclination:");
 		maxInclLabel = new JLabel("Max inclination:");
 		inclPenLabel = new JLabel("Inclination penalty:");
 		
-		minInclField= new JTextField(((Double) landuses[landuseID].getMinIncl()).toString(),8);
-		maxInclField = new JTextField(((Double) landuses[landuseID].getMaxIncl()).toString(),8);
-		inclPenField = new JTextField(((Double) landuses[landuseID].getInclPenalty()).toString(),4);
+		minInclSlider = new JSlider(0,100,(int)(landuses[landuseID].getMinIncl()*100));
+		minInclSlider.setSnapToTicks(true);
+		minInclSlider.setPaintTicks(true);
+		minInclSlider.setPaintLabels(true);
+		minInclSlider.setMinorTickSpacing(1);
+		minInclSlider.setMajorTickSpacing(10);
+		minInclSlider.setPreferredSize(new Dimension(500,40));
+		
+		maxInclSlider = new JSlider(0,100,(int)(landuses[landuseID].getMaxIncl()*100));
+		maxInclSlider.setSnapToTicks(true);
+		maxInclSlider.setPaintTicks(true);
+		maxInclSlider.setPaintLabels(true);
+		maxInclSlider.setMinorTickSpacing(1);
+		maxInclSlider.setMajorTickSpacing(10);
+		maxInclSlider.setPreferredSize(new Dimension(500,40));
+		
+		inclPenSlider = new JSlider(0,100,(int)(landuses[landuseID].getInclPenalty()*100));
+		inclPenSlider.setSnapToTicks(true);
+		inclPenSlider.setPaintTicks(true);
+		inclPenSlider.setPaintLabels(true);
+		inclPenSlider.setMinorTickSpacing(1);
+		inclPenSlider.setMajorTickSpacing(10);
+		inclPenSlider.setPreferredSize(new Dimension(500,40));
 		
 
 		soilTypePanel = new JPanel();
 		soilTypePanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
-		soilTypePanel.setBorder(new EmptyBorder(10, 0, 5, 0));
+		soilTypePanel.setBorder(new EmptyBorder(10, 0, 0, 0));
 		
 		soilTypeLabel = new JLabel("SoilTypes Restriction");
 		soilTypePenLabel = new JLabel("SoilTypes penalty:");	
-		soilTypePenField = new JTextField(((Double) landuses[landuseID].getSoilTypePen()).toString(),4);
+		
+		soilTypePenSlider = new JSlider(0,100,(int)(landuses[landuseID].getSoilTypePen()*100));
+		soilTypePenSlider.setSnapToTicks(true);
+		soilTypePenSlider.setPaintTicks(true);
+		soilTypePenSlider.setPaintLabels(true);
+		soilTypePenSlider.setMinorTickSpacing(1);
+		soilTypePenSlider.setMajorTickSpacing(10);
+		soilTypePenSlider.setPreferredSize(new Dimension(500,40));
 		
 		soilTypePenPanel = new JPanel();
-		soilTypePenPanel.setLayout(new FlowLayout(FlowLayout.TRAILING, 5, 5));
+		soilTypePenPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 		
 		int soilTypesSize = soilTypes.length;
 		
@@ -359,6 +424,14 @@ public class LanduseDialog extends JDialog{
 	}
 	
 
+	private boolean soilTypeIsForbidden(SoilType soilType) {
+		SoilType[] tempSoils = tempLanduse.getForbiddenSoil();
+		for (int i = 0 ; i < tempSoils.length; i++){
+			if (tempSoils[i] == soilType) return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Builds the landuse.
 	 *
@@ -368,25 +441,13 @@ public class LanduseDialog extends JDialog{
 		
 		double tempMinArea;
 		double tempMaxArea;
-		double tempAreaPen;
-		double tempMinIncl;
-		double tempMaxIncl;
-		double tempInclPen;
-		double tempSoilPenalty;
 		
 		tempMinArea = Double.parseDouble(minAreaField.getText());
 		tempMaxArea = Double.parseDouble(maxAreaField.getText());
-		tempAreaPen = Double.parseDouble(areaPenField.getText());
-		
-		tempMinIncl = Double.parseDouble(minInclField.getText());
-		tempMaxIncl = Double.parseDouble(maxInclField.getText());
-		tempInclPen = Double.parseDouble(inclPenField.getText());
-		
-		tempSoilPenalty = Double.parseDouble(soilTypePenField.getText());
 		
 		tempLanduse.setName(landuseField.getText());
-		tempLanduse.setAreaConstraint(tempMinArea, tempMaxArea, tempAreaPen);
-		tempLanduse.setInclinationConstrain(tempMinIncl, tempMaxIncl, tempInclPen);
+		tempLanduse.setAreaConstraint(tempMinArea, tempMaxArea, ((double) areaPenSlider.getValue())/100);
+		tempLanduse.setInclinationConstrain(((double) minInclSlider.getValue())/100, ((double) maxInclSlider.getValue())/100, ((double) inclPenSlider.getValue())/100);
 		
 		ArrayList<SoilType> tempForbiddenTypes = new ArrayList<SoilType>();
 		
@@ -398,9 +459,11 @@ public class LanduseDialog extends JDialog{
 		
 		SoilType[] forbiddenTypes = new SoilType[tempForbiddenTypes.size()];
 		
+		for (int i = 0; i < forbiddenTypes.length;i++){
+			forbiddenTypes[i] = tempForbiddenTypes.get(i);
+		}
 		
-		
-		tempLanduse.setSoilConstraint(forbiddenTypes, tempSoilPenalty);
+		tempLanduse.setSoilConstraint(forbiddenTypes, ((double) soilTypePenSlider.getValue())/100);
 		
 	}
 	
