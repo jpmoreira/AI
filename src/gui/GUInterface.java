@@ -254,7 +254,7 @@ public class GUInterface {
 
 		configLandUses();
 
-		configRestrictions();
+		//configRestrictions();
 
 		configGeneticGenerator();
 
@@ -375,14 +375,25 @@ public class GUInterface {
 		landuseDialog = new LanduseDialog(frame, true, "Landuse Settings", landuses, id);
 
 		landuses[id] = landuseDialog.getTempLanduse();
-		id = landuseDialog.getLanduseID();
+		//id = landuseDialog.getLanduseID();
 
+		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);		
+		landuses[id] = restrictionsDialog.getTempLanduse();
+		id = landuseDialog.getLanduseID();
+		
+		
 		while (!landuseDialog.isFinished() && !landuseDialog.isCanceled()){
 
 			landuseDialog = new LanduseDialog(frame, true, "Landuse Settings", landuses, id);
 			if (!landuseDialog.isCanceled()){
 				landuses[id] = landuseDialog.getTempLanduse();
+				//id = landuseDialog.getLanduseID();
+				
+				restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);
+		
+				landuses[id] = restrictionsDialog.getTempLanduse();
 				id = landuseDialog.getLanduseID();
+				
 			} else {
 				break;
 			}
@@ -715,6 +726,8 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 
+			// TODO add threads
+			// TODO setText(generation ++);
 			pause = false;
 
 			while (!pause){
@@ -782,10 +795,12 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			int ite = 0;
 
-			while (ite<1000 || !pause){
+			while (ite<1000 && !pause){
 				population.iterate();
 				generation++;	
 
+				ite++;
+				updateStatusPanel();
 				centerPanel.repaint();
 			}
 
@@ -815,10 +830,12 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			int ite = 0;
 
-			while (ite<100 || !pause){
+			while (ite<100 && !pause){
 				population.iterate();
 				generation++;
-
+				
+				ite++;
+				updateStatusPanel();
 				centerPanel.repaint();
 			}
 
@@ -848,10 +865,12 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 			int ite = 0;
 
-			while (ite<10 || !pause){
+			while (ite<10 && !pause){
 				population.iterate();
 				generation++;
-
+				
+				ite++;
+				updateStatusPanel();
 				centerPanel.repaint();
 			}
 
@@ -882,6 +901,7 @@ public class GUInterface {
 			population.iterate();
 			generation++;
 
+			updateStatusPanel();
 			centerPanel.repaint();
 
 		}

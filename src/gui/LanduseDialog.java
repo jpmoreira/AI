@@ -682,11 +682,13 @@ public class LanduseDialog extends JDialog{
 			
 			dialogPanel = new JPanel();
 			dialogPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+			dialogPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 			
 			dialogLabel = new JLabel("Select the type of construction;");
 			
 			constructionPanel = new JPanel();
-			constructionPanel.setLayout(new GridLayout(2, 3));
+			constructionPanel.setLayout(new GridLayout(2, 3, 5, 5));
+			constructionPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 			
 			airportRadio = new JRadioButton("Airport");
 			factoryRadio = new JRadioButton("Factory");

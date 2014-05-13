@@ -49,6 +49,10 @@ public class RestrictionsDialog extends JDialog{
 
 	
 	
+	private JLabel landuseIDLabel;
+
+	private JPanel landuseIDPanel;
+	
 	/** SoilTypes restrictions panel. */
 	private JPanel soilTypePanel;
 	
@@ -87,6 +91,8 @@ public class RestrictionsDialog extends JDialog{
 
 	/** The previous button. */
 	private JButton previousButton;
+
+
 	
 	public RestrictionsDialog(JFrame frame, boolean modal, String myMessage, Construction[] landuses, int landuseID){
 
@@ -116,10 +122,27 @@ public class RestrictionsDialog extends JDialog{
 
 	private void createWidgets() {
 		
+		// TODO adicionar identificação da construção
+		
+		FlowLayout flowLeading = new FlowLayout(FlowLayout.LEADING, 5, 5);
+		FlowLayout flowCenter = new FlowLayout(FlowLayout.CENTER, 5, 5);
+		
+		landuseIDPanel = new JPanel();
+		landuseIDPanel.setLayout(flowLeading);
+		landuseIDPanel.setBorder(new EmptyBorder(10, 0, 5, 0));
+		
+		landuseIDLabel = new JLabel("Landuse ID: " + getLanduseID() + "  Chromosome: " + landuses[landuseID].toCromossome() + " - " + landuses[landuseID].name());
+		
+		
+		// TODO adicionar restrições das construções vizinhas
+		// TODO adicionar restrições lotes proibidos
+		// TODO adicionar restrições lotes preferencias
+		// TODO adicionar restrições lotes obrigatórios
+		
 
 		soilTypePanel = new JPanel();
-		soilTypePanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
-		soilTypePanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+		soilTypePanel.setLayout(flowLeading);
+		soilTypePanel.setBorder(new EmptyBorder(10, 5, 5, 5));
 		
 		soilTypeLabel = new JLabel("SoilTypes Restriction");
 		soilTypePenLabel = new JLabel("SoilTypes penalty:");	
@@ -133,7 +156,7 @@ public class RestrictionsDialog extends JDialog{
 		soilTypePenSlider.setPreferredSize(new Dimension(500,40));
 		
 		soilTypePenPanel = new JPanel();
-		soilTypePenPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		soilTypePenPanel.setLayout(flowCenter);
 		
 		int soilTypesSize = soilTypes.length;
 		
@@ -152,7 +175,8 @@ public class RestrictionsDialog extends JDialog{
 		}
 		
 		soilCheckboxesPanel = new JPanel();
-		soilCheckboxesPanel.setLayout(new GridLayout(rows, cols));
+		soilCheckboxesPanel.setLayout(new GridLayout(rows, cols,10,5));
+		soilCheckboxesPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
 		
 		for (int i = 0; i < soilTypesSize; i++){
 			JCheckBox tempCheckBox = new JCheckBox(soilTypes[i].name());
@@ -201,6 +225,9 @@ public class RestrictionsDialog extends JDialog{
 	
 	private void addWidgets(Container contentPane) {
 		
+		
+		landuseIDPanel.add(landuseIDLabel);
+		contentPane.add(landuseIDPanel);
 
 		soilTypePanel.add(soilTypeLabel);
 		contentPane.add(soilTypePanel);
