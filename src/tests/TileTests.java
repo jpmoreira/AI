@@ -7,7 +7,6 @@ import org.junit.Test;
 
 public class TileTests {
 
-	//TODO maybe some other tests besides adjacencies
 	@Test
 	public void adjacencieTest() {
 		Tile t1=new Tile();

@@ -14,43 +14,24 @@ import mainPackage.Tile.SoilType;
 public class HouseConstruction extends Construction {
 
 	
-	
 	/**
 	 * 
-	 * A simple constructor.
+	 * A simple construction constructor. Houses should not be placed in high inclination tiles.
+	 * Houses should not be placed near {@link PrisonConstruction Prisons} or {@link FactoryConstruction Factories}.
+	 * Houses should be in the vicinity of a {@link ParkConstruction park}.
 	 * 
-	 * @param minArea
-	 *            the minimum area a tile must have to include this construction
-	 * @param maxArea
-	 *            the maximum area a tile must have to include this construction
 	 */
-	public HouseConstruction(double minArea, double maxArea) {
-
+	
+	public HouseConstruction(){
+		
+		
 		super("House");
-		this.setAreaConstraint(minArea, maxArea, 0.2);
 		this.setForbiddenAdjacenciesConstraint(new Construction[0], new String[]{PrisonConstruction.class.getCanonicalName(),FactoryConstruction.class.getCanonicalName()}, 0.5);
 		this.setInclinationConstrain(0.0, 0.2, 0.05);
 		this.setSoilConstraint(new SoilType[]{SoilType.SoilType_Clay}, 0.05);
 		this.setMustHaveAdjacenciesConstraint(new String[]{ParkConstruction.class.getCanonicalName()}, new Construction[0], 0.05);
-	}
-	
-	//TODO test this and prision
-
-	@Override
-	public double affinityToTileInState(Tile tile, State state) {
-		double currentAffinity=1.0;
 		
-		currentAffinity-=this.defaultPenaltyForAdjacentConstruction(tile.adjacencies(), state);
 		
-		currentAffinity-=defaultAreaPenalty(tile);
-		currentAffinity-=defaultSoilTilePenalty(tile);
-		currentAffinity-=defaultInclinationPenalty(tile);
-		currentAffinity-=defaultMustHaveAdjacenciesPenalty(tile.adjacencies(), state);
-		
-		if(currentAffinity<0)currentAffinity=0;
-		
-		return currentAffinity;
-
 	}
 
 }

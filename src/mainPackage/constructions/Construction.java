@@ -15,7 +15,7 @@ import Exceptions.ConstructionException.ConstructionExeptionCode;
  * subclassed
  * 
  * */
-abstract public class Construction {
+public class Construction {
 
 	/**
 	 * the name of the construction
@@ -321,7 +321,18 @@ abstract public class Construction {
 	 *         doesn't suit this construction.
 	 * 
 	 * */
-	abstract public double affinityToTileInState(Tile tile, State state);
+	public double affinityToTileInState(Tile tile, State state){
+		
+		double currentAffinity = 1.0;
+
+		currentAffinity-=this.allDefaultPenalties(tile, state);
+		
+		if(currentAffinity<0.0)currentAffinity=0.0;
+					
+
+		return currentAffinity;
+		
+	}
 
 	/**
 	 * 
@@ -379,32 +390,7 @@ abstract public class Construction {
 	 */
 	static public Construction anonymousConstruction(String name){
 		
-		return new Construction(name) {
-
-			@Override
-			public double affinityToTileInState(Tile tile,State s) {
-
-				double currentAffinity = 1.0;
-
-	
-				currentAffinity-=this.defaultBadTilePenalty(tile);
-				currentAffinity-=this.defaultAreaPenalty(tile);
-				currentAffinity-=this.defaultSoilTilePenalty(tile);
-				
-				
-				currentAffinity-=this.defaultPenaltyForAdjacentConstruction(tile.adjacencies(), s);
-				
-				currentAffinity-=this.defaultMustHaveAdjacenciesPenalty(tile.adjacencies(), s);
-				
-				currentAffinity-=this.defaultPricePenalty(tile);
-				
-				if(currentAffinity<0.0)currentAffinity=0.0;
-				
-				
-
-				return currentAffinity;
-			}
-		};
+		return new Construction(name);
 	}
 	
 	
@@ -572,6 +558,23 @@ abstract public class Construction {
 		
 		if(t.getPricePerAreaUnit()>maxPrice|| t.getPricePerAreaUnit()<minPrice)return pricePenalty;
 		return 0.0;
+		
+	}
+	
+	
+	protected double allDefaultPenalties(Tile t,State s){
+		
+		
+		double currentPenalty=0.0;
+		currentPenalty+=defaultPenaltyForAdjacentConstruction(t.adjacencies(), s);
+		currentPenalty+=defaultAreaPenalty(t);
+		currentPenalty+=defaultInclinationPenalty(t);
+		currentPenalty+=defaultBadTilePenalty(t);
+		currentPenalty+=defaultSoilTilePenalty(t);
+		currentPenalty+=defaultMustHaveAdjacenciesPenalty(t.adjacencies(), s);
+		currentPenalty+=defaultPricePenalty(t);
+		
+		return currentPenalty;
 		
 	}
 	

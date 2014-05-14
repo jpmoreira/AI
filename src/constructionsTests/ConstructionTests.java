@@ -1,4 +1,4 @@
-package tests;
+package constructionsTests;
 
 import static org.junit.Assert.*;
 import mainPackage.State;
@@ -77,7 +77,7 @@ public class ConstructionTests {
 		c3.setSoilConstraint(new Tile.SoilType[]{Tile.SoilType.SoilType_Peaty}, 0.05);
 		c3.setForbiddenAdjacenciesConstraint(new Construction[0], forbClasses, 0.025);
 		
-		PrisonConstruction c4=new PrisonConstruction(0,10000);
+		PrisonConstruction c4=new PrisonConstruction();
 		
 
 		

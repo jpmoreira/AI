@@ -23,7 +23,7 @@ public class Tile {
 		SoilType_Clay,
 		SoilType_Peaty,
 		SoilType_Rocky
-		//TODO don't know if this type of values make sense... review this
+		
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class Tile {
 	public double getMaxInclination() {
 		return maxInclination;
 	}
-	public void setMaxInclination(int maxInclination) {
+	public void setMaxInclination(double maxInclination) {
 		this.maxInclination = maxInclination;
 	}
 	public double getArea() {
