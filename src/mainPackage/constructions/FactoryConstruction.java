@@ -5,15 +5,11 @@ import mainPackage.Tile;
 
 public class FactoryConstruction extends Construction {
 
-	public FactoryConstruction(String theName) {
-		super(theName);
-		// TODO Auto-generated constructor stub
+	public FactoryConstruction() {
+		super("Factory");
+		this.setMustHaveAdjacenciesConstraint(new String[]{AirportConstruction.class.getCanonicalName()}, new Construction[0], 0.2);
+		this.setInclinationConstrain(0.0, 0.5, 0.1);
 	}
 
-	@Override
-	public double affinityToTileInState(Tile tile, State state) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	
 }

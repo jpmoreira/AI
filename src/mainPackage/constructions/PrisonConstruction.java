@@ -5,17 +5,19 @@ import mainPackage.Tile;
 
 public class PrisonConstruction extends Construction {
 
-	
-	public PrisonConstruction(double max_area, double min_area) {
+	/**
+	 * 
+	 * Simple constructor for a prison.
+	 * For security reasons prisons should not be placed near {@link AirportConstruction airports}.
+	 * Prisons should be placed in low value tiles.
+	 * 
+	 */
+	public PrisonConstruction() {
 		super("Prison");
-		this.setAreaConstraint(min_area, max_area, 0.2);
-		//TODO implement
+		this.setForbiddenAdjacenciesConstraint(new Construction[0], new String[]{AirportConstruction.class.getCanonicalName()},0.3);
+		this.setPriceConstraint(0.0, 5.0, 0.05);
 	}
 
-	//TODO implement this
-	@Override
-	public double affinityToTileInState(Tile tile, State state) {
-		return 0;
-	}
+
 
 }

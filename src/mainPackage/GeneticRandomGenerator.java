@@ -371,8 +371,7 @@ public class GeneticRandomGenerator {
 	 * 
 	 */
 	public void updateParameters() {
-
-		// FIXME probably more parameter should be updated;
+ 
 		this.mutationProbability = this.mutationProbability
 				* this.mutationProbVarFactor;
 		this.diversityUsageFactor *= 0.90;// multiply diversityUsageFactorBy 0.9

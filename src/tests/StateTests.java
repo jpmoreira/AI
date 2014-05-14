@@ -4,7 +4,10 @@ import static org.junit.Assert.*;
 import mainPackage.Population;
 import mainPackage.State;
 import mainPackage.Tile;
+import mainPackage.constructions.AirportConstruction;
 import mainPackage.constructions.Construction;
+import mainPackage.constructions.FactoryConstruction;
+import mainPackage.constructions.HouseConstruction;
 
 import org.junit.Test;
 
@@ -269,8 +272,33 @@ public class StateTests {
 
 	@Test
 	public void fitnessWithingAcceptableBounds() {
+		
+		Construction c=new Construction("A");
+		c.setMustHaveAdjacenciesConstraint(new String[]{AirportConstruction.class.getCanonicalName()}, new Construction[0], 0.1);
 
-		// TODO implement this to test if the fitness of a state is <=1 and >=0
+		AirportConstruction airport=new AirportConstruction();
+		
+		FactoryConstruction factory=new FactoryConstruction();
+		
+		HouseConstruction house=new HouseConstruction();
+		
+		Tile t1=new Tile();
+		Tile t2=new Tile();
+		Tile t3=new Tile();
+		Tile t4=new Tile();
+		t2.addAdjacentTile(t3);
+		t2.addAdjacentTile(t1);
+		t3.addAdjacentTile(t4);
+		
+		State s=new State(new Construction[]{c,airport,factory,house},new Tile[]{t1,t2,t3,t4});
+		
+		assertTrue(s.fitness()<=1.0);
+		double mean=(c.affinityToTileInState(t1, s)+airport.affinityToTileInState(t2, s)+factory.affinityToTileInState(t3, s)+house.affinityToTileInState(t4, s))/4;
+		assertEquals(s.fitness(),mean ,0.0001);
+		
+		
+		
+		
 
 	}
 

@@ -1,5 +1,4 @@
 package mainPackage;
-//TODO add statistics
 import java.util.ArrayList;
 
 
@@ -18,13 +17,38 @@ public class Population {
 	 * The Constructions in this problem
 	 * 
 	 */
-	public Construction[] constructions;
+	private Construction[] constructions;
 	/**
 	 * 
 	 * The Tiles in this problem
 	 * 
 	 */
-	public Tile[] tiles;
+	private Tile[] tiles;
+	
+	
+	/**
+	 * 
+	 * The number of the current iteration.
+	 */
+	private int currentIteration=0;
+	
+	/**
+	 * 
+	 * The best most fit state ever.
+	 */
+	private State bestStateEver=null;
+	
+	/**
+	 * 
+	 * The iteration where the best state ever first appeared.
+	 * 
+	 */
+	private int bestStateIterationNr=0;
+	
+	
+	private int mutationsSoFar=0;
+	private int mutationsThisIteration=0;
+	
 	
 	/**
 	 * 
@@ -49,6 +73,9 @@ public class Population {
 		
 		return this.states;
 	}
+	
+	
+	
 	
 	public Tile[] tiles(){
 		
@@ -142,7 +169,11 @@ public class Population {
 		
 	}
 	
-	
+	/**
+	 * 
+	 * A method that returns an array with the fitness for all the states in the population 
+	 * @return an array with the fitness for each state.
+	 */
 	public double[] fitnessArray(){
 		
 		double[] fitnesses=new double[states.length];
@@ -153,6 +184,20 @@ public class Population {
 		return fitnesses;
 	}
 
+	/**
+	 * 
+	 * Returns the best state ever for this population.
+	 * @return
+	 */
+	public State bestStateEver(){
+		
+		return this.bestStateEver;
+	}
+	
+	public int iterationNrForBestStateEver(){
+		
+		return this.bestStateIterationNr;
+	}
 	
 	/**
 	 * A method that pairs all the states that are to be paired
@@ -200,16 +245,66 @@ public class Population {
 	 */
 	public void mutate(){
 		
-		
+		mutationsThisIteration=0;
 		boolean mutate;
 		for(State s: states){
 			mutate=coinTosser.stateShouldMutate(s,null);
 			if(mutate){
+				mutationsThisIteration++;
 				s.mutate(coinTosser.mutatingSegmentForState(s,null),coinTosser.bitToToggle(null));
 			}
 			
 		}
+		mutationsSoFar+=mutationsThisIteration;
 		
+	}
+
+	/**
+	 * 
+	 * A method that returns the number of mutations this last iteration
+	 * @return the number of mutations this last iteration
+	 */
+	public int mutationsThisIteration(){
+		
+		return mutationsThisIteration;
+	}
+	
+	/**
+	 * 
+	 * A method that returns the mean number of mutations per iteration
+	 * @return the number of mutations per iteration
+	 */
+	public int meanMutationsPerIteration(){
+		
+		
+		if(currentIteration!=0)return mutationsSoFar/currentIteration;
+		return 0;
+		
+	}
+	
+	/**
+	 * 
+	 * 
+	 * A method that returns the mean number of mutations so far.
+	 * @return the number of mutations so far
+	 */
+	public int mutationsSoFar(){
+		return mutationsSoFar;
+	}
+
+	/**
+	 * 
+	 * A method that updates the statistics relative to this population.
+	 */
+	public void updateStatistics(){
+		
+		State currentMostFit=this.mostFitState();
+		if(currentMostFit.fitness()>this.bestStateEver.fitness()){
+		
+			this.bestStateEver=currentMostFit;
+			this.bestStateIterationNr=this.currentIteration;
+			
+		}
 	}
 	
 	/**
@@ -220,6 +315,8 @@ public class Population {
 		this.pair();
 		this.mutate();
 		this.coinTosser.updateParameters();
+		this.updateStatistics();
+		this.currentIteration++;
 	}
 	/**
 	 * 
@@ -234,6 +331,24 @@ public class Population {
 			if(best.fitness()<s.fitness())best=s;
 		}
 		return best;
+	}
+	
+
+	
+	/**
+	 * 
+	 * 
+	 * A method that returns the current mean fitness.
+	 * @return the current mean fitness of the population
+	 */
+	public double meanFitness(){
+		
+		double total=0.0;
+		for (double value : this.fitnessArray()) {
+			total+=value;
+		}
+		return total/this.fitnessArray().length;
+		
 	}
 	
 	/**
@@ -254,7 +369,11 @@ public class Population {
 		return newOnes;
 	}
 
-	//TODO document it
+	/**
+	 * 
+	 * A method that returns the number of states to be paired
+	 * @return the number of states to be paired
+	 */
 	public int statesToPair(){
 		
 		return this.statesToPair;

@@ -5,15 +5,15 @@ import mainPackage.Tile;
 
 public class AirportConstruction extends Construction {
 
-	public AirportConstruction(String theName) {
-		super(theName);
-		// TODO Auto-generated constructor stub
+	/**
+	 * 
+	 * Simple construction constructor.
+	 * Airport should be placed in a tile with low inclination.
+	 * 
+	 */
+	
+	public AirportConstruction() {
+		super("Airport");
+		this.setInclinationConstrain(0.0, 0.2, 0.4);
 	}
-
-	@Override
-	public double affinityToTileInState(Tile tile, State state) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }
