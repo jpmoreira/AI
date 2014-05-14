@@ -122,8 +122,6 @@ public class RestrictionsDialog extends JDialog{
 
 	private void createWidgets() {
 		
-		// TODO adicionar identificação da construção
-		
 		FlowLayout flowLeading = new FlowLayout(FlowLayout.LEADING, 5, 5);
 		FlowLayout flowCenter = new FlowLayout(FlowLayout.CENTER, 5, 5);
 		
@@ -135,6 +133,8 @@ public class RestrictionsDialog extends JDialog{
 		
 		
 		// TODO adicionar restrições das construções vizinhas
+		
+		
 		// TODO adicionar restrições lotes proibidos
 		// TODO adicionar restrições lotes preferencias
 		// TODO adicionar restrições lotes obrigatórios

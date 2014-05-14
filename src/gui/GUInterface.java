@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import mainPackage.Population;
@@ -32,10 +33,6 @@ import mainPackage.constructions.Construction;
  * The Class GUInterface.
  */
 public class GUInterface {
-
-
-
-
 
 
 	/** The generation. */
@@ -197,6 +194,13 @@ public class GUInterface {
 
 
 
+	/** Timer */
+	private Timer evolutionTimer;
+	
+	/** Timer rate */
+	private int evolutionRate = 1;
+
+	protected int evolutionCount = 0;
 
 
 
@@ -244,6 +248,8 @@ public class GUInterface {
 
 		frame.pack();
 		frame.setVisible(true);	
+		
+		evolutionTimer = new Timer(evolutionRate, evolutionListener);
 
 	}
 
@@ -269,7 +275,7 @@ public class GUInterface {
 
 		configLandUses();
 
-		//configRestrictions();
+		configRestrictions();
 
 		configGeneticGenerator();
 
@@ -390,10 +396,10 @@ public class GUInterface {
 		landuseDialog = new LanduseDialog(frame, true, "Landuse Settings", landuses, id);
 
 		landuses[id] = landuseDialog.getTempLanduse();
-		//id = landuseDialog.getLanduseID();
+		id = landuseDialog.getLanduseID();
 
-		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);		
-		landuses[id] = restrictionsDialog.getTempLanduse();
+//		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);		
+//		landuses[id] = restrictionsDialog.getTempLanduse();
 		id = landuseDialog.getLanduseID();
 		
 		
@@ -402,11 +408,10 @@ public class GUInterface {
 			landuseDialog = new LanduseDialog(frame, true, "Landuse Settings", landuses, id);
 			if (!landuseDialog.isCanceled()){
 				landuses[id] = landuseDialog.getTempLanduse();
-				//id = landuseDialog.getLanduseID();
+				id = landuseDialog.getLanduseID();
 				
-				restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);
-		
-				landuses[id] = restrictionsDialog.getTempLanduse();
+//				restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);		
+//				landuses[id] = restrictionsDialog.getTempLanduse();
 				id = landuseDialog.getLanduseID();
 				
 			} else {
@@ -458,18 +463,6 @@ public class GUInterface {
 			}
 			
 			landuses = new Construction[startDialog.getLandUseNumber()];
-			
-//			for (int i = 0; i < startDialog.getLandUseNumber();i++){
-//				Construction tempConstruction = new Construction("NULL") {
-//					
-//					@Override
-//					public double affinityToTileInState(Tile tile, State state) {
-//						// TODO Auto-generated method stub
-//						return 0;
-//					}
-//				};
-//				landuses[i] = tempConstruction;
-//			}
 			
 			popSize = startDialog.getPopulationSize();
 			pairingStates = popSize/2;
@@ -528,6 +521,21 @@ public class GUInterface {
 		updateStatusPanel();
 		centerPanel.repaint();
 	}
+	
+	ActionListener evolutionListener = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			if (evolutionCount == 0) {
+				evolutionTimer.stop();
+			} else {
+				evolutionCount--;
+				evolution();
+			}	
+			
+		}		
+	};
 	
 	
 	/**
@@ -768,6 +776,11 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 
+			//evolutionRate = TODO getTimerRate(); 
+//			evolutionCount = -1;
+//			
+//			evolutionTimer.start();
+			
 			pause = false;
 
 			Thread evolutionThread = new Thread() {
@@ -807,6 +820,11 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+//			evolutionCount = 0;
+//
+//			evolutionTimer.stop();
+			
 			pause = true;
 
 			centerPanel.repaint();
@@ -836,20 +854,23 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
-			pause = false;
+			evolutionCount = 1000;
+			evolutionTimer.start();
 			
-			Thread evolutionThread = new Thread() {
-				public void run(){
-					int ite = 0;
-					while (ite<1000 && !pause){
-						evolution();
-						ite++;
-					}
-					
-				}
-				
-			};
-			evolutionThread.start();
+//			pause = false;
+//			
+//			Thread evolutionThread = new Thread() {
+//				public void run(){
+//					int ite = 0;
+//					while (ite<1000 && !pause){
+//						evolution();
+//						ite++;
+//					}
+//					
+//				}
+//				
+//			};
+//			evolutionThread.start();
 
 		}
 
@@ -875,6 +896,9 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+//			evolutionCount = 100;
+//			evolutionTimer.start();
 
 			pause = false;
 			
@@ -916,6 +940,9 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
+//			evolutionCount = 10;
+//			evolutionTimer.start();
+			
 			pause = false;
 			
 			Thread evolutionThread = new Thread() {
@@ -955,6 +982,9 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+//			evolutionCount = 1;
+//			evolutionTimer.start();
 			
 			Thread evolutionThread = new Thread() {
 				public void run(){

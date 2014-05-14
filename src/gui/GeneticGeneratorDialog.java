@@ -189,8 +189,8 @@ public class GeneticGeneratorDialog extends JDialog{
 		diversityPanel.add(diversityLabel);
 		diversityPanel.add(diversitySlider);
 
-		okPanel.add(okButton);
 		okPanel.add(cancelButton);
+		okPanel.add(okButton);
 
 		
 		contentPane.add(diversityPanel);
