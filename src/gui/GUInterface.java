@@ -289,6 +289,8 @@ public class GUInterface {
 		} else {
 			population.coinTosser.enableFitnessToRank(probToRank);
 		}
+		
+		updateStatusPanel();
 
 	}
 
@@ -383,7 +385,7 @@ public class GUInterface {
 			}
 		}	
 
-		updateStatusPanel();
+//		updateStatusPanel();
 
 	}
 
@@ -468,7 +470,7 @@ public class GUInterface {
 			pairingStates = popSize/2;
 		}	
 		
-		updateStatusPanel();
+//		updateStatusPanel();
 
 	}
 
@@ -727,7 +729,7 @@ public class GUInterface {
 				";   Nr. of Landuses: " + landuses.length +
 				";   Population Size: " + popSize +
 				";   Nr of Pairing states: " + pairingStates +
-				";   Generation Nr: " + generation);
+				";   Generation Nr: " + population.getIteration());
 
 		if (directFitnessToProb) {
 			genStatusOuputLabel.setText("Mutation Probability: " + mutationProb +
@@ -940,23 +942,23 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-//			evolutionCount = 10;
-//			evolutionTimer.start();
+			evolutionCount = 10;
+			evolutionTimer.start();
 			
-			pause = false;
-			
-			Thread evolutionThread = new Thread() {
-				public void run(){
-					int ite = 0;
-					while (ite<10 && !pause){
-						evolution();
-						ite++;
-					}
-					
-				}
-				
-			};
-			evolutionThread.start();
+//			pause = false;
+//			
+//			Thread evolutionThread = new Thread() {
+//				public void run(){
+//					int ite = 0;
+//					while (ite<10 && !pause){
+//						evolution();
+//						ite++;
+//					}
+//					
+//				}
+//				
+//			};
+//			evolutionThread.start();
 
 		}
 
@@ -1145,6 +1147,7 @@ public class GUInterface {
 				return;
 			}
 			configRestrictions();
+			updateStatusPanel();
 
 			centerPanel.repaint();
 
@@ -1180,6 +1183,7 @@ public class GUInterface {
 			}
 			
 			configAdjacencies();
+			updateStatusPanel();
 
 			centerPanel.repaint();
 		}
@@ -1213,6 +1217,7 @@ public class GUInterface {
 			}
 
 			configSites();
+			updateStatusPanel();
 
 			centerPanel.repaint();
 

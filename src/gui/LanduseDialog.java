@@ -6,9 +6,11 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -661,6 +663,8 @@ public class LanduseDialog extends JDialog{
 		
 		/** Button Group */
 		private ButtonGroup buttonGroup;
+		private JPanel dialogIDPanel;
+		private JLabel dialogIDLabel;
 		
 		
 		public TypeDialog(JFrame frame, boolean modal, String myMessage){
@@ -679,6 +683,12 @@ public class LanduseDialog extends JDialog{
 		}
 
 		private void createTypeWidgets() {
+			
+			dialogIDPanel = new JPanel();
+			dialogIDPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+			dialogIDPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
+			
+			dialogIDLabel = new JLabel("Landuse ID: " + getLanduseID());
 			
 			dialogPanel = new JPanel();
 			dialogPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
@@ -721,6 +731,9 @@ public class LanduseDialog extends JDialog{
 
 		private void addTypeWidgets(Container contentPane) {
 			
+			dialogIDPanel.add(dialogIDLabel);
+			contentPane.add(dialogIDPanel);
+			
 			dialogPanel.add(dialogLabel);
 			contentPane.add(dialogPanel);
 			
@@ -753,15 +766,15 @@ public class LanduseDialog extends JDialog{
 					
 				} else if (airportRadio.isSelected()){
 					
-					tempLanduse = new AirportConstruction("Airport");
+					tempLanduse = new AirportConstruction();
 					
 				} else if (factoryRadio.isSelected()){
 					
-					tempLanduse = new FactoryConstruction("Factory");
+					tempLanduse = new FactoryConstruction();
 					
 				} else if (houseRadio.isSelected()){
 					
-					tempLanduse = new HouseConstruction(0.0, 0.0);
+					tempLanduse = new HouseConstruction();
 					
 				} else if (parkRadio.isSelected()){
 					
@@ -769,7 +782,7 @@ public class LanduseDialog extends JDialog{
 					
 				} else if (prisonRadio.isSelected()){
 					
-					tempLanduse = new PrisonConstruction(0.0, 0.0);
+					tempLanduse = new PrisonConstruction();
 					
 				} else {
 					JOptionPane.showMessageDialog(getParent(), "Select a construction type");

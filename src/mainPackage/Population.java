@@ -1,7 +1,6 @@
 package mainPackage;
 import java.util.ArrayList;
 
-
 import mainPackage.constructions.Construction;
 
 public class Population {
@@ -299,7 +298,10 @@ public class Population {
 	public void updateStatistics(){
 		
 		State currentMostFit=this.mostFitState();
-		if(currentMostFit.fitness()>this.bestStateEver.fitness()){
+		
+		if (this.bestStateEver == null){
+			this.bestStateEver=currentMostFit;
+		} else if(currentMostFit.fitness()>this.bestStateEver.fitness()){
 		
 			this.bestStateEver=currentMostFit;
 			this.bestStateIterationNr=this.currentIteration;
@@ -387,5 +389,9 @@ public class Population {
 		
 		this.statesToPair=nr;
 		
+	}
+
+	public int getIteration() {
+		return this.currentIteration;
 	}
 }
