@@ -165,7 +165,7 @@ public class PopulationTest {
 
 		State best, secondBest;
 
-		if (st1.fitness() >= st2.fitness()) {
+		if (st1.fitness(1.0) >= st2.fitness(1.0)) {
 			best = st1;
 			secondBest = st2;
 		} else {
@@ -173,12 +173,12 @@ public class PopulationTest {
 			secondBest = st1;
 		}
 		for (State s : pop.states()) {
-			if (s.fitness() > best.fitness())
+			if (s.fitness(1.0) > best.fitness(1.0))
 				best = s;
 
 		}
 		for (State s : pop.states()) {
-			if (s.fitness() > secondBest.fitness() && s != best)
+			if (s.fitness(1.0) > secondBest.fitness(1.0) && s != best)
 				secondBest = s;
 
 		}
@@ -256,7 +256,7 @@ public class PopulationTest {
 		Population pop = new Population(tiles, constructions, 5, 0.01, 2);
 		State best = pop.mostFitState();
 
-		System.out.println("BEFORE " + best.fitness() + " "
+		System.out.println("BEFORE " + best.fitness(1.0) + " "
 				+ best.visualRepresentation());
 
 		for (int i = 0; i < 100000; i++) {
@@ -266,10 +266,10 @@ public class PopulationTest {
 		}
 
 		State bestAfter = pop.mostFitState();
-		System.out.println("AFTER " + bestAfter.fitness() + " "
+		System.out.println("AFTER " + bestAfter.fitness(1.0) + " "
 				+ bestAfter.visualRepresentation());
 
-		assertTrue(bestAfter.fitness() >= best.fitness());
+		assertTrue(bestAfter.fitness(1.0) >= best.fitness(1.0));
 
 	}
 
@@ -376,9 +376,74 @@ public class PopulationTest {
 	      }
 		
 		
-		assertTrue(p2.mostFitState().fitness()==p.mostFitState().fitness());
+		assertTrue(p2.mostFitState().fitness(1.0)==p.mostFitState().fitness(1.0));
 		assertTrue(p2.states()[0].constructions[0].toCromossome()==p.states()[0].constructions[0].toCromossome());
 		
 	}
 
+	
+	@Test
+	public void moreConstructionsThanTiles(){
+		Construction c1=new Construction("c1");
+		Construction c2=new Construction("c2");
+		Construction c3=new Construction("c3");
+		Construction c4=new Construction("c4");
+		
+		Tile t1=new Tile();
+		Tile t2=new Tile();
+		
+		Population p=new Population(new Tile[]{t1,t2}, new Construction[]{c1,c2,c3,c4},3, 0.01, 2);
+		p.iterate();
+		
+		assertTrue(1==1);//possible to iterate so everything ok
+		
+	}
+	@Test
+	public void moreTilesThanConstructions(){
+		
+		Construction c1=new Construction("c1");
+		Construction c2=new Construction("c2");
+		
+		Tile t1=new Tile();
+		Tile t2=new Tile();
+		Tile t3=new Tile();
+		Tile t4=new Tile();
+		
+		Population p=new Population(new Tile[]{t1,t2,t3,t4}, new Construction[]{c1,c2,},3, 0.01, 2);
+		p.iterate();
+		
+		assertTrue(1==1);//possible to iterate so everything ok
+		
+	}
+	
+	@Test
+	public void testRepetedStatesPenalty(){
+		
+		Construction c1=new Construction("C1");
+		Construction c2=new Construction("C2");
+		Construction c3=new Construction("C3");
+		Construction c4=new Construction("C4");
+		
+		Tile t1=new Tile();
+		Tile t4=new Tile();
+		Tile t3=new Tile();
+		Tile t2=new Tile();
+		
+		State s1=new State(new Construction[]{c1,c2,c3,c4}, new Tile[]{t1,t2,t3,t4});
+		State s2=new State(new Construction[]{c1,c2,c4,c4}, new Tile[]{t1,t2,t3,t4});
+		State s3=new State(new Construction[]{c1,c4,c4,c4}, new Tile[]{t1,t2,t3,t4});
+		State s4=new State(new Construction[]{c1,c1,c4,c4}, new Tile[]{t1,t2,t3,t4});
+		Population p=new Population(new Tile[]{t1,t2,t3,t4}, new Construction[]{c1,c2,c3,c4}, 4, 0.01, 2);
+		p.setStates(new State[]{s1,s2,s3,s4});
+		p.setRepetedConstructionsFactor(0.5);
+		
+		double[] fitnesses=p.fitnessArray();
+		
+		assertEquals(1.0, fitnesses[0],0.00001);
+		assertEquals(0.5, fitnesses[1],0.00001);
+		assertEquals(0.125, fitnesses[2],0.00001);
+		assertEquals(0.25, fitnesses[3],0.00001);
+		
+		
+	}
 }

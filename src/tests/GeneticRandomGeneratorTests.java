@@ -66,7 +66,7 @@ public class GeneticRandomGeneratorTests {
 
 		State[] statesArray = { s1, s2, s3, s4 };
 
-		GeneticRandomGenerator.BubbleSort(statesArray, 1, 0.0);
+		GeneticRandomGenerator.BubbleSort(statesArray, 1, 0.0,1.0);
 
 		assertEquals(statesArray[0], s4);
 
@@ -124,7 +124,7 @@ public class GeneticRandomGeneratorTests {
 
 		State[] statesArray = { s1, s2, s3, s4 };
 
-		GeneticRandomGenerator.BubbleSort(statesArray, 2, 0.0);
+		GeneticRandomGenerator.BubbleSort(statesArray, 2, 0.0,1.0);
 
 		assertEquals(statesArray[0], s4);
 		assertEquals(statesArray[1], s3);
@@ -181,8 +181,9 @@ public class GeneticRandomGeneratorTests {
 
 		State[] statesArray = { s1, s4, s3, s2 };
 
-		GeneticRandomGenerator.BubbleSort(statesArray, 1, 0.0);
+		GeneticRandomGenerator.BubbleSort(statesArray, 1, 0.0,1.0);
 
+		
 		assertEquals(statesArray[0], s4);
 
 	}
@@ -347,7 +348,7 @@ public class GeneticRandomGeneratorTests {
 
 			GeneticRandomGenerator generator = pop.coinTosser;
 			GeneticRandomGenerator.BubbleSort(pop.states(),
-					pop.states().length, 0);
+					pop.states().length, 0,1.0);
 			State bestState = pop.states()[0];
 			State secondBestState = pop.states()[1];
 

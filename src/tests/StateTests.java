@@ -292,9 +292,9 @@ public class StateTests {
 		
 		State s=new State(new Construction[]{c,airport,factory,house},new Tile[]{t1,t2,t3,t4});
 		
-		assertTrue(s.fitness()<=1.0);
+		assertTrue(s.fitness(1.0)<=1.0);
 		double mean=(c.affinityToTileInState(t1, s)+airport.affinityToTileInState(t2, s)+factory.affinityToTileInState(t3, s)+house.affinityToTileInState(t4, s))/4;
-		assertEquals(s.fitness(),mean ,0.0001);
+		assertEquals(s.fitness(1.0),mean ,0.0001);
 		
 		
 		
