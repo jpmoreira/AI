@@ -8,7 +8,6 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -19,12 +18,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import mainPackage.Population;
-import mainPackage.State;
 import mainPackage.Tile;
 import mainPackage.constructions.Construction;
 
@@ -35,8 +32,8 @@ import mainPackage.constructions.Construction;
 public class GUInterface {
 
 
-	/** The generation. */
-	private int generation = 0;
+//	/** The generation. */
+//	private int generation = 0;
 
 	/** The landuses. */
 	Construction[] landuses;
@@ -83,8 +80,8 @@ public class GUInterface {
 	/** The genetic panel. */
 	private JPanel geneticPanel;
 
-	/** The annealing panel. */
-	private JPanel annealingPanel;
+//	/** The annealing panel. */
+//	private JPanel annealingPanel;
 
 	/** The exit panel. */
 	private JPanel exitPanel;
@@ -107,8 +104,8 @@ public class GUInterface {
 	/** The table results panel. */
 	private JPanel tableResultsPanel;
 
-	/** The graph results panel. */
-	private JPanel graphResultsPanel;
+//	/** The graph results panel. */
+//	private JPanel graphResultsPanel;
 
 
 
@@ -159,9 +156,6 @@ public class GUInterface {
 
 	/** The pause btn. */
 	private JButton pauseBtn;
-
-	/** The genetic label. */
-	private JLabel geneticGenLabel;
 
 	/** The annealing label. */
 	private JLabel annealingLabel;
@@ -262,10 +256,8 @@ public class GUInterface {
 	 */
 	private void startNewProblem() {
 
-		//TODO 
-		Construction.resetConstructions();
 
-		generation = 0;
+		Construction.resetConstructions();
 
 		configPopulation();
 
@@ -274,7 +266,7 @@ public class GUInterface {
 		configAdjacencies();
 
 		configLandUses();
-
+		//TODO 
 		configRestrictions();
 
 		configGeneticGenerator();
@@ -385,8 +377,6 @@ public class GUInterface {
 			}
 		}	
 
-//		updateStatusPanel();
-
 	}
 
 	/**
@@ -469,8 +459,6 @@ public class GUInterface {
 			popSize = startDialog.getPopulationSize();
 			pairingStates = popSize/2;
 		}	
-		
-//		updateStatusPanel();
 
 	}
 
@@ -518,7 +506,6 @@ public class GUInterface {
 
 	private void evolution() {
 		population.iterate();
-		generation++;
 
 		updateStatusPanel();
 		centerPanel.repaint();
@@ -660,7 +647,7 @@ public class GUInterface {
 		statusOuputLabel.setVisible(true);
 
 		genStatusOuputLabel = new JLabel("Mutation Probability: ND" +
-				";   Mutation Probability Variatition Factor: ND" +
+				";   Mutation Probability Variation Factor: ND" +
 				";   Diversity Factor: ND" +
 				";   Direct Fitness to Probability: ND" +
 				";   Probability to Rank: ND");
@@ -733,13 +720,13 @@ public class GUInterface {
 
 		if (directFitnessToProb) {
 			genStatusOuputLabel.setText("Mutation Probability: " + mutationProb +
-					";   Mutation Probability Variatition Factor: " + mutationProbVarFac +
+					";   Mutation Probability Variation Factor: " + mutationProbVarFac +
 					";   Diversity Factor: " + diversityUsageFac +
 					";   Direct Fitness to Probability: " + directFitnessToProb +
 					";   Probability to Rank: N/A");
 		} else {
 			genStatusOuputLabel.setText("Mutation Probability: " + mutationProb +
-					";   Mutation Probability Variatition Factor: " + mutationProbVarFac +
+					";   Mutation Probability Variation Factor: " + mutationProbVarFac +
 					";   Diversity Factor: " + diversityUsageFac +
 					";   Direct Fitness to Probability: " + directFitnessToProb +
 					";   Probability to Rank: " + probToRank);
@@ -779,22 +766,22 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent arg0) {
 
 			//evolutionRate = TODO getTimerRate(); 
-//			evolutionCount = -1;
-//			
-//			evolutionTimer.start();
+			evolutionCount = -1;
 			
-			pause = false;
-
-			Thread evolutionThread = new Thread() {
-				public void run(){
-					while (!pause){
-						evolution();
-					}
-					
-				}
-				
-			};
-			evolutionThread.start();
+			evolutionTimer.start();
+			
+//			pause = false;
+//
+//			Thread evolutionThread = new Thread() {
+//				public void run(){
+//					while (!pause){
+//						evolution();
+//					}
+//					
+//				}
+//				
+//			};
+//			evolutionThread.start();
 
 		}
 
@@ -823,13 +810,13 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-//			evolutionCount = 0;
-//
-//			evolutionTimer.stop();
-			
-			pause = true;
+			evolutionCount = 0;
 
-			centerPanel.repaint();
+			evolutionTimer.stop();
+			
+//			pause = true;
+//
+//			centerPanel.repaint();
 		}
 
 	}
@@ -899,23 +886,23 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-//			evolutionCount = 100;
-//			evolutionTimer.start();
+			evolutionCount = 100;
+			evolutionTimer.start();
 
-			pause = false;
-			
-			Thread evolutionThread = new Thread() {
-				public void run(){
-					int ite = 0;
-					while (ite<100 && !pause){
-						evolution();
-						ite++;
-					}
-					
-				}
-				
-			};
-			evolutionThread.start();
+//			pause = false;
+//			
+//			Thread evolutionThread = new Thread() {
+//				public void run(){
+//					int ite = 0;
+//					while (ite<100 && !pause){
+//						evolution();
+//						ite++;
+//					}
+//					
+//				}
+//				
+//			};
+//			evolutionThread.start();
 
 		}
 
@@ -985,16 +972,16 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-//			evolutionCount = 1;
-//			evolutionTimer.start();
+			evolutionCount = 1;
+			evolutionTimer.start();
 			
-			Thread evolutionThread = new Thread() {
-				public void run(){
-					evolution();
-				}
-				
-			};
-			evolutionThread.start();
+//			Thread evolutionThread = new Thread() {
+//				public void run(){
+//					evolution();
+//				}
+//				
+//			};
+//			evolutionThread.start();
 
 		}
 
