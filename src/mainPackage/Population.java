@@ -438,4 +438,9 @@ public class Population implements Serializable{
 	public int getIteration() {
 		return this.currentIteration;
 	}
+
+	public Construction[] getLandUses() {
+		return this.constructions;
+	}
+
 }

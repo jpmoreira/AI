@@ -481,6 +481,29 @@ public class GeneticRandomGenerator implements Serializable{
 		this.diversityUsageFactor = usageFactor;
 	}
 
+	public double getMutationProb() {
+
+		return mutationProbability;
+	}
+
+	public double getMutationProbVarFac() {
+
+		return mutationProbVarFactor;
+	}
+
+	public double getDiversityUsageFac() {
+	
+		return diversityUsageFactor;
+	}
+
+	public boolean getDirectFitnessToProb() {
+		return directFitnessToProbability;
+	}
+
+	public double getProbToRank() {
+		return probToRankFactor;
+	}
+
 
 
 }

@@ -714,22 +714,22 @@ public class GUInterface {
 
 		statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
 				";   Nr. of Landuses: " + landuses.length +
-				";   Population Size: " + popSize +
-				";   Nr of Pairing states: " + pairingStates +
+				";   Population Size: " + population.populationSize() +
+				";   Nr of Pairing states: " + population.statesToPair() +
 				";   Generation Nr: " + population.getIteration());
 
 		if (directFitnessToProb) {
-			genStatusOuputLabel.setText("Mutation Probability: " + mutationProb +
-					";   Mutation Probability Variation Factor: " + mutationProbVarFac +
-					";   Diversity Factor: " + diversityUsageFac +
-					";   Direct Fitness to Probability: " + directFitnessToProb +
+			genStatusOuputLabel.setText("Mutation Probability: " + population.coinTosser.getMutationProb() +
+					";   Mutation Probability Variation Factor: " + population.coinTosser.getMutationProbVarFac() +
+					";   Diversity Factor: " + population.coinTosser.getDiversityUsageFac() +
+					";   Direct Fitness to Probability: " + population.coinTosser.getDirectFitnessToProb() +
 					";   Probability to Rank: N/A");
 		} else {
 			genStatusOuputLabel.setText("Mutation Probability: " + mutationProb +
 					";   Mutation Probability Variation Factor: " + mutationProbVarFac +
-					";   Diversity Factor: " + diversityUsageFac +
-					";   Direct Fitness to Probability: " + directFitnessToProb +
-					";   Probability to Rank: " + probToRank);
+					";   Diversity Factor: " + population.coinTosser.getDiversityUsageFac() +
+					";   Direct Fitness to Probability: " + population.coinTosser.getDirectFitnessToProb() +
+					";   Probability to Rank: " + population.coinTosser.getProbToRank());
 		}
 
 	}
@@ -1032,42 +1032,19 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
-/*			// JDialog - SAVE/LOAD GAME
-			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem");
+			// JDialog - SAVE/LOAD GAME
+			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem",population);
 
 			if(saveLoadDialog.problemSaved())
 			{
-				try
-				{
-					mazePanel.getProblem().saveProblem(saveLoadDialog.getFilePath());
-					JOptionPane.showMessageDialog(frame,"Problem saved.");
-				}
-				catch (IOException i)
-				{
-					JOptionPane.showMessageDialog(frame,"Error writing the file.");
-				}		
+					JOptionPane.showMessageDialog(frame,"Problem saved.");	
 			} 
 			else if (saveLoadDialog.problemLoaded())
 			{
-				String newProblemMsg = "Load Problem?";
-				int reply = JOptionPane.showConfirmDialog(frame,newProblemMsg,"Load Problem",JOptionPane.YES_NO_OPTION);
-
-				if(reply == JOptionPane.YES_OPTION)
-				{
-					try
-					{
-						mazePanel.loadProblem(saveLoadDialog.getFilePath());
-					}
-					catch (IOException i )
-					{
-						JOptionPane.showMessageDialog(frame,"File not found.");
-					}
-					catch (ClassNotFoundException i)
-					{
-						JOptionPane.showMessageDialog(frame,"File not supported.");
-					}
-				}
-				else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}	
+				population = saveLoadDialog.getTempPopulation();
+				tiles = population.tiles();
+				landuses = population.getLandUses();
+				
 			}
 
 			saveLoadDialog.setSaveProblem(false);
@@ -1077,7 +1054,7 @@ public class GUInterface {
 			
 			centerPanel.repaint();
 			//mazePanel.requestFocusInWindow();
-*/
+
 		}
 
 	}

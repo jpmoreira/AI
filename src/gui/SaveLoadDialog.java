@@ -5,13 +5,21 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import mainPackage.Population;
 
 public class SaveLoadDialog extends JDialog{
 
@@ -20,10 +28,7 @@ public class SaveLoadDialog extends JDialog{
 	
 	/** The load problem. */
 	private boolean loadProblem = false;
-
-	/** The path. */
-	private String path;
-
+	
 	/** The text panel. */
 	private JPanel textPanel;
 	
@@ -51,6 +56,11 @@ public class SaveLoadDialog extends JDialog{
 	/** The cancel button. */
 	private JButton cancelButton;
 
+	private Population tempPopulation;
+	
+	private JFrame frame;
+
+	
 	
 	/**
 	 * Instantiates a new save load dialog.
@@ -58,13 +68,17 @@ public class SaveLoadDialog extends JDialog{
 	 * @param frame the frame
 	 * @param modal the modal
 	 * @param myMessage the my message
+	 * @param population 
 	 */
-	public SaveLoadDialog(JFrame frame, boolean modal, String myMessage)
+	public SaveLoadDialog(JFrame frame, boolean modal, String myMessage, Population population)
 	{
 
 		super(frame,modal);
 		getContentPane().setLayout(new GridLayout(3,1,5,5));
 
+		this.frame = frame;
+		this.tempPopulation = population;
+		
 		createWidgets();
 		addWidgets(getContentPane());
 
@@ -124,6 +138,9 @@ public class SaveLoadDialog extends JDialog{
 		// Button - Save Problem
 		saveButton = new JButton("Save Problem");
 		saveButton.addActionListener(new SaveProblemListener());
+		if (tempPopulation==null){
+			saveButton.setEnabled(false);
+		}
 
 		// Button - Load Problem
 		loadButton = new JButton("Load Problem");
@@ -143,16 +160,6 @@ public class SaveLoadDialog extends JDialog{
 	 */
 	public boolean problemSaved() {
 		return saveProblem;
-	}
-	
-
-	/**
-	 * Gets the file path.
-	 *
-	 * @return the file path
-	 */
-	public String getFilePath() {
-		return path;
 	}
 	
 
@@ -191,7 +198,9 @@ public class SaveLoadDialog extends JDialog{
 			String name = pathInputField.getText();
 			name.concat(".dat");
 
-			path = "./saved_problems/" + name;
+			String path = "./saved_problems/" + name;
+			
+			loadProblem(path);
 
 			setVisible(false);
 
@@ -225,7 +234,9 @@ public class SaveLoadDialog extends JDialog{
 			String name = pathInputField.getText();
 			name.concat(".dat");
 
-			path = "./saved_problems/" + name;
+			String path = "./saved_problems/" + name;
+			
+			saveProblem(path);
 
 			setVisible(false);
 
@@ -256,34 +267,99 @@ public class SaveLoadDialog extends JDialog{
 
 			saveProblem = false;
 			loadProblem = false;
-			path = null;
 
 			setVisible(false);
 
 		}
 
 	}
-	
 
-	/**
-	 * Sets the save problem.
-	 *
-	 * @param b the new save problem
-	 */
-	public void setSaveProblem(boolean b) {
-		saveProblem = b;
+	
+	public void saveProblem(String path) {
+		String newProblemMsg = "Save Problem?";
+		int reply = JOptionPane.showConfirmDialog(frame,newProblemMsg,"Save Problem",JOptionPane.YES_NO_OPTION);
+
+		if(reply == JOptionPane.YES_OPTION)
+		{
+			try
+			{
+				
+				FileOutputStream fileOut = new FileOutputStream(path);
+				ObjectOutputStream os = new ObjectOutputStream(fileOut);
+
+				/* Write the game in a file */
+				os.writeObject(tempPopulation);
+
+				fileOut.close();
+				os.close();
+
+			}
+			catch (IOException i )
+			{
+				JOptionPane.showMessageDialog(frame,"Error writing the file.");
+			}
+		}
+		else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
+		
 		
 	}
 
-	
-	/**
-	 * Sets the load problem.
-	 *
-	 * @param b the new load problem
-	 */
-	public void setLoadProblem(boolean b) {
-		loadProblem = b;
+
+	public void loadProblem(String path2) {
 		
+		String newProblemMsg = "Load Problem?";
+		int reply = JOptionPane.showConfirmDialog(frame,newProblemMsg,"Load Problem",JOptionPane.YES_NO_OPTION);
+
+		if(reply == JOptionPane.YES_OPTION)
+		{
+			try
+			{
+				
+				FileInputStream fileIn = new FileInputStream(path2);
+				ObjectInputStream is = new ObjectInputStream(fileIn);
+
+				/* load the saved game in the file to the object tempGame */
+				setTempPopulation((Population) is.readObject());
+
+				is.close();
+				fileIn.close();
+				
+				loadProblem = true;
+
+
+			}
+			catch (IOException i )
+			{
+				JOptionPane.showMessageDialog(frame,"File not found.");
+			}
+			catch (ClassNotFoundException i)
+			{
+				JOptionPane.showMessageDialog(frame,"File not supported.");
+			}
+		}
+		else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
+
+	}
+
+
+	public void setSaveProblem(boolean b) {
+		this.saveProblem = b;
+	}
+
+
+	public void setLoadProblem(boolean b) {
+		this.loadProblem = b;
+		
+	}
+
+
+	public Population getTempPopulation() {
+		return tempPopulation;
+	}
+
+
+	public void setTempPopulation(Population tempPopulation) {
+		this.tempPopulation = tempPopulation;
 	}
 
 }
