@@ -1,6 +1,9 @@
 package mainPackage;
 
-public class DefaultRandomGenerator implements RandomNrGenerator{
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class DefaultRandomGenerator implements RandomNrGenerator,Serializable{
 
 	@Override
 	public double nextRandomNr() {

@@ -3,8 +3,10 @@ package tests;
 //TEST more tiles that constructions and more constructions than tiles
 import static org.junit.Assert.*;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
@@ -326,6 +328,7 @@ public class PopulationTest {
 
 	}
 
+	@Test
 	public void serializePopulation(){
 		
 		Tile t1=new Tile();
@@ -336,23 +339,45 @@ public class PopulationTest {
 		Construction c2=new Construction("C2");
 		Construction c3=new Construction("C3");
 		
-		Population p=new Population(new Tile[]{t1,t2,t3}, new Construction[]{c1,c2,c3}, 2, 0.01, 1);
+		Population p=new Population(new Tile[]{t1,t2,t3}, new Construction[]{c1,c2,c3}, 2, 0.01, 2);
+		
+		p.iterate();
 		
 		try
 	      {
 	         FileOutputStream fileOut =
-	         new FileOutputStream("/popTest.ser");
+	         new FileOutputStream("popTest.ser");
 	         ObjectOutputStream out = new ObjectOutputStream(fileOut);
 	         out.writeObject(p);
 	         out.close();
 	         fileOut.close();
-	         System.out.printf("Serialized data is saved in /tmp/employee.ser");
 	      }catch(IOException i)
 	      {
 	          i.printStackTrace();
 	          fail("Exception Thrown");
 	      }
-		assertTrue(1==1);
+		
+		Population p2=null;
+		try
+	      {
+	         FileInputStream fileIn = new FileInputStream("popTest.ser");
+	         ObjectInputStream in = new ObjectInputStream(fileIn);
+	         p2 = (Population) in.readObject();
+	         in.close();
+	         fileIn.close();
+	      }catch(IOException i)
+	      {
+	         i.printStackTrace();
+	         fail("Exception Thrown");
+	      }catch(ClassNotFoundException c)
+	      {
+	         c.printStackTrace();
+	         fail("Exception Thrown");
+	      }
+		
+		
+		assertTrue(p2.mostFitState().fitness()==p.mostFitState().fitness());
+		assertTrue(p2.states()[0].constructions[0].toCromossome()==p.states()[0].constructions[0].toCromossome());
 		
 	}
 

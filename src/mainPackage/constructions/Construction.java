@@ -1,14 +1,11 @@
 package mainPackage.constructions;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-import sun.security.util.PendingException;
-import mainPackage.ConstantManager;
 import mainPackage.State;
 import mainPackage.Tile;
 import mainPackage.Tile.SoilType;
-import Exceptions.ConstructionException;
-import Exceptions.ConstructionException.ConstructionExeptionCode;
 
 /**
  * 
@@ -16,7 +13,8 @@ import Exceptions.ConstructionException.ConstructionExeptionCode;
  * subclassed
  * 
  * */
-public class Construction {
+@SuppressWarnings("serial")
+public class Construction implements Serializable{
 
 	/**
 	 * the name of the construction

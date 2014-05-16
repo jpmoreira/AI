@@ -1,5 +1,6 @@
 package mainPackage;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -10,7 +11,8 @@ import java.util.ArrayList;
  * A class that represents a given Tile and all its properties
  * 
  * */
-public class Tile {
+@SuppressWarnings("serial")
+public class Tile implements Serializable{
 
 	/**
 	 * 

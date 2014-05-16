@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import mainPackage.constructions.Construction;
 
+@SuppressWarnings("serial")
 public class Population implements Serializable{
 
 	/**

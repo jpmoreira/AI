@@ -1,14 +1,16 @@
 package mainPackage;
+import java.io.Serializable;
+
 import mainPackage.Tile;
 import mainPackage.constructions.Construction;
-import mainPackage.ConstantManager;
 /**
  * 
  * A class that represents a given State in the resolution process
  * 
  * 
  * */
-public class State {
+@SuppressWarnings("serial")
+public class State implements Serializable{
 	
 	
 	/**

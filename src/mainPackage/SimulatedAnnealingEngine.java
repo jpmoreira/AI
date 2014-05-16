@@ -1,6 +1,9 @@
 package mainPackage;
 
-public class SimulatedAnnealingEngine {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class SimulatedAnnealingEngine implements Serializable{
 	
 	
 	double currentTemperature=0;

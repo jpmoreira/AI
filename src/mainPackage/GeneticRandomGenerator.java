@@ -1,14 +1,13 @@
 package mainPackage;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import com.sun.tools.javac.code.Attribute.Array;
 
 import mainPackage.State;
 import mainPackage.constructions.Construction;
 
-public class GeneticRandomGenerator {
+@SuppressWarnings("serial")
+public class GeneticRandomGenerator implements Serializable{
 
 	/**
 	 * the lower bound for all the probability to rank algorithm sub intervals.
@@ -125,8 +124,6 @@ public class GeneticRandomGenerator {
 		ArrayList<State> statesForReproduction = new ArrayList<State>();
 
 		double randomNumber;
-		double lowerBound = 0;
-		double upperBound = (1.0 - this.probToRankFactor);
 		State[] states = this.population.states();
 
 		while (statesForReproduction.size() < this.population.statesToPair()) {

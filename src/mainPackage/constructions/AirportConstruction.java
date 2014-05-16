@@ -1,8 +1,6 @@
 package mainPackage.constructions;
 
-import mainPackage.State;
-import mainPackage.Tile;
-
+@SuppressWarnings("serial")
 public class AirportConstruction extends Construction {
 
 	/**

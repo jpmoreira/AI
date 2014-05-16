@@ -1,8 +1,5 @@
 package mainPackage.constructions;
 
-import Exceptions.ConstructionException;
-import mainPackage.State;
-import mainPackage.Tile;
 import mainPackage.Tile.SoilType;
 
 /**
@@ -11,6 +8,7 @@ import mainPackage.Tile.SoilType;
  * 
  * 
  */
+@SuppressWarnings("serial")
 public class HouseConstruction extends Construction {
 
 	
