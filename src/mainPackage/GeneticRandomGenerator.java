@@ -174,7 +174,7 @@ public class GeneticRandomGenerator {
 			randomNumber = gen.nextRandomNr();
 			currentState = this.population.states()[stateIndex];
 			probForReproduction = currentState.fitness() / overallFitness;
-			if (randomNumber <= probForReproduction)
+			if (randomNumber <= probForReproduction)//FIXME here its not working for fitness of the state being 0
 				statesForReproduction.add(currentState);
 
 			stateIndex++;

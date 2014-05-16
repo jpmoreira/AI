@@ -1,10 +1,10 @@
 package mainPackage;
+import java.io.Serializable;
 import java.util.ArrayList;
-
 
 import mainPackage.constructions.Construction;
 
-public class Population {
+public class Population implements Serializable{
 
 	/**
 	 * 
@@ -74,7 +74,7 @@ public class Population {
 		return this.states;
 	}
 	
-	
+
 	
 	
 	public Tile[] tiles(){
@@ -143,10 +143,17 @@ public class Population {
 	 */
 	Construction[] generateRandomConstructionArray(int size){
 		
+		
+		int upperBound=size;
+		if(constructions.length>size)upperBound=constructions.length;
+		
 		Construction[] constructionsToReturn=new Construction[size];
 		for(int i=0;i<size;i++){
-			int constructionNr= (int)(Math.random()*(constructions.length));
-			constructionsToReturn[i]=constructions[constructionNr];
+			int constructionNr= (int)(Math.random()*(upperBound));//generate a number that is between zero and the biggest number between the number of tiles and constructions
+			
+			if(constructions.length<=constructionNr) constructionsToReturn[i]=Construction.nullConstruction();//if was generated a construction that doesn't exist place a null construction then
+			else constructionsToReturn[i]=constructions[constructionNr];//else use a real construction
+			
 		}
 		return constructionsToReturn;
 		

@@ -1,7 +1,11 @@
 package tests;
 
+//TEST more tiles that constructions and more constructions than tiles
 import static org.junit.Assert.*;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import mainPackage.Population;
@@ -322,5 +326,34 @@ public class PopulationTest {
 
 	}
 
+	public void serializePopulation(){
+		
+		Tile t1=new Tile();
+		Tile t2=new Tile();
+		Tile t3=new Tile();
+		
+		Construction c1=new Construction("C1");
+		Construction c2=new Construction("C2");
+		Construction c3=new Construction("C3");
+		
+		Population p=new Population(new Tile[]{t1,t2,t3}, new Construction[]{c1,c2,c3}, 2, 0.01, 1);
+		
+		try
+	      {
+	         FileOutputStream fileOut =
+	         new FileOutputStream("/popTest.ser");
+	         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+	         out.writeObject(p);
+	         out.close();
+	         fileOut.close();
+	         System.out.printf("Serialized data is saved in /tmp/employee.ser");
+	      }catch(IOException i)
+	      {
+	          i.printStackTrace();
+	          fail("Exception Thrown");
+	      }
+		assertTrue(1==1);
+		
+	}
 
 }

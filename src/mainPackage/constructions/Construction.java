@@ -38,7 +38,7 @@ public class Construction {
 	 * 
 	 * @return a construction representing an empty construction
 	 */
-	private static Construction nullConstruction() {
+	public static Construction nullConstruction() {
 
 		if (nullConstruction == null) {
 
@@ -327,7 +327,7 @@ public class Construction {
 
 		currentAffinity-=this.allDefaultPenalties(tile, state);
 		
-		if(currentAffinity<0.0)currentAffinity=0.0;
+		if(currentAffinity<=0.0)currentAffinity=Float.MIN_VALUE;
 					
 
 		return currentAffinity;
