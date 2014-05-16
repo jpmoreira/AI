@@ -8,15 +8,19 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import mainPackage.Population;
@@ -30,24 +34,42 @@ import mainPackage.constructions.Construction;
  */
 public class GUInterface {
 
+
+	/** The generation. */
 	private int generation = 0;
 
+	/** The landuses. */
 	Construction[] landuses;
 
+	/** The tiles. */
 	private Tile[] tiles;
 
+	/** The population. */
 	private Population population;
 
+	/** The pop size. */
 	private int popSize;
 
+	/** The pause. */
 	boolean pause = false;
 
 	/* Genetic Generator Settings */
+	/** The mutation prob. */
 	private double mutationProb = 0.75;
+	
+	/** The mutation prob var fac. */
 	private double mutationProbVarFac = 1.0;
+	
+	/** The prob to rank. */
 	private double probToRank = 0.5;
+	
+	/** The diversity usage fac. */
 	private double diversityUsageFac = 0;
+	
+	/** The direct fitness to prob. */
 	private boolean directFitnessToProb = true;
+	
+	/** The pairing states. */
 	private int pairingStates;
 
 
@@ -73,10 +95,10 @@ public class GUInterface {
 	/** The center panel. */
 	private JPanel centerPanel;
 
-	/** The population status output */
+	/**  The population status output. */
 	private JLabel statusOuputLabel;
 
-	/** The generator status output */
+	/**  The generator status output. */
 	private JLabel genStatusOuputLabel;
 
 	/** The run panel. */
@@ -90,7 +112,7 @@ public class GUInterface {
 
 
 
-	/** Genetic Algorithm Label */
+	/**  Genetic Algorithm Label. */
 	private JLabel geneticLabel;
 
 	/** The pop settings button. */
@@ -103,13 +125,16 @@ public class GUInterface {
 	private JButton landuseSettingButton;
 
 	/** The state setting button. */
-	private JButton stateSettingButton;
+	private JButton restrictionsButton;
 
-	/** The genetic generator setting button*/
+	/**  The genetic generator setting button. */
 	private JButton geneticButton;
 
 	/** The new problem button. */
 	private JButton newProblemButton;
+	
+	private JButton saveProblemButton;
+
 
 	/** The exit button. */
 	private JButton exitButton;
@@ -152,17 +177,30 @@ public class GUInterface {
 	/** The site dialog. */
 	private TileDialog siteDialog;
 	
-	/** The Tiles Adjacenties Dialog */
+	/**  The Tiles Adjacenties Dialog. */
 	private AdjacenciesDialog adjacenciesDialog;
 
 	/** The state dialog. */
-	private StateDialog stateDialog;
+	private RestrictionsDialog restrictionsDialog;
 
+	/** The start dialog. */
 	private StartDialog startDialog;
 
+	/** The genetic generator dialog. */
 	private GeneticGeneratorDialog geneticGeneratorDialog;
 
+	/** The save and load dialog */
+	private SaveLoadDialog saveLoadDialog;
 
+
+
+	/** Timer */
+	private Timer evolutionTimer;
+	
+	/** Timer rate */
+	private int evolutionRate = 1;
+
+	protected int evolutionCount = 0;
 
 
 
@@ -210,6 +248,8 @@ public class GUInterface {
 
 		frame.pack();
 		frame.setVisible(true);	
+		
+		evolutionTimer = new Timer(evolutionRate, evolutionListener);
 
 	}
 
@@ -217,6 +257,9 @@ public class GUInterface {
 
 
 
+	/**
+	 * Start new problem.
+	 */
 	private void startNewProblem() {
 
 		//TODO 
@@ -246,6 +289,8 @@ public class GUInterface {
 		} else {
 			population.coinTosser.enableFitnessToRank(probToRank);
 		}
+		
+		updateStatusPanel();
 
 	}
 
@@ -253,11 +298,35 @@ public class GUInterface {
 
 
 
+	/**
+	 * Config restrictions.
+	 */
 	private void configRestrictions() {
-		// TODO Auto-generated method stub
+		
+		int id = 0;
+		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);
+
+		
+		landuses[id] = restrictionsDialog.getTempLanduse();
+		id = restrictionsDialog.getLanduseID();
+
+		while (!restrictionsDialog.isFinished() && !restrictionsDialog.isCanceled()){
+
+			restrictionsDialog = new RestrictionsDialog(frame, true, "Landuse Settings", landuses, id);
+			if (!restrictionsDialog.isCanceled()){
+				landuses[id] = restrictionsDialog.getTempLanduse();
+				id = restrictionsDialog.getLanduseID();
+			} else {
+				break;
+			}
+
+		}
 
 	}
 
+	/**
+	 * Config adjacencies.
+	 */
 	private void configAdjacencies() {
 	
 		int id = 0;
@@ -294,6 +363,9 @@ public class GUInterface {
 
 	}
 
+	/**
+	 * Config genetic generator.
+	 */
 	private void configGeneticGenerator() {
 
 		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", popSize/2, pairingStates, mutationProb, mutationProbVarFac, diversityUsageFac, directFitnessToProb, probToRank);
@@ -313,10 +385,13 @@ public class GUInterface {
 			}
 		}	
 
-		updateStatusPanel();
+//		updateStatusPanel();
 
 	}
 
+	/**
+	 * Config land uses.
+	 */
 	private void configLandUses() {
 
 		int id = 0;
@@ -325,12 +400,22 @@ public class GUInterface {
 		landuses[id] = landuseDialog.getTempLanduse();
 		id = landuseDialog.getLanduseID();
 
+//		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);		
+//		landuses[id] = restrictionsDialog.getTempLanduse();
+		id = landuseDialog.getLanduseID();
+		
+		
 		while (!landuseDialog.isFinished() && !landuseDialog.isCanceled()){
 
 			landuseDialog = new LanduseDialog(frame, true, "Landuse Settings", landuses, id);
 			if (!landuseDialog.isCanceled()){
 				landuses[id] = landuseDialog.getTempLanduse();
 				id = landuseDialog.getLanduseID();
+				
+//				restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);		
+//				landuses[id] = restrictionsDialog.getTempLanduse();
+				id = landuseDialog.getLanduseID();
+				
 			} else {
 				break;
 			}
@@ -339,6 +424,9 @@ public class GUInterface {
 
 	}
 
+	/**
+	 * Config sites.
+	 */
 	private void configSites() {
 
 		int id = 0;
@@ -362,6 +450,9 @@ public class GUInterface {
 
 	}
 
+	/**
+	 * Config population.
+	 */
 	private void configPopulation() {
 		startDialog = new StartDialog(frame, true, "New Problem");
 
@@ -375,30 +466,28 @@ public class GUInterface {
 			
 			landuses = new Construction[startDialog.getLandUseNumber()];
 			
-			for (int i = 0; i < startDialog.getLandUseNumber();i++){
-				Construction tempConstruction = new Construction("NULL") {
-					
-					@Override
-					public double affinityToTileInState(Tile tile, State state) {
-						// TODO Auto-generated method stub
-						return 0;
-					}
-				};
-				landuses[i] = tempConstruction;
-			}
-			
 			popSize = startDialog.getPopulationSize();
 			pairingStates = popSize/2;
 		}	
 		
-		updateStatusPanel();
+//		updateStatusPanel();
 
 	}
 
+	/**
+	 * Gets the population.
+	 *
+	 * @return the population
+	 */
 	public Population getPopulation() {
 		return population;
 	}
 
+	/**
+	 * Sets the population.
+	 *
+	 * @param population the new population
+	 */
 	public void setPopulation(Population population) {
 		this.population = population;
 	}
@@ -408,16 +497,49 @@ public class GUInterface {
 
 
 
+	/**
+	 * Gets the tiles.
+	 *
+	 * @return the tiles
+	 */
 	public Tile[] getTiles() {
 		return tiles;
 	}
 
+	/**
+	 * Sets the tiles.
+	 *
+	 * @param tiles the new tiles
+	 */
 	public void setTiles(Tile[] tiles) {
 		this.tiles = tiles;
 	}
 
 
+	private void evolution() {
+		population.iterate();
+		generation++;
 
+		updateStatusPanel();
+		centerPanel.repaint();
+	}
+	
+	ActionListener evolutionListener = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			if (evolutionCount == 0) {
+				evolutionTimer.stop();
+			} else {
+				evolutionCount--;
+				evolution();
+			}	
+			
+		}		
+	};
+	
+	
 	/**
 	 * Adds the widgets.
 	 *
@@ -426,25 +548,32 @@ public class GUInterface {
 	private void addWidgets(Container contentPane) {
 
 		geneticPanel.add(geneticLabel);
-		//geneticPanel.add(stateSettingButton);
 		geneticPanel.add(sitesSettingsButton);
 		geneticPanel.add(adjacenciesButton);
 		geneticPanel.add(landuseSettingButton);
+		geneticPanel.add(restrictionsButton);
 		geneticPanel.add(geneticButton);
-		leftPanel.add(geneticPanel,BorderLayout.NORTH);
+		//leftPanel.add(geneticPanel,BorderLayout.NORTH);
 
-		annealingPanel.add(annealingLabel);
-		annealingPanel.add(new JLabel(""));
-		annealingPanel.add(new JLabel(""));
-		annealingPanel.add(new JLabel(""));
-		annealingPanel.add(new JLabel(""));
-		annealingLabel.add(Box.createVerticalStrut(100));
-		leftPanel.add(annealingPanel,BorderLayout.CENTER);
+		geneticPanel.add(annealingLabel);
+		geneticPanel.add(new JLabel(""));
+		geneticPanel.add(new JLabel(""));
+		
+		//annealingPanel.add(annealingLabel);
+		//annealingPanel.add(new JLabel(""));
+		//annealingPanel.add(new JLabel(""));
+		//annealingLabel.add(Box.createVerticalStrut(100));
+		//leftPanel.add(annealingPanel,BorderLayout.CENTER);
 
 		exitPanel.add(newProblemButton);
+		exitPanel.add(saveProblemButton);
 		exitPanel.add(exitButton);
-		leftPanel.add(exitPanel,BorderLayout.SOUTH);
+		//leftPanel.add(exitPanel,BorderLayout.SOUTH);
 
+		leftPanel.add(geneticPanel);
+		//leftPanel.add(annealingPanel);
+		leftPanel.add(Box.createVerticalStrut(125));
+		leftPanel.add(exitPanel);
 		contentPane.add(leftPanel,BorderLayout.WEST);
 
 		topPanel.add(statusOuputLabel,BorderLayout.NORTH);
@@ -477,24 +606,24 @@ public class GUInterface {
 
 		/* Left Panel and Elements */
 		leftPanel = new JPanel();
-		leftPanel.setLayout(new BorderLayout(5, 5));
+		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 		//leftPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		leftPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		leftPanel.setMaximumSize(new Dimension(175, 735));
 
 		/* Genetic Algorithm Panel */
 		geneticPanel = new JPanel();
-		geneticPanel.setLayout(new GridLayout(5,1,1,1));
+		geneticPanel.setLayout(new GridLayout(9,1));
 		//		geneticPanel.setLayout(new BoxLayout(geneticPanel,BoxLayout.Y_AXIS));
 
 		geneticLabel = new JLabel("Genetic Algorithms");
 		geneticLabel.setHorizontalAlignment(JLabel.CENTER);
 		geneticLabel.setVerticalAlignment(JLabel.CENTER);
 		geneticPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		/*
-		stateSettingButton = new JButton("<html><center>State<br>Settings</center></html>");
-		stateSettingButton.addActionListener(new StateSettingsListener());
-*/
+
+		restrictionsButton = new JButton("<html><center>LandUses<br>Restrictions</center></html>");
+		restrictionsButton.addActionListener(new LandUseRestrictionsListener());
+
 		adjacenciesButton = new JButton("<html><center>Adjacencies<br>Settings</center></html>");
 		adjacenciesButton.addActionListener(new AdjacenciesSettingsListener());
 		 
@@ -508,10 +637,10 @@ public class GUInterface {
 		geneticButton.addActionListener(new GeneticListener());
 
 		/* Simulated Annealing Panel */
-		annealingPanel = new JPanel();
-		annealingPanel.setLayout(new GridLayout(6,1,2,2));
-		annealingPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		annealingPanel.setMaximumSize(new Dimension (175,250));
+		//annealingPanel = new JPanel();
+		//annealingPanel.setLayout(new GridLayout(3,1));
+		//annealingPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		//annealingPanel.setMaximumSize(new Dimension (175,250));
 
 		annealingLabel = new JLabel("Simulated Annealing");
 		annealingLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -574,11 +703,16 @@ public class GUInterface {
 		/* Exit Panel */
 
 		exitPanel = new JPanel();
-		exitPanel.setLayout(new GridLayout(2,1,5,5));
+		exitPanel.setLayout(new GridLayout(3,1));
 		exitPanel.setBorder(new EmptyBorder(5,5,5,5));
+		
 
 		newProblemButton = new JButton("New Problem");
 		newProblemButton.addActionListener(new NewProblemListener());
+		
+		saveProblemButton = new JButton("<html><center>Save/Load<br>Problem</center></html>");
+		saveProblemButton.addActionListener(new SaveLoadProblemListener());
+
 
 		exitButton = new JButton("Exit");
 		exitButton.addActionListener(new ExitListener());
@@ -586,13 +720,16 @@ public class GUInterface {
 	}
 
 
+	/**
+	 * Update status panel.
+	 */
 	private void updateStatusPanel() {
 
 		statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
 				";   Nr. of Landuses: " + landuses.length +
 				";   Population Size: " + popSize +
 				";   Nr of Pairing states: " + pairingStates +
-				";   Generation Nr: " + generation);
+				";   Generation Nr: " + population.getIteration());
 
 		if (directFitnessToProb) {
 			genStatusOuputLabel.setText("Mutation Probability: " + mutationProb +
@@ -609,6 +746,13 @@ public class GUInterface {
 		}
 
 	}
+
+
+
+
+
+
+
 
 
 
@@ -634,16 +778,23 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 
+			//evolutionRate = TODO getTimerRate(); 
+//			evolutionCount = -1;
+//			
+//			evolutionTimer.start();
+			
 			pause = false;
 
-			while (!pause){
-				population.iterate();
-				generation++;
+			Thread evolutionThread = new Thread() {
+				public void run(){
+					while (!pause){
+						evolution();
+					}
+					
+				}
 				
-				updateStatusPanel();
-				centerPanel.repaint();
-				
-			}
+			};
+			evolutionThread.start();
 
 		}
 
@@ -671,6 +822,11 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+//			evolutionCount = 0;
+//
+//			evolutionTimer.stop();
+			
 			pause = true;
 
 			centerPanel.repaint();
@@ -699,14 +855,24 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int ite = 0;
 
-			while (ite<1000 || !pause){
-				population.iterate();
-				generation++;	
-
-				centerPanel.repaint();
-			}
+			evolutionCount = 1000;
+			evolutionTimer.start();
+			
+//			pause = false;
+//			
+//			Thread evolutionThread = new Thread() {
+//				public void run(){
+//					int ite = 0;
+//					while (ite<1000 && !pause){
+//						evolution();
+//						ite++;
+//					}
+//					
+//				}
+//				
+//			};
+//			evolutionThread.start();
 
 		}
 
@@ -732,14 +898,24 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int ite = 0;
+			
+//			evolutionCount = 100;
+//			evolutionTimer.start();
 
-			while (ite<100 || !pause){
-				population.iterate();
-				generation++;
-
-				centerPanel.repaint();
-			}
+			pause = false;
+			
+			Thread evolutionThread = new Thread() {
+				public void run(){
+					int ite = 0;
+					while (ite<100 && !pause){
+						evolution();
+						ite++;
+					}
+					
+				}
+				
+			};
+			evolutionThread.start();
 
 		}
 
@@ -765,14 +941,24 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int ite = 0;
-
-			while (ite<10 || !pause){
-				population.iterate();
-				generation++;
-
-				centerPanel.repaint();
-			}
+			
+			evolutionCount = 10;
+			evolutionTimer.start();
+			
+//			pause = false;
+//			
+//			Thread evolutionThread = new Thread() {
+//				public void run(){
+//					int ite = 0;
+//					while (ite<10 && !pause){
+//						evolution();
+//						ite++;
+//					}
+//					
+//				}
+//				
+//			};
+//			evolutionThread.start();
 
 		}
 
@@ -798,10 +984,17 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			population.iterate();
-			generation++;
-
-			centerPanel.repaint();
+			
+//			evolutionCount = 1;
+//			evolutionTimer.start();
+			
+			Thread evolutionThread = new Thread() {
+				public void run(){
+					evolution();
+				}
+				
+			};
+			evolutionThread.start();
 
 		}
 
@@ -844,6 +1037,64 @@ public class GUInterface {
 		}
 
 	}
+	
+	
+
+	public class SaveLoadProblemListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+/*			// JDialog - SAVE/LOAD GAME
+			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem");
+
+			if(saveLoadDialog.problemSaved())
+			{
+				try
+				{
+					mazePanel.getProblem().saveProblem(saveLoadDialog.getFilePath());
+					JOptionPane.showMessageDialog(frame,"Problem saved.");
+				}
+				catch (IOException i)
+				{
+					JOptionPane.showMessageDialog(frame,"Error writing the file.");
+				}		
+			} 
+			else if (saveLoadDialog.problemLoaded())
+			{
+				String newProblemMsg = "Load Problem?";
+				int reply = JOptionPane.showConfirmDialog(frame,newProblemMsg,"Load Problem",JOptionPane.YES_NO_OPTION);
+
+				if(reply == JOptionPane.YES_OPTION)
+				{
+					try
+					{
+						mazePanel.loadProblem(saveLoadDialog.getFilePath());
+					}
+					catch (IOException i )
+					{
+						JOptionPane.showMessageDialog(frame,"File not found.");
+					}
+					catch (ClassNotFoundException i)
+					{
+						JOptionPane.showMessageDialog(frame,"File not supported.");
+					}
+				}
+				else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}	
+			}
+
+			saveLoadDialog.setSaveProblem(false);
+			saveLoadDialog.setLoadProblem(false);
+			
+			updateStatusPanel();
+			
+			centerPanel.repaint();
+			//mazePanel.requestFocusInWindow();
+*/
+		}
+
+	}
+	
 
 	/**
 	 * The listener interface for receiving newProblem events.
@@ -884,7 +1135,7 @@ public class GUInterface {
 	 *
 	 * @see StateSettingsEvent
 	 */
-	public class StateSettingsListener implements ActionListener {
+	public class LandUseRestrictionsListener implements ActionListener {
 
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -895,7 +1146,10 @@ public class GUInterface {
 				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
 				return;
 			}
-			// TODO Auto-generated method stub
+			configRestrictions();
+			updateStatusPanel();
+
+			centerPanel.repaint();
 
 		}
 
@@ -929,6 +1183,7 @@ public class GUInterface {
 			}
 			
 			configAdjacencies();
+			updateStatusPanel();
 
 			centerPanel.repaint();
 		}
@@ -962,6 +1217,7 @@ public class GUInterface {
 			}
 
 			configSites();
+			updateStatusPanel();
 
 			centerPanel.repaint();
 
@@ -1008,8 +1264,22 @@ public class GUInterface {
 
 
 
+	/**
+	 * The listener interface for receiving genetic events.
+	 * The class that is interested in processing a genetic
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addGeneticListener<code> method. When
+	 * the genetic event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see GeneticEvent
+	 */
 	public class GeneticListener implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 

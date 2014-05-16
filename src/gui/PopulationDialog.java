@@ -16,6 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PopulationDialog.
+ */
 public class PopulationDialog extends JDialog {
 
 
@@ -44,6 +48,13 @@ public class PopulationDialog extends JDialog {
 	private JButton cancelButton;
 
 
+	/**
+	 * Instantiates a new population dialog.
+	 *
+	 * @param frame the frame
+	 * @param modal the modal
+	 * @param myMessage the my message
+	 */
 	public PopulationDialog (JFrame frame, boolean modal, String myMessage){
 
 		super(frame,modal);
@@ -61,6 +72,11 @@ public class PopulationDialog extends JDialog {
 	
 
 
+	/**
+	 * Adds the widgets.
+	 *
+	 * @param contentPane the content pane
+	 */
 	private void addWidgets(Container contentPane) {
 		
 		inputPanel.add(populationLabel);
@@ -77,6 +93,9 @@ public class PopulationDialog extends JDialog {
 	
 
 
+	/**
+	 * Creates the widgets.
+	 */
 	private void createWidgets() {
 
 		// Input Panel
@@ -106,19 +125,43 @@ public class PopulationDialog extends JDialog {
 
 
 
+	/**
+	 * Gets the new population.
+	 *
+	 * @return the new population
+	 */
 	public boolean getNewPopulation() {
 		return newPopulation;
 	}
 	
 
+	/**
+	 * Gets the population size.
+	 *
+	 * @return the population size
+	 */
 	public int getPopulationSize() {
 		return populationSize;
 	}
 	
 	
+	/**
+	 * The listener interface for receiving ok events.
+	 * The class that is interested in processing a ok
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addOkListener<code> method. When
+	 * the ok event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see OkEvent
+	 */
 	public class OkListener implements ActionListener {
 
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			try {
@@ -146,8 +189,14 @@ public class PopulationDialog extends JDialog {
 	}
 
 
+	/**
+	 * The Class CancelButton.
+	 */
 	public class CancelButton implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			setVisible(false);

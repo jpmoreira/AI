@@ -16,53 +16,83 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import mainPackage.Tile;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AdjacenciesDialog.
+ */
 public class AdjacenciesDialog extends JDialog{
 
 
+	/** The tile id. */
 	private int tileID;
 
+	/** The tiles. */
 	private Tile[] tiles;
 
+	/** The adj checkboxes. */
 	private ArrayList<JCheckBox> adjCheckboxes;
 
+	/** The adjacencies. */
 	private ArrayList<Integer> adjacencies;
 
 
 
+	/** The num tiles. */
 	private int numTiles;
 
 
 
+	/** The finished. */
 	private boolean finished = false;
 
+	/** The canceled. */
 	private boolean canceled = false;
 
 
+	/** The adj panel. */
 	private JPanel adjPanel;
 
+	/** The check box label. */
 	private JLabel checkBoxLabel;
 	
+	/** The check box label panel. */
 	private JPanel checkBoxLabelPanel;	
 
+	/** The tile id panel. */
 	private JPanel tileIDPanel;
 	
+	/** The tile id label. */
 	private JLabel tileIDLabel;
 
 
+	/** The buttons panel. */
 	private JPanel buttonsPanel;
 
+	/** The save button. */
 	private JButton saveButton;
 
+	/** The cancel button. */
 	private JButton cancelButton;
 
+	/** The next button. */
 	private JButton nextButton;
 
+	/** The previous button. */
 	private JButton previousButton;
 
 
 
 
 
+	/**
+	 * Instantiates a new adjacencies dialog.
+	 *
+	 * @param frame the frame
+	 * @param modal the modal
+	 * @param myMessage the my message
+	 * @param argTiles the arg tiles
+	 * @param tileID the tile id
+	 */
 	public AdjacenciesDialog(JFrame frame, boolean modal, String myMessage, Tile[] argTiles, int tileID){
 		super(frame, modal);
 
@@ -89,6 +119,9 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * Update adj.
+	 */
 	private void updateAdj() {
 		
 		for (Tile tile: tiles[tileID].adjacencies()){
@@ -98,6 +131,12 @@ public class AdjacenciesDialog extends JDialog{
 	}
 	
 	
+	/**
+	 * Checks if is adj.
+	 *
+	 * @param i the i
+	 * @return true, if is adj
+	 */
 	private boolean isAdj(int i) {
 		for (int j = 0; j < adjacencies.size(); j++){
 			if(adjacencies.get(j) == i) return true;
@@ -107,6 +146,11 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * Adds the widgets.
+	 *
+	 * @param contentPane the content pane
+	 */
 	private void addWidgets(Container contentPane) {
 		
 		tileIDPanel.add(tileIDLabel);
@@ -137,6 +181,9 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * Creates the widgets.
+	 */
 	private void createWidgets() {
 
 		tileIDPanel = new JPanel();
@@ -222,6 +269,9 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * Adds the adj.
+	 */
 	private void addAdj() {
 		for (int i = 0; i < numTiles; i++){
 			if (adjCheckboxes.get(i).isSelected()){
@@ -236,6 +286,11 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * Gets the adjacencies.
+	 *
+	 * @return the adjacencies
+	 */
 	public ArrayList<Integer> getAdjacencies() {
 		return adjacencies;
 	}
@@ -244,6 +299,11 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * Gets the tile id.
+	 *
+	 * @return the tile id
+	 */
 	public int getTileID() {
 		return tileID;
 	}
@@ -255,6 +315,11 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * Checks if is finished.
+	 *
+	 * @return true, if is finished
+	 */
 	public boolean isFinished() {
 		return finished;
 	}
@@ -266,13 +331,32 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * Checks if is canceled.
+	 *
+	 * @return true, if is canceled
+	 */
 	public boolean isCanceled() {
 		return canceled;
 	}
 
 
+	/**
+	 * The listener interface for receiving cancelButton events.
+	 * The class that is interested in processing a cancelButton
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addCancelButtonListener<code> method. When
+	 * the cancelButton event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see CancelButtonEvent
+	 */
 	public class CancelButtonListener implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -285,8 +369,22 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * The listener interface for receiving previousButton events.
+	 * The class that is interested in processing a previousButton
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addPreviousButtonListener<code> method. When
+	 * the previousButton event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see PreviousButtonEvent
+	 */
 	public class PreviousButtonListener implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -302,8 +400,22 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * The listener interface for receiving nextButton events.
+	 * The class that is interested in processing a nextButton
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addNextButtonListener<code> method. When
+	 * the nextButton event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see NextButtonEvent
+	 */
 	public class NextButtonListener implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -320,8 +432,22 @@ public class AdjacenciesDialog extends JDialog{
 
 
 
+	/**
+	 * The listener interface for receiving saveButton events.
+	 * The class that is interested in processing a saveButton
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addSaveButtonListener<code> method. When
+	 * the saveButton event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see SaveButtonEvent
+	 */
 	public class SaveButtonListener implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 

@@ -306,7 +306,10 @@ public class Population implements Serializable{
 	public void updateStatistics(){
 		
 		State currentMostFit=this.mostFitState();
-		if(currentMostFit.fitness()>this.bestStateEver.fitness()){
+		
+		if (this.bestStateEver == null){
+			this.bestStateEver=currentMostFit;
+		} else if(currentMostFit.fitness()>this.bestStateEver.fitness()){
 		
 			this.bestStateEver=currentMostFit;
 			this.bestStateIterationNr=this.currentIteration;
@@ -394,5 +397,9 @@ public class Population implements Serializable{
 		
 		this.statesToPair=nr;
 		
+	}
+
+	public int getIteration() {
+		return this.currentIteration;
 	}
 }

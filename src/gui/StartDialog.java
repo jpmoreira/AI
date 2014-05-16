@@ -16,6 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class StartDialog.
+ */
 public class StartDialog extends JDialog{
 
 	/** The size input. */
@@ -61,6 +65,13 @@ public class StartDialog extends JDialog{
 	private JButton cancelButton;
 
 
+	/**
+	 * Instantiates a new start dialog.
+	 *
+	 * @param frame the frame
+	 * @param modal the modal
+	 * @param myMessage the my message
+	 */
 	public StartDialog (JFrame frame, boolean modal, String myMessage){
 
 		super(frame,modal);
@@ -79,6 +90,11 @@ public class StartDialog extends JDialog{
 	
 
 
+	/**
+	 * Adds the widgets.
+	 *
+	 * @param contentPane the content pane
+	 */
 	private void addWidgets(Container contentPane) {
 		
 		inputPanel.add(populationLabel);
@@ -99,6 +115,9 @@ public class StartDialog extends JDialog{
 	
 
 
+	/**
+	 * Creates the widgets.
+	 */
 	private void createWidgets() {
 
 		// Input Panel
@@ -139,33 +158,67 @@ public class StartDialog extends JDialog{
 
 
 
+	/**
+	 * Gets the new problem.
+	 *
+	 * @return the new problem
+	 */
 	public boolean getNewProblem() {
 		return newProblem;
 	}
 	
 
+	/**
+	 * Gets the tiles number.
+	 *
+	 * @return the tiles number
+	 */
 	public int getTilesNumber() {
 		return numTiles;
 	}
 	
 
+	/**
+	 * Gets the land use number.
+	 *
+	 * @return the land use number
+	 */
 	public int getLandUseNumber() {
 		return numLanduses;
 	}
 	
 	
 	
+	/**
+	 * Gets the population size.
+	 *
+	 * @return the population size
+	 */
 	public int getPopulationSize() {
 		return populationSize;
 	}
 
 
 
+	/**
+	 * The listener interface for receiving ok events.
+	 * The class that is interested in processing a ok
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addOkListener<code> method. When
+	 * the ok event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see OkEvent
+	 */
 	public class OkListener implements ActionListener {
 
 		
 	
 		
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			
@@ -203,8 +256,14 @@ public class StartDialog extends JDialog{
 	}
 
 
+	/**
+	 * The Class CancelButton.
+	 */
 	public class CancelButton implements ActionListener {
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			newProblem = false;
