@@ -18,6 +18,8 @@ public class State implements Serializable{
 	 * the Constructions this state has. Order matters
 	 */
 	public Construction[] constructions;
+	
+
 	private static int currentID=0;
 	
 	private int id;
@@ -135,19 +137,39 @@ public class State implements Serializable{
 	
 	}
 
+	/**
+	 * 
+	 * A method that returns the number of repeated constructions in this state
+	 * @return the number of repeated constructions in this state
+	 */
+	private int repetedConstructions(){
+		
+		int repetitions=0;
+		for(int i=0;i<this.constructions.length;i++){
+			for(int f=i+1;f<this.constructions.length;f++){
+				if(constructions[f]==constructions[i] )repetitions++;
+			}
+		}
+		
+		return repetitions;
+	}
 	
 	/**
 	 * 
 	 * A method that returns the fitness of a given state. The most fit the state the bigger then number returned.
+	 * @param repetedConstructionsFactor the factor by which the fitness is to be multiplied by each construction repetition
 	 * @return a number representing the fitness of the state. This number should be between 0 and 1.
 	 */
-	public double fitness(){
+	public double fitness(double repetedConstructionsFactor){
 		double fitness = 0;
 		if(tiles.length<constructions.length)return (double) -1.0;
 		for(int i=0;i<tiles.length;i++){
 			fitness+=constructions[i].affinityToTileInState(tiles[i],this);
 		}
-		return fitness/tiles.length;
+		fitness/= tiles.length;
+		
+		fitness*=Math.pow(repetedConstructionsFactor, this.repetedConstructions());
+		return fitness;
 	}
 	/**
 	 * 

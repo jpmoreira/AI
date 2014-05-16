@@ -50,6 +50,12 @@ public class Population implements Serializable{
 	private int mutationsSoFar=0;
 	private int mutationsThisIteration=0;
 	
+	/**
+	 * 
+	 * A factor by which a state fitness is to be decremented in case repeted states are found
+	 * 
+	 */
+	private double repetedConstructionFactor=1.0;
 	
 	/**
 	 * 
@@ -76,7 +82,36 @@ public class Population implements Serializable{
 	}
 	
 
+	/**
+	 * 
+	 * A method that changes the states of a given population. Used mainly for testing purposes.
+	 * @param newStates the new group of states. This group of states should be of the same size as the one the population currently has.
+	 */
+	public void setStates(State[] newStates){
+		
+		if(newStates.length==this.states.length)this.states=newStates;
+		
+		
+	}
+	/**
+	 * 
+	 * A method that sets the {@link #repetedConstructionFactor}.
+	 * @param factor
+	 */
+	public void setRepetedConstructionsFactor(double factor){
+		
+		this.repetedConstructionFactor=factor;
+	}
 	
+	/**
+	 * 
+	 * A getter for {@link #repetedConstructionFactor}.
+	 * @return a copy of {@link #repetedConstructionFactor}.
+	 */
+	public double getRepetedConstructionsFactor(){
+			
+		return this.repetedConstructionFactor;
+	}
 	
 	public Tile[] tiles(){
 		
@@ -169,7 +204,7 @@ public class Population implements Serializable{
 		
 		double overallFitness=0;
 		for (State state : states) {
-			overallFitness+=state.fitness();
+			overallFitness+=state.fitness(repetedConstructionFactor);
 		}
 		
 		return overallFitness;
@@ -186,7 +221,7 @@ public class Population implements Serializable{
 		
 		double[] fitnesses=new double[states.length];
 		for(int i=0;i<states.length;i++){
-			fitnesses[i]=states[i].fitness();
+			fitnesses[i]=states[i].fitness(repetedConstructionFactor);
 		}
 		
 		return fitnesses;
@@ -310,7 +345,7 @@ public class Population implements Serializable{
 		
 		if (this.bestStateEver == null){
 			this.bestStateEver=currentMostFit;
-		} else if(currentMostFit.fitness()>this.bestStateEver.fitness()){
+		} else if(currentMostFit.fitness(repetedConstructionFactor)>this.bestStateEver.fitness(repetedConstructionFactor)){
 		
 			this.bestStateEver=currentMostFit;
 			this.bestStateIterationNr=this.currentIteration;
@@ -339,7 +374,7 @@ public class Population implements Serializable{
 		State best=states[0];
 		
 		for (State s : states) {
-			if(best.fitness()<s.fitness())best=s;
+			if(best.fitness(repetedConstructionFactor)<s.fitness(repetedConstructionFactor))best=s;
 		}
 		return best;
 	}

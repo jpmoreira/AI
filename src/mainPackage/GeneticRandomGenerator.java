@@ -3,6 +3,7 @@ package mainPackage;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import junit.extensions.RepeatedTest;
 import mainPackage.State;
 import mainPackage.constructions.Construction;
 
@@ -118,7 +119,7 @@ public class GeneticRandomGenerator implements Serializable{
 			gen = defaultGenerator;
 
 		GeneticRandomGenerator.BubbleSort(population.states(),
-				population.states().length, this.diversityUsageFactor);// sort
+				population.states().length, this.diversityUsageFactor,population.getRepetedConstructionsFactor());// sort
 																		// states
 
 		ArrayList<State> statesForReproduction = new ArrayList<State>();
@@ -170,7 +171,7 @@ public class GeneticRandomGenerator implements Serializable{
 
 			randomNumber = gen.nextRandomNr();
 			currentState = this.population.states()[stateIndex];
-			probForReproduction = currentState.fitness() / overallFitness;
+			probForReproduction = currentState.fitness(population.getRepetedConstructionsFactor()) / overallFitness;
 			if (randomNumber <= probForReproduction)//FIXME here its not working for fitness of the state being 0
 				statesForReproduction.add(currentState);
 
@@ -225,7 +226,7 @@ public class GeneticRandomGenerator implements Serializable{
 				- this.population.statesToPair();
 
 		GeneticRandomGenerator.BubbleSort(orderedStates,
-				nrOfElitistStatesToSelect, diversityUsageFactor);
+				nrOfElitistStatesToSelect, diversityUsageFactor,population.getRepetedConstructionsFactor());
 
 		State[] statesForNextGen = new State[nrOfElitistStatesToSelect];
 
@@ -317,13 +318,13 @@ public class GeneticRandomGenerator implements Serializable{
 	 *            array
 	 */
 	public static void BubbleSort(State[] states, int nrStatesToOrder,
-			double diversityFactor) {
+			double diversityFactor,double repetedFactor) {
 		for (int i = 0; i < states.length && i < nrStatesToOrder; i++) {
 			for (int x = states.length - 1; x > i; x--) {
 
-				double valueX = states[x].fitness() * (1 - diversityFactor)
+				double valueX = states[x].fitness(repetedFactor) * (1 - diversityFactor)
 						+ states[x].diversity(states) * diversityFactor;
-				double valueBeforeX = states[x - 1].fitness()
+				double valueBeforeX = states[x - 1].fitness(repetedFactor)
 						* (1 - diversityFactor)
 						+ states[x - 1].diversity(states) * diversityFactor;
 
