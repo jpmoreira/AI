@@ -324,7 +324,8 @@ public class GUInterface {
 		int id = 0;
 		adjacenciesDialog = new AdjacenciesDialog(frame, true, "Adjacencies Settings", getTiles(), id);
 
-		ArrayList <Integer> tempAdj = adjacenciesDialog.getAdjacencies();
+		ArrayList <Integer> tempAdj = new ArrayList<Integer>();
+		tempAdj = adjacenciesDialog.getAdjacencies();
 		
 		for (int i = 0; i < tempAdj.size(); i++) {
 			tiles[id].addAdjacentTile(tiles[tempAdj.get(i)]);
@@ -719,17 +720,17 @@ public class GUInterface {
 				";   Generation Nr: " + population.getIteration());
 
 		if (directFitnessToProb) {
-			genStatusOuputLabel.setText("Mutation Probability: " + population.coinTosser.getMutationProb() +
-					";   Mutation Probability Variation Factor: " + population.coinTosser.getMutationProbVarFac() +
-					";   Diversity Factor: " + population.coinTosser.getDiversityUsageFac() +
+			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",population.coinTosser.getMutationProb()) +
+					";   Mutation Probability Variation Factor: " + String.format("%.2f",population.coinTosser.getMutationProbVarFac()) +
+					";   Diversity Factor: " + String.format("%.2f",population.coinTosser.getDiversityUsageFac()) +
 					";   Direct Fitness to Probability: " + population.coinTosser.getDirectFitnessToProb() +
 					";   Probability to Rank: N/A");
 		} else {
-			genStatusOuputLabel.setText("Mutation Probability: " + mutationProb +
-					";   Mutation Probability Variation Factor: " + mutationProbVarFac +
-					";   Diversity Factor: " + population.coinTosser.getDiversityUsageFac() +
+			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",mutationProb) +
+					";   Mutation Probability Variation Factor: " + String.format("%.2f",mutationProbVarFac) +
+					";   Diversity Factor: " + String.format("%.2f",population.coinTosser.getDiversityUsageFac()) +
 					";   Direct Fitness to Probability: " + population.coinTosser.getDirectFitnessToProb() +
-					";   Probability to Rank: " + population.coinTosser.getProbToRank());
+					";   Probability to Rank: " + String.format("%.2f",population.coinTosser.getProbToRank()));
 		}
 
 	}
@@ -1078,10 +1079,33 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			startNewProblem();
+			
+			if (population == null){
+				startNewProblem();
 
-			updateStatusPanel();
-			centerPanel.repaint();
+				updateStatusPanel();
+				centerPanel.repaint();
+			} else {
+				
+				String exitMsg = "Current population will be lost. Do you want to continue?";
+				int reply = JOptionPane.showConfirmDialog(frame,exitMsg,"Exit",JOptionPane.YES_NO_OPTION);
+
+				if(reply == JOptionPane.YES_OPTION)
+				{
+
+					population = null;
+					tiles = null;
+					landuses = null;
+					
+					startNewProblem();
+
+					updateStatusPanel();
+					centerPanel.repaint();
+					
+				}
+				else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
+				
+			}
 		}
 
 	}

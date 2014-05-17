@@ -176,15 +176,12 @@ public class TileDialog extends JDialog {
 			tileIDLabel = new JLabel("Tile ID: " + tiles[tileID].getId());
 			
 			soilCombo.setSelectedItem(tiles[tileID].getSoilType());
+				
+			inclinationField = new JTextField("" + tiles[tileID].getMaxInclination(),4);
 			
-			Double incl = tiles[tileID].getMaxInclination();		
-			inclinationField = new JTextField(incl.toString(),4);
-			
-			Double tempArea = tiles[tileID].getArea();		
-			areaText = new JTextField(tempArea.toString(),4);
-			
-			Float tempPrice = tiles[tileID].getPricePerAreaUnit();		
-			priceField = new JTextField(tempPrice.toString(),4);
+			areaText = new JTextField("" + tiles[tileID].getArea(),4);
+				
+			priceField = new JTextField("" + tiles[tileID].getPricePerAreaUnit(),4);
 			
 		}
 
@@ -277,14 +274,13 @@ public class TileDialog extends JDialog {
 		SoilType tempSoilType = (SoilType) soilCombo.getSelectedItem();
 
 
-		float tempArea;
+		double tempArea;
 		float tempPrice;
-		int tempIncl;
+		double tempIncl;
 
-
-		tempArea = Float.parseFloat(areaText.getText());
+		tempArea = Double.parseDouble(areaText.getText());
 		tempPrice = Float.parseFloat(priceField.getText());
-		tempIncl = Integer.parseInt(inclinationField.getText());
+		tempIncl = Double.parseDouble(inclinationField.getText());
 
 		if (tempArea < 0) throw new Exception("area");
 		if (tempPrice < 0) throw new Exception("price");
@@ -433,7 +429,7 @@ public class TileDialog extends JDialog {
 				setVisible(false);
 			}
 			catch (NumberFormatException n) {
-				JOptionPane.showMessageDialog(getParent(), "Diversity usage factor and probability to rank must Double");
+				JOptionPane.showMessageDialog(getParent(), "Number format error.");
 			}
 			catch (Exception e1){
 				if (e1.getMessage().equals("soil")){
@@ -483,7 +479,7 @@ public class TileDialog extends JDialog {
 				setVisible(false);
 			}
 			catch (NumberFormatException n) {
-				JOptionPane.showMessageDialog(getParent(), "Diversity usage factor and probability to rank must Double");
+				JOptionPane.showMessageDialog(getParent(), "Number format error.");
 			}
 			catch (Exception e1){
 				if (e1.getMessage().equals("soil")){
@@ -536,7 +532,7 @@ public class TileDialog extends JDialog {
 				
 			}
 			catch (NumberFormatException n) {
-				JOptionPane.showMessageDialog(getParent(), "Diversity usage factor and probability to rank must Double");
+				JOptionPane.showMessageDialog(getParent(), "Number format error.");
 			}
 			catch (Exception e1){
 				if (e1.getMessage().equals("soil")){

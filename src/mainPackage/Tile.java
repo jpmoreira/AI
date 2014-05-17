@@ -112,7 +112,7 @@ public class Tile implements Serializable{
 	public double getArea() {
 		return area;
 	}
-	public void setArea(float area) {
+	public void setArea(double area) {
 		this.area = area;
 	}
 	public float getPricePerAreaUnit() {

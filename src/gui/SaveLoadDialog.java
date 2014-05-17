@@ -328,14 +328,15 @@ public class SaveLoadDialog extends JDialog{
 
 
 			}
-			catch (IOException i )
-			{
-				JOptionPane.showMessageDialog(frame,"File not found.");
-			}
 			catch (ClassNotFoundException i)
 			{
 				JOptionPane.showMessageDialog(frame,"File not supported.");
 			}
+			catch (IOException i )
+			{
+				JOptionPane.showMessageDialog(frame,"File not found.");
+			}
+			
 		}
 		else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
 
