@@ -63,6 +63,24 @@ public class AdjacenciesDialog extends JDialog{
 	
 	/** The tile id label. */
 	private JLabel tileIDLabel;
+	
+	/** Others adjacencies panels */
+	private JPanel othersPanel;
+	
+	/** Others adjacencies panels */
+	private JLabel othersLabel;
+	
+	private JCheckBox lakeCheckBox;
+	
+	private JCheckBox highwayCheckBox;
+	
+	private JCheckBox beachCheckBox;
+	
+	private JCheckBox riverCheckBox;
+	
+	private JCheckBox trainStationCheckBox;
+	
+	private JCheckBox hospitalCheckBox;
 
 
 	/** The buttons panel. */
@@ -79,6 +97,8 @@ public class AdjacenciesDialog extends JDialog{
 
 	/** The previous button. */
 	private JButton previousButton;
+
+	private JPanel othersLabelPanel;
 
 
 
@@ -164,6 +184,18 @@ public class AdjacenciesDialog extends JDialog{
 
 		}
 		contentPane.add(adjPanel);
+		
+		othersLabelPanel.add(othersLabel);
+		contentPane.add(othersLabelPanel);
+		
+		othersPanel.add(lakeCheckBox);
+		othersPanel.add(highwayCheckBox);
+		othersPanel.add(hospitalCheckBox);
+		othersPanel.add(riverCheckBox);
+		othersPanel.add(beachCheckBox);
+		othersPanel.add(trainStationCheckBox);
+		contentPane.add(othersPanel);
+		
 
 		buttonsPanel.add(cancelButton);
 		buttonsPanel.add(previousButton);
@@ -191,14 +223,20 @@ public class AdjacenciesDialog extends JDialog{
 		
 		tileIDLabel = new JLabel("Tile ID: " + tileID);
 
-		checkBoxLabel = new JLabel("Adjacencies");
+		checkBoxLabel = new JLabel("Lots Adjacencies");
+		
+		othersLabel = new JLabel("Others Adjacencies:");
 		
 		checkBoxLabelPanel = new JPanel();
 		checkBoxLabelPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		
+		othersLabelPanel = new JPanel();
+		othersLabelPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 
 		adjPanel = new JPanel();
+		othersPanel = new JPanel();
 		
-		int rows , cols;
+		int rows , cols, rowsOthers;
 		
 		if (numTiles%5 > 0){
 			rows = numTiles/5+1;
@@ -212,7 +250,14 @@ public class AdjacenciesDialog extends JDialog{
 			cols = numTiles;
 		}
 		
-		adjPanel.setLayout(new GridLayout(rows, cols));
+		if (cols < 3){
+			rowsOthers = 6/cols;
+		} else {
+			rowsOthers = 2;
+		}
+		
+		adjPanel.setLayout(new GridLayout(rows, cols));		
+		othersPanel.setLayout(new GridLayout(rowsOthers, cols));
 
 		for (int i = 0 ; i < numTiles; i++){
 			JCheckBox tempCheck = new JCheckBox("Lot " + i);
@@ -224,6 +269,16 @@ public class AdjacenciesDialog extends JDialog{
 
 			adjCheckboxes.add(tempCheck);
 		}
+
+		
+		//TODO add restrictions do tiles...
+		
+		lakeCheckBox = new JCheckBox("Lake");
+		highwayCheckBox = new JCheckBox("Highway");
+		hospitalCheckBox = new JCheckBox("Hospital");
+		beachCheckBox = new JCheckBox("Beach");
+		riverCheckBox = new JCheckBox("River");
+		trainStationCheckBox = new JCheckBox("Train Station");
 
 		buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.TRAILING,5,5));

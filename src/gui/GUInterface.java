@@ -5,7 +5,10 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -18,8 +21,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import com.sun.xml.internal.ws.org.objectweb.asm.Label;
 
 import mainPackage.Population;
 import mainPackage.Tile;
@@ -31,9 +41,6 @@ import mainPackage.constructions.Construction;
  */
 public class GUInterface {
 
-
-//	/** The generation. */
-//	private int generation = 0;
 
 	/** The landuses. */
 	Construction[] landuses;
@@ -80,9 +87,6 @@ public class GUInterface {
 	/** The genetic panel. */
 	private JPanel geneticPanel;
 
-//	/** The annealing panel. */
-//	private JPanel annealingPanel;
-
 	/** The exit panel. */
 	private JPanel exitPanel;
 
@@ -100,13 +104,25 @@ public class GUInterface {
 
 	/** The run panel. */
 	private JPanel runPanel;
+	
+	
 
 	/** The table results panel. */
-	private JPanel tableResultsPanel;
+	private JPanel resultsPanel;
 
-//	/** The graph results panel. */
-//	private JPanel graphResultsPanel;
+	/** The graph results panel. */
+	private JPanel bestStatisticsPanel;
 
+	/** The solution panel. */
+	private JScrollPane bestSolutionPanel;
+	/** The solution panel. */
+	private JTable bestSolutionTable;
+	
+	/** The history panel */
+	private JPanel historyPanel;
+	
+	
+	
 
 
 	/**  Genetic Algorithm Label. */
@@ -163,7 +179,7 @@ public class GUInterface {
 
 
 	/** The population dialog. */
-	private PopulationDialog populationDialog;
+	private AnnealingDialog annealingDialog;
 
 	/** The landuse dialog. */
 	private LanduseDialog landuseDialog;
@@ -195,6 +211,8 @@ public class GUInterface {
 	private int evolutionRate = 1;
 
 	protected int evolutionCount = 0;
+
+	private JLabel bestStateVisualization;
 
 
 
@@ -283,12 +301,98 @@ public class GUInterface {
 		}
 		
 		updateStatusPanel();
+		
+		createResultWidgets();
+		addResultWidgets();
 
 	}
 
 
 
 
+
+	private void createResultWidgets() {
+
+
+		
+		/* Best Statistics Panel */
+		bestStatisticsPanel = new JPanel();
+		bestStatisticsPanel.setLayout(new GridLayout(2,4));
+		
+		generationBestStateLabel = new JLabel("Generation");
+		generationBestStateLabel.setHorizontalTextPosition(JLabel.CENTER);
+		//generationBestStateLabel.setPreferredSize(cell);
+
+		
+		fitnessBestStateLabel = new JLabel("Fitness");
+		fitnessBestStateLabel.setHorizontalTextPosition(JLabel.CENTER);
+//		fitnessBestStateLabel.setPreferredSize(cell);
+		
+		generationBestState = new JLabel("");
+		generationBestState.setHorizontalTextPosition(JLabel.CENTER);
+		
+		fitnessBestState = new JLabel("");
+		fitnessBestState.setHorizontalTextPosition(JLabel.CENTER);
+		
+		/* Best State Panel */
+		bestSolutionPanel = new JScrollPane();
+		
+		
+		DefaultTableModel dtm = new DefaultTableModel(new String[]{"Sites","LandUse"},0);
+		
+		bestSolutionTable = new JTable();
+		bestSolutionTable.setModel(dtm);
+		
+		bestSolutionPanel.setViewportView(bestSolutionTable);
+		
+		bestSolutionLabel = new JLabel("Best Solution:");
+		bestSolutionLabel.setHorizontalTextPosition(JLabel.CENTER);
+		
+
+		
+
+		
+		/* Result Panel */
+		historyPanel = new JPanel();
+		historyPanel.setLayout(new BorderLayout());
+		
+		bestStateVisualization = new JLabel(population.bestStateEver().visualRepresentation());
+		bestStateVisualization.setText(population.bestStateEver().visualRepresentation());
+		
+		
+	}
+
+	private void addResultWidgets() {
+		
+		bestStatisticsPanel.add(new JLabel(""));
+		bestStatisticsPanel.add(generationBestStateLabel);
+		bestStatisticsPanel.add(fitnessBestStateLabel);
+		bestStatisticsPanel.add(new JLabel(""));
+		bestStatisticsPanel.add(new JLabel(""));
+		bestStatisticsPanel.add(generationBestState);
+		bestStatisticsPanel.add(fitnessBestState);
+		bestStatisticsPanel.add(new JLabel(""));
+		
+		JPanel temp = new JPanel();
+		temp.setLayout(new BorderLayout(5,5));
+		temp.add(bestStatisticsPanel,BorderLayout.NORTH);	
+		
+
+		historyPanel.add(bestStateVisualization,BorderLayout.CENTER);
+
+		temp.add(historyPanel);
+		
+		JPanel rigthPanel = new JPanel();
+		rigthPanel.setLayout(new BorderLayout());
+		
+		rigthPanel.add(bestSolutionLabel,BorderLayout.NORTH);
+		rigthPanel.add(bestSolutionPanel,BorderLayout.CENTER);
+		
+		resultsPanel.add(rigthPanel,BorderLayout.EAST);
+		resultsPanel.add(temp,BorderLayout.CENTER);
+		
+		
+	}
 
 	/**
 	 * Config restrictions.
@@ -509,9 +613,22 @@ public class GUInterface {
 		population.iterate();
 
 		updateStatusPanel();
+		updateResultPanel();
 		centerPanel.repaint();
 	}
 	
+	private void updateResultPanel() {
+		
+		
+		generationBestState.setText("");
+		
+		fitnessBestState.setText("");
+	
+		bestStateVisualization.setText(population.bestStateEver().visualRepresentation());
+		
+		
+	}
+
 	ActionListener evolutionListener = new ActionListener() {
 
 		@Override
@@ -526,6 +643,16 @@ public class GUInterface {
 			
 		}		
 	};
+
+	private JLabel bestSolutionLabel;
+
+	private JLabel generationBestStateLabel;
+
+	private JLabel fitnessBestStateLabel;
+
+	private JLabel fitnessBestState;
+
+	private JLabel generationBestState;
 	
 	
 	/**
@@ -546,12 +673,6 @@ public class GUInterface {
 		geneticPanel.add(annealingLabel);
 		geneticPanel.add(new JLabel(""));
 		geneticPanel.add(new JLabel(""));
-		
-		//annealingPanel.add(annealingLabel);
-		//annealingPanel.add(new JLabel(""));
-		//annealingPanel.add(new JLabel(""));
-		//annealingLabel.add(Box.createVerticalStrut(100));
-		//leftPanel.add(annealingPanel,BorderLayout.CENTER);
 
 		exitPanel.add(newProblemButton);
 		exitPanel.add(saveProblemButton);
@@ -574,12 +695,10 @@ public class GUInterface {
 		runPanel.add(runBtn);
 		runPanel.add(pauseBtn);	
 		topPanel.add(runPanel,BorderLayout.SOUTH);	
-
-
-
+		
 		centerPanel.add(topPanel,BorderLayout.NORTH);
 
-		centerPanel.add(tableResultsPanel,BorderLayout.CENTER);
+		centerPanel.add(resultsPanel,BorderLayout.CENTER);
 
 		contentPane.add(centerPanel,BorderLayout.CENTER);
 
@@ -590,19 +709,16 @@ public class GUInterface {
 	 */
 	private void createWidgets() {
 
-		//Dimension btnDim = new Dimension(175, 10);
 
 		/* Left Panel and Elements */
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		//leftPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		leftPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		leftPanel.setMaximumSize(new Dimension(175, 735));
 
 		/* Genetic Algorithm Panel */
 		geneticPanel = new JPanel();
 		geneticPanel.setLayout(new GridLayout(9,1));
-		//		geneticPanel.setLayout(new BoxLayout(geneticPanel,BoxLayout.Y_AXIS));
 
 		geneticLabel = new JLabel("Genetic Algorithms");
 		geneticLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -623,12 +739,6 @@ public class GUInterface {
 
 		geneticButton = new JButton("<html><center>Generator<br>Settings</center></html>");
 		geneticButton.addActionListener(new GeneticListener());
-
-		/* Simulated Annealing Panel */
-		//annealingPanel = new JPanel();
-		//annealingPanel.setLayout(new GridLayout(3,1));
-		//annealingPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		//annealingPanel.setMaximumSize(new Dimension (175,250));
 
 		annealingLabel = new JLabel("Simulated Annealing");
 		annealingLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -684,9 +794,9 @@ public class GUInterface {
 
 
 		/* Result Panel */
-		tableResultsPanel = new JPanel();
-		tableResultsPanel.setLayout(new GridLayout(50, 10, 0, 0));
-
+		resultsPanel = new JPanel();
+		resultsPanel.setLayout(new BorderLayout());
+		
 
 		/* Exit Panel */
 
@@ -1045,7 +1155,7 @@ public class GUInterface {
 			else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
 
 			// TODO request focus in result panel 
-			tableResultsPanel.requestFocusInWindow();
+			resultsPanel.requestFocusInWindow();
 
 		}
 
@@ -1071,6 +1181,10 @@ public class GUInterface {
 				tiles = population.tiles();
 				landuses = population.getLandUses();
 				
+				resultsPanel.removeAll();
+				createResultWidgets();
+				addResultWidgets();
+				
 			}
 
 			saveLoadDialog.setSaveProblem(false);
@@ -1079,7 +1193,6 @@ public class GUInterface {
 			updateStatusPanel();
 			
 			centerPanel.repaint();
-			//mazePanel.requestFocusInWindow();
 
 		}
 

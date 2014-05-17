@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 /**
  * The Class PopulationDialog.
  */
-public class PopulationDialog extends JDialog {
+public class AnnealingDialog extends JDialog {
 
 
 	/** The size input. */
@@ -55,7 +55,7 @@ public class PopulationDialog extends JDialog {
 	 * @param modal the modal
 	 * @param myMessage the my message
 	 */
-	public PopulationDialog (JFrame frame, boolean modal, String myMessage){
+	public AnnealingDialog (JFrame frame, boolean modal, String myMessage){
 
 		super(frame,modal);
 

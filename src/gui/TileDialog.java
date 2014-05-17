@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 import mainPackage.Tile;
@@ -66,12 +68,13 @@ public class TileDialog extends JDialog {
 
 	/** The soil combo. */
 	private JComboBox soilCombo;
+	
 
 	/** The inclination label. */
 	private JLabel inclinationLabel;
 
 	/** The inclination field. */
-	private JTextField inclinationField;
+	private JSlider inclinationSlider;
 
 
 	/** The area panel. */
@@ -103,7 +106,9 @@ public class TileDialog extends JDialog {
 	private JButton nextButton;
 
 	/** The previous button. */
-	private JButton previousButton;	
+	private JButton previousButton;
+
+	private JPanel inclinationPanel;	
 
 
 	/**
@@ -141,14 +146,19 @@ public class TileDialog extends JDialog {
 	 */
 	private void createWidgets() {
 
+		FlowLayout flowLeading = new FlowLayout(FlowLayout.LEADING, 5, 5);
+		
 		tileIDPanel = new JPanel();
-		tileIDPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		tileIDPanel.setLayout(flowLeading);
 		
 		centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 		
 		soilTypePanel = new JPanel();
-		soilTypePanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		soilTypePanel.setLayout(flowLeading);
+		
+		inclinationPanel = new JPanel();
+		inclinationPanel.setLayout(flowLeading );
 		
 		soilLabel = new JLabel("Soil type:");
 		
@@ -156,17 +166,26 @@ public class TileDialog extends JDialog {
 		soilCombo.setModel(new DefaultComboBoxModel(Tile.SoilType.values()));
 		
 		areaPanel = new JPanel();
-		areaPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		areaPanel.setLayout(flowLeading);
 		
 		inclinationLabel = new JLabel("Inclination:");
-		areaLabel = new JLabel("Area:");
+		areaLabel = new JLabel("      Area:");
 		priceLabel = new JLabel("Price/m2:");
+		
+		inclinationSlider = new JSlider(0,100);
+		inclinationSlider.setSnapToTicks(true);
+		inclinationSlider.setPaintTicks(true);
+		inclinationSlider.setPaintLabels(true);
+		inclinationSlider.setMinorTickSpacing(1);
+		inclinationSlider.setMajorTickSpacing(10);
+		inclinationSlider.setPreferredSize(new Dimension(500,40));
 		
 		
 		if (tiles[tileID].getSoilType() == null){
 			tileIDLabel = new JLabel("Tile ID: " + tileID);
 			
-			inclinationField = new JTextField("0",4);
+			inclinationSlider.setValue(0);
+			
 			areaText = new JTextField("0",8);
 			priceField = new JTextField("0",8);
 			soilCombo.setSelectedIndex(0);
@@ -175,9 +194,9 @@ public class TileDialog extends JDialog {
 			
 			tileIDLabel = new JLabel("Tile ID: " + tiles[tileID].getId());
 			
+			inclinationSlider.setValue((int)(tiles[tileID].getMaxInclination()*100));
+			
 			soilCombo.setSelectedItem(tiles[tileID].getSoilType());
-				
-			inclinationField = new JTextField("" + tiles[tileID].getMaxInclination(),4);
 			
 			areaText = new JTextField("" + tiles[tileID].getArea(),4);
 				
@@ -236,16 +255,23 @@ public class TileDialog extends JDialog {
 
 		soilTypePanel.add(soilLabel);
 		soilTypePanel.add(soilCombo);
-		soilTypePanel.add(inclinationLabel);
-		soilTypePanel.add(inclinationField);
+		soilTypePanel.add(areaLabel);
+		soilTypePanel.add(areaText);
+		soilTypePanel.add(priceLabel);
+		soilTypePanel.add(priceField);
 
-		areaPanel.add(areaLabel);
-		areaPanel.add(areaText);
-		areaPanel.add(priceLabel);
-		areaPanel.add(priceField);
+//		areaPanel.add(areaLabel);
+//		areaPanel.add(areaText);
+//		areaPanel.add(priceLabel);
+//		areaPanel.add(priceField);
 
+		
+		inclinationPanel.add(inclinationLabel);
+		inclinationPanel.add(inclinationSlider);
+		
 		centerPanel.add(soilTypePanel);
-		centerPanel.add(areaPanel);
+//		centerPanel.add(areaPanel);
+		centerPanel.add(inclinationPanel);
 
 		contentPane.add(centerPanel,BorderLayout.CENTER);
 
@@ -276,18 +302,16 @@ public class TileDialog extends JDialog {
 
 		double tempArea;
 		float tempPrice;
-		double tempIncl;
 
 		tempArea = Double.parseDouble(areaText.getText());
 		tempPrice = Float.parseFloat(priceField.getText());
-		tempIncl = Double.parseDouble(inclinationField.getText());
 
 		if (tempArea < 0) throw new Exception("area");
 		if (tempPrice < 0) throw new Exception("price");
-		if (tempIncl < 0 || tempIncl > 100) throw new Exception("incl");
+
 
 		tempTile.setArea(tempArea);
-		tempTile.setMaxInclination(tempIncl);
+		tempTile.setMaxInclination(((double) inclinationSlider.getValue())/100);
 		tempTile.setPricePerAreaUnit(tempPrice);
 		tempTile.setSoilType(tempSoilType);
 		
