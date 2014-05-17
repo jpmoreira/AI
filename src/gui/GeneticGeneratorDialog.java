@@ -55,9 +55,6 @@ public class GeneticGeneratorDialog extends JDialog{
 	/** The states to pair text field. */
 	private JSlider statesToPairSlider;  
 
-	/** The mutation check box. */
-	private JCheckBox mutationCheckBox;
-
 	/** The mutation prob label. */
 	private JLabel mutationProbLabel;
 
@@ -92,9 +89,6 @@ public class GeneticGeneratorDialog extends JDialog{
 
 	/** The right gen panel. */
 	private JPanel fitnessPanel;
-
-	/** The genetic label. */
-	private JLabel geneticLabel;
 
 
 	/**  The Ok Panel. */
@@ -234,12 +228,9 @@ public class GeneticGeneratorDialog extends JDialog{
 		statesToPairSlider.setPaintTicks(true);
 		statesToPairSlider.setPaintLabels(true);
 		statesToPairSlider.setMinorTickSpacing(1);
-		statesToPairSlider.setMajorTickSpacing(maxPairing/4);
+		statesToPairSlider.setMajorTickSpacing(Math.max(maxPairing/4,1));
 		statesToPairSlider.setPreferredSize(new Dimension(500,40));
 
-//		mutationCheckBox = new JCheckBox("Mutation");
-//		mutationCheckBox.setSelected(true);
-//		mutationCheckBox.addActionListener(new MutationListener());
 
 		mutationProbLabel = new JLabel("Mutation probability (%):");
 		mutationProbSlider = new JSlider(0, 100, (int) (mutationProb*100));
@@ -249,7 +240,6 @@ public class GeneticGeneratorDialog extends JDialog{
 		mutationProbSlider.setMinorTickSpacing(1);
 		mutationProbSlider.setMajorTickSpacing(10);
 		mutationProbSlider.setPreferredSize(new Dimension(500,40));
-//		mutationProbSlider.setEnabled(mutationCheckBox.isSelected());
 				
 
 		mutationVarLabel = new JLabel("Mutation variation factor:");

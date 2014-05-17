@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -9,6 +10,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import com.sun.xml.internal.ws.org.objectweb.asm.Label;
 
@@ -120,9 +123,6 @@ public class GUInterface {
 	
 	/** The history panel */
 	private JPanel historyPanel;
-	
-	
-	
 
 
 	/**  Genetic Algorithm Label. */
@@ -337,27 +337,26 @@ public class GUInterface {
 		/* Best State Panel */
 		bestSolutionPanel = new JScrollPane();
 		
+		int resultsNr = tiles.length;
+			
+		bestSolutionTable = new JTable(new DefaultTableModel(new String[]{"Site","Landuse"},resultsNr));
 		
-		DefaultTableModel dtm = new DefaultTableModel(new String[]{"Sites","LandUse"},0);
-		
-		bestSolutionTable = new JTable();
-		bestSolutionTable.setModel(dtm);
+		for (int i = 0 ; i < resultsNr; i++){
+			bestSolutionTable.setValueAt("Lot " + i, i, 0);
+		}
 		
 		bestSolutionPanel.setViewportView(bestSolutionTable);
 		
 		bestSolutionLabel = new JLabel("Best Solution:");
-		bestSolutionLabel.setHorizontalTextPosition(JLabel.CENTER);
-		
-
-		
+		bestSolutionLabel.setHorizontalTextPosition(JLabel.LEADING);
+		bestSolutionLabel.setBorder(new EmptyBorder(5, 0, 5, 0));
 
 		
 		/* Result Panel */
 		historyPanel = new JPanel();
 		historyPanel.setLayout(new BorderLayout());
 		
-		bestStateVisualization = new JLabel(population.bestStateEver().visualRepresentation());
-		bestStateVisualization.setText(population.bestStateEver().visualRepresentation());
+		bestStateVisualization = new JLabel("");
 		
 		
 	}
@@ -382,13 +381,15 @@ public class GUInterface {
 
 		temp.add(historyPanel);
 		
-		JPanel rigthPanel = new JPanel();
-		rigthPanel.setLayout(new BorderLayout());
+		JPanel rightPanel = new JPanel();
+		rightPanel.setPreferredSize(new Dimension(175,735));
+		rightPanel.setLayout(new BoxLayout(rightPanel,BoxLayout.Y_AXIS));
+		rightPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			
+		rightPanel.add(bestSolutionLabel);
+		rightPanel.add(bestSolutionPanel);
 		
-		rigthPanel.add(bestSolutionLabel,BorderLayout.NORTH);
-		rigthPanel.add(bestSolutionPanel,BorderLayout.CENTER);
-		
-		resultsPanel.add(rigthPanel,BorderLayout.EAST);
+		resultsPanel.add(rightPanel,BorderLayout.EAST);
 		resultsPanel.add(temp,BorderLayout.CENTER);
 		
 		
@@ -619,12 +620,20 @@ public class GUInterface {
 	
 	private void updateResultPanel() {
 		
-		
+		if (population.bestStateEver() == null){
+			return;
+		}
 		generationBestState.setText("");
 		
 		fitnessBestState.setText("");
 	
 		bestStateVisualization.setText(population.bestStateEver().visualRepresentation());
+		
+		for (int i = 0 ; i < tiles.length; i++){
+			
+			bestSolutionTable.setValueAt(population.bestStateEver().constructions[i].name(),i,1);
+			
+		}
 		
 		
 	}
@@ -668,7 +677,6 @@ public class GUInterface {
 		geneticPanel.add(landuseSettingButton);
 		geneticPanel.add(restrictionsButton);
 		geneticPanel.add(geneticButton);
-		//leftPanel.add(geneticPanel,BorderLayout.NORTH);
 
 		geneticPanel.add(annealingLabel);
 		geneticPanel.add(new JLabel(""));
@@ -677,10 +685,8 @@ public class GUInterface {
 		exitPanel.add(newProblemButton);
 		exitPanel.add(saveProblemButton);
 		exitPanel.add(exitButton);
-		//leftPanel.add(exitPanel,BorderLayout.SOUTH);
 
 		leftPanel.add(geneticPanel);
-		//leftPanel.add(annealingPanel);
 		leftPanel.add(Box.createVerticalStrut(125));
 		leftPanel.add(exitPanel);
 		contentPane.add(leftPanel,BorderLayout.WEST);
@@ -886,18 +892,6 @@ public class GUInterface {
 			
 			evolutionTimer.start();
 			
-//			pause = false;
-//
-//			Thread evolutionThread = new Thread() {
-//				public void run(){
-//					while (!pause){
-//						evolution();
-//					}
-//					
-//				}
-//				
-//			};
-//			evolutionThread.start();
 
 		}
 
@@ -930,9 +924,6 @@ public class GUInterface {
 
 			evolutionTimer.stop();
 			
-//			pause = true;
-//
-//			centerPanel.repaint();
 		}
 
 	}
@@ -967,20 +958,6 @@ public class GUInterface {
 			evolutionCount = 1000;
 			evolutionTimer.start();
 			
-//			pause = false;
-//			
-//			Thread evolutionThread = new Thread() {
-//				public void run(){
-//					int ite = 0;
-//					while (ite<1000 && !pause){
-//						evolution();
-//						ite++;
-//					}
-//					
-//				}
-//				
-//			};
-//			evolutionThread.start();
 
 		}
 
@@ -1015,20 +992,6 @@ public class GUInterface {
 			evolutionCount = 100;
 			evolutionTimer.start();
 
-//			pause = false;
-//			
-//			Thread evolutionThread = new Thread() {
-//				public void run(){
-//					int ite = 0;
-//					while (ite<100 && !pause){
-//						evolution();
-//						ite++;
-//					}
-//					
-//				}
-//				
-//			};
-//			evolutionThread.start();
 
 		}
 
@@ -1062,21 +1025,6 @@ public class GUInterface {
 			
 			evolutionCount = 10;
 			evolutionTimer.start();
-			
-//			pause = false;
-//			
-//			Thread evolutionThread = new Thread() {
-//				public void run(){
-//					int ite = 0;
-//					while (ite<10 && !pause){
-//						evolution();
-//						ite++;
-//					}
-//					
-//				}
-//				
-//			};
-//			evolutionThread.start();
 
 		}
 
@@ -1110,14 +1058,6 @@ public class GUInterface {
 			
 			evolutionCount = 1;
 			evolutionTimer.start();
-			
-//			Thread evolutionThread = new Thread() {
-//				public void run(){
-//					evolution();
-//				}
-//				
-//			};
-//			evolutionThread.start();
 
 		}
 
@@ -1181,6 +1121,14 @@ public class GUInterface {
 				tiles = population.tiles();
 				landuses = population.getLandUses();
 				
+				pairingStates = population.statesToPair();
+				popSize = population.populationSize();
+				mutationProb = population.coinTosser.getMutationProb();
+				mutationProbVarFac = population.coinTosser.getMutationProbVarFac();
+				diversityUsageFac = population.coinTosser.getDiversityUsageFac();
+				directFitnessToProb = population.coinTosser.getDirectFitnessToProb();
+				probToRank = population.coinTosser.getProbToRank();
+				
 				resultsPanel.removeAll();
 				createResultWidgets();
 				addResultWidgets();
@@ -1191,6 +1139,7 @@ public class GUInterface {
 			saveLoadDialog.setLoadProblem(false);
 			
 			updateStatusPanel();
+			updateResultPanel();
 			
 			centerPanel.repaint();
 
