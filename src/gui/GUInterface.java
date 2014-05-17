@@ -765,6 +765,11 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			
+			if (population == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
 
 			//evolutionRate = TODO getTimerRate(); 
 			evolutionCount = -1;
@@ -843,6 +848,11 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			if (population == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
 
 			evolutionCount = 1000;
 			evolutionTimer.start();
@@ -887,6 +897,11 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
+			if (population == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
+			
 			evolutionCount = 100;
 			evolutionTimer.start();
 
@@ -930,6 +945,11 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
+			if (population == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
+			
 			evolutionCount = 10;
 			evolutionTimer.start();
 			
@@ -972,6 +992,11 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			if (population == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
 			
 			evolutionCount = 1;
 			evolutionTimer.start();
