@@ -277,33 +277,38 @@ public class GUInterface {
 
 		Construction.resetConstructions();
 
-		configPopulation();
+		if (configPopulation()){
+			
+			configSites();
 
-		configSites();
+			configAdjacencies();
 
-		configAdjacencies();
+			configLandUses();
+			//TODO 
+			configRestrictions();
 
-		configLandUses();
-		//TODO 
-		configRestrictions();
+			configGeneticGenerator();
 
-		configGeneticGenerator();
+			population = new Population(tiles, landuses, popSize, mutationProb, pairingStates);
 
-		population = new Population(tiles, landuses, popSize, mutationProb, pairingStates);
+			population.coinTosser.setMutationProbability(mutationProb, mutationProbVarFac);
+			population.coinTosser.setDiversityUsage(diversityUsageFac);
 
-		population.coinTosser.setMutationProbability(mutationProb, mutationProbVarFac);
-		population.coinTosser.setDiversityUsage(diversityUsageFac);
+			if (directFitnessToProb) {
+				population.coinTosser.enableDirectMethod();
+			} else {
+				population.coinTosser.enableFitnessToRank(probToRank);
+			}
+			
+			updateStatusPanel();
+			
+			createResultWidgets();
+			addResultWidgets();
+			
+			centerPanel.repaint();
+		};
 
-		if (directFitnessToProb) {
-			population.coinTosser.enableDirectMethod();
-		} else {
-			population.coinTosser.enableFitnessToRank(probToRank);
-		}
 		
-		updateStatusPanel();
-		
-		createResultWidgets();
-		addResultWidgets();
 
 	}
 
@@ -554,8 +559,9 @@ public class GUInterface {
 
 	/**
 	 * Config population.
+	 * @return 
 	 */
-	private void configPopulation() {
+	private boolean configPopulation() {
 		startDialog = new StartDialog(frame, true, "New Problem");
 
 		if (startDialog.getNewProblem()) {
@@ -570,7 +576,11 @@ public class GUInterface {
 			
 			popSize = startDialog.getPopulationSize();
 			pairingStates = popSize/2;
+			
+			return true;
 		}	
+		
+		return false;
 
 	}
 
@@ -1176,8 +1186,6 @@ public class GUInterface {
 			if (population == null){
 				startNewProblem();
 
-				updateStatusPanel();
-				centerPanel.repaint();
 			} else {
 				
 				String exitMsg = "Current population will be lost. Do you want to continue?";
@@ -1191,9 +1199,6 @@ public class GUInterface {
 					landuses = null;
 					
 					startNewProblem();
-
-					updateStatusPanel();
-					centerPanel.repaint();
 					
 				}
 				else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}

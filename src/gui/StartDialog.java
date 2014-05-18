@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,6 +34,10 @@ public class StartDialog extends JDialog{
 	
 	/** Population Size. */
 	private int populationSize;
+	
+	private boolean repeatedConst;
+	
+	private boolean useAllConstructions;
 
 	/** The input panel. */
 	private JPanel inputPanel;
@@ -57,6 +62,10 @@ public class StartDialog extends JDialog{
 
 	/** The landuse field. */
 	private JTextField landuseField;
+	
+	private JCheckBox repeatedConstuctionsCheckbox;
+	
+	private JCheckBox useAllContructionsCheckbox;
 	
 	/** The ok input button. */
 	private JButton okButton;
@@ -103,6 +112,8 @@ public class StartDialog extends JDialog{
 		inputPanel.add(tileField);
 		inputPanel.add(landuseLabel);
 		inputPanel.add(landuseField);
+		inputPanel.add(useAllContructionsCheckbox);
+		inputPanel.add(repeatedConstuctionsCheckbox);
 		inputPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
 		contentPane.add(inputPanel,BorderLayout.CENTER);
@@ -122,7 +133,7 @@ public class StartDialog extends JDialog{
 
 		// Input Panel
 		inputPanel = new JPanel();
-		inputPanel.setLayout(new GridLayout(3,2,5,5));
+		inputPanel.setLayout(new GridLayout(4,2,5,5));
 
 		// Input Content
 		
@@ -141,6 +152,10 @@ public class StartDialog extends JDialog{
 
 		landuseField = new JTextField();
 		landuseField.setEditable(true);
+		
+		repeatedConstuctionsCheckbox = new JCheckBox("Repeat Landuses");
+		
+		useAllContructionsCheckbox = new JCheckBox("Use all Landuses");
 
 		// Button Panel
 		inputButtonsPanel = new JPanel();
@@ -200,6 +215,30 @@ public class StartDialog extends JDialog{
 
 
 
+	public boolean isRepeatedConst() {
+		return repeatedConst;
+	}
+
+
+
+	public void setRepeatedConst(boolean repeatedConst) {
+		this.repeatedConst = repeatedConst;
+	}
+
+
+
+	public boolean isUseAllConstructions() {
+		return useAllConstructions;
+	}
+
+
+
+	public void setUseAllConstructions(boolean useAllConstructions) {
+		this.useAllConstructions = useAllConstructions;
+	}
+
+
+
 	/**
 	 * The listener interface for receiving ok events.
 	 * The class that is interested in processing a ok
@@ -232,11 +271,19 @@ public class StartDialog extends JDialog{
 				tempLanduse = Integer.parseInt(landuseField.getText());
 				
 				if (tempTiles > 0 && tempLanduse > 0 && tempPopSize > 0){
+					
+					if ((tempLanduse > tempTiles) && useAllContructionsCheckbox.isSelected()) throw new Exception("1");
+					
 					numTiles = tempTiles;
 					numLanduses = tempLanduse;
 					populationSize = tempPopSize;
+					
+					repeatedConst = repeatedConstuctionsCheckbox.isSelected();
+					useAllConstructions = useAllContructionsCheckbox.isSelected();
+					
 					newProblem = true;
 					setVisible(false);
+					
 				} else {
 					throw new Exception();
 				}
@@ -246,9 +293,14 @@ public class StartDialog extends JDialog{
 				JOptionPane.showMessageDialog(getParent(), "Input must be an Integer");
 				return;
 			}
-			catch (Exception e1) {	
+			catch (Exception e1) {
+				if (e1.getMessage().equals("1")){
+					JOptionPane.showMessageDialog(getParent(), "Number of landuses must equal or lower than the number of lots.");
+					return;
+				}
 				JOptionPane.showMessageDialog(getParent(), "The numbers must be greater than 0");
 				return;
+				
 			}
 			
 		}
