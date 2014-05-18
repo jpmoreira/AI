@@ -583,19 +583,19 @@ public class Construction implements Serializable{
 	}
 
 	public double getMinArea(){
-		return minArea;
+		return this.minArea;
 	}
 	
 	public double getMaxArea(){
-		return maxArea;
+		return this.maxArea;
 	}
 	
 	public double getMinIncl(){
-		return minInclination;
+		return this.minInclination;
 	}
 	
 	public double getMaxIncl(){
-		return maxInclination;
+		return this.maxInclination;
 	}
 
 	public void setName(String name) {
@@ -604,27 +604,43 @@ public class Construction implements Serializable{
 	}
 
 	public double getAreaPenalty() {
-		return areaPenalty;
+		return this.areaPenalty;
 	}
 
 	public double getInclPenalty() {
-		return inclinationPenalty;
+		return this.inclinationPenalty;
 	}
 
 	public double getSoilTypePen() {
-		return forbiddenSoilPenalty;
+		return this.forbiddenSoilPenalty;
 	}
 
 	public SoilType[] getForbiddenSoil() {
-		return forbiddenSoils;
+		return this.forbiddenSoils;
 	}
 
 	public double getMinPrice() {
-		return minPrice;
+		return this.minPrice;
 	}
 
 	public double getMaxPrice() {
-		return maxPrice;
+		return this.maxPrice;
+	}
+
+	public Construction[] getForbiddenConstr() {
+		return this.forbiddenAdjacencies;
+	}
+
+	public Construction[] getMustHaveConstr() {
+		return this.mustHaveAdjacenciesInstances;
+	}
+
+	public String[] getMustHaveClasses() {
+		return this.mustHaveAdjacentClasses;
+	}
+
+	public String[] getForbiddenClasses() {
+		return this.forbiddenAdjacentClasses;
 	}
 	
 }

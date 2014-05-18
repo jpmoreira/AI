@@ -20,6 +20,7 @@ import javax.swing.JSlider;
 import javax.swing.border.EmptyBorder;
 
 import Exceptions.ConstructionException;
+import mainPackage.Tile;
 import mainPackage.Tile.SoilType;
 import mainPackage.constructions.Construction;
 
@@ -33,6 +34,8 @@ public class RestrictionsDialog extends JDialog{
 
 	/** The landuses. */
 	private Construction[] landuses;
+	
+	private Tile[] tiles;
 
 	/** The temp landuse. */
 	private Construction tempLanduse;
@@ -47,6 +50,52 @@ public class RestrictionsDialog extends JDialog{
 	/** The canceled. */
 	private boolean canceled = false;
 
+	
+	
+	/** The adj checkboxes. */
+	private ArrayList<JCheckBox> forbiddenCheckboxes;
+	
+	private JPanel forbCheckBoxPanel;
+
+	
+	/** Forbidden restrictions label. */
+	private JLabel forbiddenLabel;
+	
+	/** Forbidden restrictions panel. */
+	private JPanel forbiddenPanel;
+	
+
+	private JLabel forbiddenPenLabel;
+	
+	/**  */
+	private Construction[] forbInstances;
+	
+	/**  */
+	private String[] forbClassesNames;	
+	
+	
+	
+	
+	/** Must Have restrictions label. */
+	private JPanel mustHavePanel;
+	
+	/** Must Have restrictions panel. */
+	private JLabel mustHaveLabel;
+	
+	private JPanel mustHaveCheckBoxPanel;
+	
+	/** The adjacencies. */
+	private ArrayList<JCheckBox> mustHaveCheckboxes;
+	
+	private JLabel mustHaveBonLabel;
+	
+	/**  */
+	private Construction[]  mustHaveInstances;
+	
+	/**  */
+	private String[] mustHaveClassesNames;
+	
+	
 	
 	
 	private JLabel landuseIDLabel;
@@ -93,12 +142,15 @@ public class RestrictionsDialog extends JDialog{
 	private JButton previousButton;
 
 
+
+
 	
-	public RestrictionsDialog(JFrame frame, boolean modal, String myMessage, Construction[] landuses, int landuseID){
+	public RestrictionsDialog(JFrame frame, boolean modal, String myMessage, Construction[] landuses, Tile[] tiles, int landuseID){
 
 		super(frame,modal);
 		this.setLanduses(landuses);
 		this.setLanduseID(landuseID);
+		this.tiles = tiles;
 		numLanduses = landuses.length;
 		
 		tempLanduse = this.landuses[landuseID];
@@ -106,6 +158,13 @@ public class RestrictionsDialog extends JDialog{
 		soilTypes = SoilType.values();
 		
 		soilCheckboxes = new ArrayList<JCheckBox>();
+		forbiddenCheckboxes = new ArrayList<JCheckBox>();
+		mustHaveCheckboxes = new ArrayList<JCheckBox>();
+		
+		this.forbInstances = landuses[landuseID].getForbiddenConstr();
+		this.forbClassesNames = landuses[landuseID].getForbiddenClasses();
+		this.mustHaveInstances = landuses[landuseID].getMustHaveConstr();
+		this.mustHaveClassesNames = landuses[landuseID].getMustHaveClasses();
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 		this.setTitle("LandUse Settings");
@@ -132,12 +191,9 @@ public class RestrictionsDialog extends JDialog{
 		landuseIDLabel = new JLabel("Landuse ID: " + getLanduseID() + "  Chromosome: " + landuses[landuseID].toCromossome() + " - " + landuses[landuseID].name());
 		
 		
-		// TODO adicionar restrições das construções vizinhas
+	
 		
-		
-		// TODO adicionar restrições lotes proibidos
-		// TODO adicionar restrições lotes preferencias
-		// TODO adicionar restrições lotes obrigatórios
+
 		
 
 		soilTypePanel = new JPanel();
@@ -186,6 +242,56 @@ public class RestrictionsDialog extends JDialog{
 			soilCheckboxes.add(tempCheckBox);
 		}
 		
+		// TODO adicionar restrições das construções vizinhas
+		
+		forbiddenPanel = new JPanel();
+		forbiddenPanel.setLayout(flowLeading);
+		forbiddenLabel = new JLabel("Forbidden adjacenies");
+		forbiddenPenLabel = new JLabel("Forbidden penalty:");	
+		
+		int constructinsSize = landuses.length;		
+		
+		int rows2;	
+		if (constructinsSize%5 > 0){
+			rows2 = constructinsSize/5 + 1; 
+		} else {
+			rows2 = constructinsSize/5;
+		}
+		
+		forbCheckBoxPanel = new JPanel();
+		forbCheckBoxPanel.setLayout(new GridLayout(rows2, cols, 10, 5));
+		forbCheckBoxPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
+	
+		// TODO ArrayList com o nome das classes existentes (não construction) já no checkboxPanel (ver inicialização das construções)
+		// e caso exista um obecto do tipo construction adicionar ao arraylist o nome do objecto... 
+	
+		for (int i = 0; i < constructinsSize; i++){
+			JCheckBox tempCheckBox = new JCheckBox(landuses[i].name());
+			if (isForbidden(landuses[i])){
+				tempCheckBox.setSelected(true);
+			}
+			forbiddenCheckboxes.add(tempCheckBox);
+		}
+		
+		mustHavePanel = new JPanel();
+		mustHavePanel.setLayout(flowLeading);
+		mustHaveLabel = new JLabel("Must have adjacenies");
+		mustHaveBonLabel = new JLabel("Must have bonus:");
+		
+		mustHaveCheckBoxPanel = new JPanel();
+		mustHaveCheckBoxPanel.setLayout(new GridLayout(rows2, cols, 10, 5));
+		mustHaveCheckBoxPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
+		
+		for (int i = 0; i < constructinsSize; i++){
+			JCheckBox tempCheckBox = new JCheckBox(landuses[i].name());
+			if (mustHave(landuses[i])){
+				tempCheckBox.setSelected(true);
+			}
+			mustHaveCheckboxes.add(tempCheckBox);
+		}
+		
+		
+		
 		
 		saveButton = new JButton("Save");
 		saveButton.addActionListener(new SaveButtonListener());
@@ -222,7 +328,8 @@ public class RestrictionsDialog extends JDialog{
 		
 		
 	}
-	
+
+
 	private void addWidgets(Container contentPane) {
 		
 		
@@ -240,6 +347,20 @@ public class RestrictionsDialog extends JDialog{
 		soilTypePenPanel.add(soilTypePenLabel);
 		soilTypePenPanel.add(soilTypePenSlider);
 		contentPane.add(soilTypePenPanel);
+		
+		forbiddenPanel.add(forbiddenLabel);
+		contentPane.add(forbiddenPanel);
+		
+		for (int i =0; i < landuses.length; i++){
+			forbCheckBoxPanel.add(forbiddenCheckboxes.get(i));
+			mustHaveCheckBoxPanel.add(mustHaveCheckboxes.get(i));
+		}
+		contentPane.add(forbCheckBoxPanel);
+		
+		mustHavePanel.add(mustHaveLabel);
+		contentPane.add(mustHavePanel);
+		
+		contentPane.add(mustHaveCheckBoxPanel);
 		
 		
 		buttonsPanel.add(cancelButton);
@@ -296,6 +417,29 @@ public class RestrictionsDialog extends JDialog{
 		for (int i = 0 ; i < tempSoils.length; i++){
 			if (tempSoils[i] == soilType) return true;
 		}
+		return false;
+	}
+	
+	
+	
+	private boolean isForbidden(Construction construction) {
+		
+		for (Construction temp: forbInstances){
+			if (temp.toCromossome() == construction.toCromossome()) {
+				return true;
+			}
+		}		
+		return false;
+	}
+
+
+	private boolean mustHave(Construction construction) {
+
+		for (Construction temp: mustHaveInstances){
+			if (temp.toCromossome() == construction.toCromossome()) {
+				return true;
+			}
+		}		
 		return false;
 	}
 	

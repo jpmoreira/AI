@@ -401,7 +401,7 @@ public class GUInterface {
 	private void configRestrictions() {
 		
 		int id = 0;
-		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, id);
+		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, tiles, id);
 
 		
 		landuses[id] = restrictionsDialog.getTempLanduse();
@@ -409,7 +409,7 @@ public class GUInterface {
 
 		while (!restrictionsDialog.isFinished() && !restrictionsDialog.isCanceled()){
 
-			restrictionsDialog = new RestrictionsDialog(frame, true, "Landuse Settings", landuses, id);
+			restrictionsDialog = new RestrictionsDialog(frame, true, "Landuse Settings", landuses, tiles, id);
 			if (!restrictionsDialog.isCanceled()){
 				landuses[id] = restrictionsDialog.getTempLanduse();
 				id = restrictionsDialog.getLanduseID();
@@ -1095,7 +1095,7 @@ public class GUInterface {
 			else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
 
 			// TODO request focus in result panel 
-			resultsPanel.requestFocusInWindow();
+//			resultsPanel.requestFocusInWindow();
 
 		}
 
