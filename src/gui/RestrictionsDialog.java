@@ -22,7 +22,12 @@ import javax.swing.border.EmptyBorder;
 import Exceptions.ConstructionException;
 import mainPackage.Tile;
 import mainPackage.Tile.SoilType;
+import mainPackage.constructions.AirportConstruction;
 import mainPackage.constructions.Construction;
+import mainPackage.constructions.FactoryConstruction;
+import mainPackage.constructions.HouseConstruction;
+import mainPackage.constructions.ParkConstruction;
+import mainPackage.constructions.PrisonConstruction;
 
 /**
  * The Class StateDialog.
@@ -50,6 +55,19 @@ public class RestrictionsDialog extends JDialog{
 	/** The canceled. */
 	private boolean canceled = false;
 
+	
+	private JCheckBox forbAirportCheckBox;
+	private JCheckBox forbFactoryCheckBox;
+	private JCheckBox forbHouseCheckBox;
+	private JCheckBox forbParkCheckBox;
+	private JCheckBox forbPrisonCheckBox;
+	
+	private JCheckBox mustHaveAirportCheckBox;
+	private JCheckBox mustHaveFactoryCheckBox;
+	private JCheckBox mustHaveHouseCheckBox;
+	private JCheckBox mustHaveParkCheckBox;
+	private JCheckBox mustHavePrisonCheckBox;
+	
 	
 	
 	/** The adj checkboxes. */
@@ -189,13 +207,8 @@ public class RestrictionsDialog extends JDialog{
 		landuseIDPanel.setBorder(new EmptyBorder(10, 0, 5, 0));
 		
 		landuseIDLabel = new JLabel("Landuse ID: " + getLanduseID() + "  Chromosome: " + landuses[landuseID].toCromossome() + " - " + landuses[landuseID].name());
-		
-		
-	
-		
 
 		
-
 		soilTypePanel = new JPanel();
 		soilTypePanel.setLayout(flowLeading);
 		soilTypePanel.setBorder(new EmptyBorder(10, 5, 5, 5));
@@ -247,50 +260,103 @@ public class RestrictionsDialog extends JDialog{
 		forbiddenPanel = new JPanel();
 		forbiddenPanel.setLayout(flowLeading);
 		forbiddenLabel = new JLabel("Forbidden adjacenies");
-		forbiddenPenLabel = new JLabel("Forbidden penalty:");	
+		forbiddenPenLabel = new JLabel("Forbidden penalty:");
 		
-		int constructinsSize = landuses.length;		
+		forbAirportCheckBox = new JCheckBox("Airport");
+		forbFactoryCheckBox = new JCheckBox("Factory");
+		forbHouseCheckBox = new JCheckBox("House");
+		forbParkCheckBox = new JCheckBox("Park");
+		forbPrisonCheckBox = new JCheckBox("Prison");
 		
-		int rows2;	
-		if (constructinsSize%5 > 0){
-			rows2 = constructinsSize/5 + 1; 
-		} else {
-			rows2 = constructinsSize/5;
-		}
+		mustHaveAirportCheckBox = new JCheckBox("Airport");
+		mustHaveFactoryCheckBox = new JCheckBox("Factory");
+		mustHaveHouseCheckBox = new JCheckBox("House");
+		mustHaveParkCheckBox = new JCheckBox("Park");
+		mustHavePrisonCheckBox = new JCheckBox("Prison");
 		
-		forbCheckBoxPanel = new JPanel();
-		forbCheckBoxPanel.setLayout(new GridLayout(rows2, cols, 10, 5));
-		forbCheckBoxPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
+		forbiddenCheckboxes.add(forbAirportCheckBox);
+		forbiddenCheckboxes.add(forbFactoryCheckBox);
+		forbiddenCheckboxes.add(forbHouseCheckBox);
+		forbiddenCheckboxes.add(forbParkCheckBox);
+		forbiddenCheckboxes.add(forbPrisonCheckBox);
+		
+		updateForbClassName();
+		
+		mustHaveCheckboxes.add(mustHaveAirportCheckBox);
+		mustHaveCheckboxes.add(mustHaveFactoryCheckBox);
+		mustHaveCheckboxes.add(mustHaveHouseCheckBox);
+		mustHaveCheckboxes.add(mustHaveParkCheckBox);
+		mustHaveCheckboxes.add(mustHavePrisonCheckBox);
+		
+		updateMustHaveClassName();
+		
+		int constructionsSize = landuses.length;
 	
 		// TODO ArrayList com o nome das classes existentes (não construction) já no checkboxPanel (ver inicialização das construções)
 		// e caso exista um obecto do tipo construction adicionar ao arraylist o nome do objecto... 
 	
-		for (int i = 0; i < constructinsSize; i++){
-			JCheckBox tempCheckBox = new JCheckBox(landuses[i].name());
-			if (isForbidden(landuses[i])){
-				tempCheckBox.setSelected(true);
+		for (int i = 0; i < constructionsSize; i++){
+			
+			String tempName = landuses[i].getClass().getCanonicalName();
+			
+			if (tempName.equals(Construction.class.getCanonicalName())){
+				
+				JCheckBox tempCheckBox = new JCheckBox(landuses[i].toCromossome() + "- " + landuses[i].name());
+				
+				if (isForbidden(landuses[i])){
+					tempCheckBox.setSelected(true);
+				}
+				
+				forbiddenCheckboxes.add(tempCheckBox);
+				
 			}
-			forbiddenCheckboxes.add(tempCheckBox);
+		
 		}
+
+
 		
 		mustHavePanel = new JPanel();
 		mustHavePanel.setLayout(flowLeading);
 		mustHaveLabel = new JLabel("Must have adjacenies");
 		mustHaveBonLabel = new JLabel("Must have bonus:");
 		
-		mustHaveCheckBoxPanel = new JPanel();
-		mustHaveCheckBoxPanel.setLayout(new GridLayout(rows2, cols, 10, 5));
-		mustHaveCheckBoxPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
+
 		
-		for (int i = 0; i < constructinsSize; i++){
-			JCheckBox tempCheckBox = new JCheckBox(landuses[i].name());
-			if (mustHave(landuses[i])){
-				tempCheckBox.setSelected(true);
+		for (int i = 0; i < constructionsSize; i++){
+			
+			String tempName = landuses[i].getClass().getCanonicalName();
+			
+			if (tempName.equals(Construction.class.getCanonicalName())){ 
+				JCheckBox tempCheckBox = new JCheckBox(landuses[i].toCromossome() + "- " + landuses[i].name());
+				if (mustHave(landuses[i])){
+					tempCheckBox.setSelected(true);
+				}
+				mustHaveCheckboxes.add(tempCheckBox);
 			}
-			mustHaveCheckboxes.add(tempCheckBox);
+			
 		}
 		
+		int rows2;	
+		if (forbiddenCheckboxes.size()%5 > 0){
+			rows2 = constructionsSize/5 + 1; 
+		} else {
+			rows2 = constructionsSize/5;
+		}
 		
+		forbCheckBoxPanel = new JPanel();
+		forbCheckBoxPanel.setLayout(new GridLayout(rows2, cols, 10, 5));
+		forbCheckBoxPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
+		
+		int rows3;
+		if (mustHaveCheckboxes.size()%5 > 0){
+			rows3 = constructionsSize/5 + 1; 
+		} else {
+			rows3 = constructionsSize/5;
+		}
+		
+		mustHaveCheckBoxPanel = new JPanel();
+		mustHaveCheckBoxPanel.setLayout(new GridLayout(rows3, cols, 10, 5));
+		mustHaveCheckBoxPanel.setBorder(new EmptyBorder(10, 5, 5, 5));
 		
 		
 		saveButton = new JButton("Save");
@@ -330,6 +396,60 @@ public class RestrictionsDialog extends JDialog{
 	}
 
 
+	private void updateMustHaveClassName() {
+		
+		for (String tempName: mustHaveClassesNames ){
+			
+			if (tempName.equals(AirportConstruction.class.getCanonicalName())){
+				mustHaveAirportCheckBox.setSelected(true);
+			} else if (tempName.equals(FactoryConstruction.class.getCanonicalName())){
+				mustHaveFactoryCheckBox.setSelected(true);
+			} else if (tempName.equals(HouseConstruction.class.getCanonicalName())){
+				mustHaveHouseCheckBox.setSelected(true);
+			} else if (tempName.equals(ParkConstruction.class.getCanonicalName())){
+				mustHaveParkCheckBox.setSelected(true);
+			} else if (tempName.equals(PrisonConstruction.class.getCanonicalName())){
+				mustHavePrisonCheckBox.setSelected(true);
+			}	
+			
+		}
+		
+	}
+
+
+	private void updateForbClassName() {
+		
+		for (String tempName: forbClassesNames ){
+			
+			if (tempName.equals(AirportConstruction.class.getCanonicalName())){
+				forbAirportCheckBox.setSelected(true);
+			} else if (tempName.equals(FactoryConstruction.class.getCanonicalName())){
+				forbFactoryCheckBox.setSelected(true);
+			} else if (tempName.equals(HouseConstruction.class.getCanonicalName())){
+				forbHouseCheckBox.setSelected(true);
+			} else if (tempName.equals(ParkConstruction.class.getCanonicalName())){
+				forbParkCheckBox.setSelected(true);
+			} else if (tempName.equals(PrisonConstruction.class.getCanonicalName())){
+				forbPrisonCheckBox.setSelected(true);
+			}	
+			
+		}
+		
+		
+	}
+
+	
+	private void updateForbiddenConstr() {
+		
+		for (Construction tempConst: forbInstances ){
+			
+	
+			
+		}
+		
+		
+	}
+
 	private void addWidgets(Container contentPane) {
 		
 		
@@ -351,12 +471,15 @@ public class RestrictionsDialog extends JDialog{
 		forbiddenPanel.add(forbiddenLabel);
 		contentPane.add(forbiddenPanel);
 		
-		for (int i =0; i < landuses.length; i++){
+		for (int i = 0; i < forbiddenCheckboxes.size() ; i++){
 			forbCheckBoxPanel.add(forbiddenCheckboxes.get(i));
-			mustHaveCheckBoxPanel.add(mustHaveCheckboxes.get(i));
 		}
 		contentPane.add(forbCheckBoxPanel);
 		
+		for (int i = 0; i < mustHaveCheckboxes.size() ; i++){
+			mustHaveCheckBoxPanel.add(mustHaveCheckboxes.get(i));
+		}
+
 		mustHavePanel.add(mustHaveLabel);
 		contentPane.add(mustHavePanel);
 		
@@ -443,6 +566,14 @@ public class RestrictionsDialog extends JDialog{
 		return false;
 	}
 	
+	public int getChromosome(String name) {
+		
+		String separator = "- ";
+		String[] parts = name.split(separator);
+		String chromo = parts[0];
+		
+		return Integer.parseInt(chromo);
+	}
 	
 	private void editLanduse() throws ConstructionException, NumberFormatException {
 		
@@ -464,8 +595,104 @@ public class RestrictionsDialog extends JDialog{
 		
 		getTempLanduse().setSoilConstraint(forbiddenTypes, ((double) soilTypePenSlider.getValue())/100);
 		
+		
+		// TODO
+		
+		ArrayList<Construction> auxForbConst = new ArrayList<Construction>();
+		ArrayList<String>auxForbClassName = new ArrayList<String>();
+		
+		for (int i = 0; i < forbiddenCheckboxes.size(); i++){
+			
+			if (forbiddenCheckboxes.get(i).isSelected()){
+				
+				if  (i==0) {
+					auxForbClassName.add(AirportConstruction.class.getCanonicalName());
+				} else if  (i==1) {
+					auxForbClassName.add(FactoryConstruction.class.getCanonicalName());
+				} else if  (i==2) {
+					auxForbClassName.add(HouseConstruction.class.getCanonicalName());
+				} else if  (i==3) {
+					auxForbClassName.add(ParkConstruction.class.getCanonicalName());
+				} else if  (i==4) {
+					auxForbClassName.add(PrisonConstruction.class.getCanonicalName());
+				} else { 
+					
+					int tempChromo = getChromosome(forbiddenCheckboxes.get(i).getLabel());
+					
+					for (int j = 0; j < landuses.length; j++){
+						if (landuses[j].toCromossome() == tempChromo){
+							auxForbConst.add(landuses[j]);
+						}
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		Construction[] tempForConst = new Construction[auxForbConst.size()];
+		for (int i =0 ; i < tempForConst.length; i++){
+			tempForConst[i] = auxForbConst.get(i);
+		}
+		
+		String[] tempForClass = new String[auxForbClassName.size()];
+		for (int i =0 ; i < tempForClass.length; i++){
+			tempForClass[i] = auxForbClassName.get(i);
+		}
+		
+		forbInstances = tempForConst;
+		forbClassesNames = tempForClass;
+		
+		
+		ArrayList<Construction> auxMustConst = new ArrayList<Construction>();
+		ArrayList<String>auxMustClassName = new ArrayList<String>();
+		
+		for (int i = 0; i < mustHaveCheckboxes.size(); i++){
+			
+			if (mustHaveCheckboxes.get(i).isSelected()){
+				
+				if  (i==0) {
+					auxMustClassName.add(AirportConstruction.class.getCanonicalName());
+				} else if  (i==1) {
+					auxMustClassName.add(FactoryConstruction.class.getCanonicalName());
+				} else if  (i==2) {
+					auxMustClassName.add(HouseConstruction.class.getCanonicalName());
+				} else if  (i==3) {
+					auxMustClassName.add(ParkConstruction.class.getCanonicalName());
+				} else if  (i==4) {
+					auxMustClassName.add(PrisonConstruction.class.getCanonicalName());
+				} else { 
+					
+					int tempChromo = getChromosome(mustHaveCheckboxes.get(i).getLabel());
+					
+					for (int j = 0; j < landuses.length; j++){
+						if (landuses[j].toCromossome() == tempChromo){
+							auxMustConst.add(landuses[j]);
+						}
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		Construction[] tempMustConst = new Construction[auxMustConst.size()];
+		for (int i =0 ; i < tempMustConst.length; i++){
+			tempMustConst[i] = auxMustConst.get(i);
+		}
+		
+		String[] tempMustClass = new String[auxMustClassName.size()];
+		for (int i =0 ; i < tempMustClass.length; i++){
+			tempMustClass[i] = auxMustClassName.get(i);
+		}
+		
+		mustHaveInstances = tempMustConst;
+		mustHaveClassesNames = tempMustClass;
+		
 	}
-	
+
 
 	public class CancelButtonListener implements ActionListener {
 
@@ -574,6 +801,31 @@ public class RestrictionsDialog extends JDialog{
 
 		
 
+	}
+
+
+
+	public Construction[] getForbConst() {
+		// TODO Auto-generated method stub
+		return forbInstances;
+	}
+
+
+	public String[] getForbClassesNames() {
+		// TODO Auto-generated method stub
+		return forbClassesNames;
+	}
+
+
+	public String[] getMustHaveClassesNames() {
+		// TODO Auto-generated method stub
+		return mustHaveClassesNames;
+	}
+
+
+	public Construction[] getMustHaveConst() {
+		// TODO Auto-generated method stub
+		return mustHaveInstances;
 	}
 
 
