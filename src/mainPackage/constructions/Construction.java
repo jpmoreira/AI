@@ -642,6 +642,16 @@ public class Construction implements Serializable{
 	public String[] getForbiddenClasses() {
 		return this.forbiddenAdjacentClasses;
 	}
+
+	public double getForbiddenPenalty() {
+		// TODO Auto-generated method stub
+		return forbiddenConstructionPenalty;
+	}
+
+	public double getMustHavePenalty() {
+		// TODO Auto-generated method stub
+		return missingMustHaveAdjacenciePenalty;
+	}
 	
 }
 //TODO use inclination constraint in auto-function

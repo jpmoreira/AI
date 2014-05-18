@@ -39,8 +39,6 @@ public class RestrictionsDialog extends JDialog{
 
 	/** The landuses. */
 	private Construction[] landuses;
-	
-	private Tile[] tiles;
 
 	/** The temp landuse. */
 	private Construction tempLanduse;
@@ -85,6 +83,8 @@ public class RestrictionsDialog extends JDialog{
 
 	private JLabel forbiddenPenLabel;
 	
+	private JSlider forbiddenPenSlider;
+	
 	/**  */
 	private Construction[] forbInstances;
 	
@@ -105,7 +105,9 @@ public class RestrictionsDialog extends JDialog{
 	/** The adjacencies. */
 	private ArrayList<JCheckBox> mustHaveCheckboxes;
 	
-	private JLabel mustHaveBonLabel;
+	private JLabel mustHavePenLabel;
+	
+	private JSlider mustHavePenSlider;
 	
 	/**  */
 	private Construction[]  mustHaveInstances;
@@ -159,6 +161,14 @@ public class RestrictionsDialog extends JDialog{
 	/** The previous button. */
 	private JButton previousButton;
 
+	private JPanel forbiddenPenPanel;
+
+	private JPanel mustHavePenPanel;
+
+	private double forbiddenPenalty;
+
+	private double mustHavePenalty;
+
 
 
 
@@ -168,10 +178,11 @@ public class RestrictionsDialog extends JDialog{
 		super(frame,modal);
 		this.setLanduses(landuses);
 		this.setLanduseID(landuseID);
-		this.tiles = tiles;
 		numLanduses = landuses.length;
 		
 		tempLanduse = this.landuses[landuseID];
+		this.forbiddenPenalty = tempLanduse.getForbiddenPenalty();
+		this.mustHavePenalty = tempLanduse.getMustHavePenalty();
 		
 		soilTypes = SoilType.values();
 		
@@ -259,8 +270,19 @@ public class RestrictionsDialog extends JDialog{
 		
 		forbiddenPanel = new JPanel();
 		forbiddenPanel.setLayout(flowLeading);
-		forbiddenLabel = new JLabel("Forbidden adjacenies");
+		forbiddenLabel = new JLabel("Forbidden adjacencies");
+		
+		forbiddenPenPanel = new JPanel();
+		forbiddenPenPanel.setLayout(flowCenter);
 		forbiddenPenLabel = new JLabel("Forbidden penalty:");
+		
+		forbiddenPenSlider = new JSlider(0,100,(int) (forbiddenPenalty*100));
+		forbiddenPenSlider.setSnapToTicks(true);
+		forbiddenPenSlider.setPaintTicks(true);
+		forbiddenPenSlider.setPaintLabels(true);
+		forbiddenPenSlider.setMinorTickSpacing(1);
+		forbiddenPenSlider.setMajorTickSpacing(10);
+		forbiddenPenSlider.setPreferredSize(new Dimension(500,40));
 		
 		forbAirportCheckBox = new JCheckBox("Airport");
 		forbFactoryCheckBox = new JCheckBox("Factory");
@@ -317,10 +339,19 @@ public class RestrictionsDialog extends JDialog{
 		
 		mustHavePanel = new JPanel();
 		mustHavePanel.setLayout(flowLeading);
-		mustHaveLabel = new JLabel("Must have adjacenies");
-		mustHaveBonLabel = new JLabel("Must have bonus:");
+		mustHaveLabel = new JLabel("Must have adjacencies");
 		
-
+		mustHavePenPanel = new JPanel();
+		mustHavePenPanel.setLayout(flowCenter);
+		mustHavePenLabel = new JLabel("Missing must have penalty:");
+		
+		mustHavePenSlider = new JSlider(0,100,(int)(mustHavePenalty*100));
+		mustHavePenSlider.setSnapToTicks(true);
+		mustHavePenSlider.setPaintTicks(true);
+		mustHavePenSlider.setPaintLabels(true);
+		mustHavePenSlider.setMinorTickSpacing(1);
+		mustHavePenSlider.setMajorTickSpacing(10);
+		mustHavePenSlider.setPreferredSize(new Dimension(500,40));
 		
 		for (int i = 0; i < constructionsSize; i++){
 			
@@ -438,18 +469,6 @@ public class RestrictionsDialog extends JDialog{
 		
 	}
 
-	
-	private void updateForbiddenConstr() {
-		
-		for (Construction tempConst: forbInstances ){
-			
-	
-			
-		}
-		
-		
-	}
-
 	private void addWidgets(Container contentPane) {
 		
 		
@@ -476,15 +495,22 @@ public class RestrictionsDialog extends JDialog{
 		}
 		contentPane.add(forbCheckBoxPanel);
 		
-		for (int i = 0; i < mustHaveCheckboxes.size() ; i++){
-			mustHaveCheckBoxPanel.add(mustHaveCheckboxes.get(i));
-		}
-
+		forbiddenPenPanel.add(forbiddenPenLabel);
+		forbiddenPenPanel.add(forbiddenPenSlider);
+		contentPane.add(forbiddenPenPanel);
+	
+		
 		mustHavePanel.add(mustHaveLabel);
 		contentPane.add(mustHavePanel);
 		
+		for (int i = 0; i < mustHaveCheckboxes.size() ; i++){
+			mustHaveCheckBoxPanel.add(mustHaveCheckboxes.get(i));
+		}
 		contentPane.add(mustHaveCheckBoxPanel);
 		
+		mustHavePenPanel.add(mustHavePenLabel);
+		mustHavePenPanel.add(mustHavePenSlider);
+		contentPane.add(mustHavePenPanel);
 		
 		buttonsPanel.add(cancelButton);
 		buttonsPanel.add(previousButton);
@@ -595,7 +621,8 @@ public class RestrictionsDialog extends JDialog{
 		
 		getTempLanduse().setSoilConstraint(forbiddenTypes, ((double) soilTypePenSlider.getValue())/100);
 		
-		
+		forbiddenPenalty = ((double) forbiddenPenSlider.getValue())/100;
+		mustHavePenalty = ((double) mustHavePenSlider.getValue())/100;
 		// TODO
 		
 		ArrayList<Construction> auxForbConst = new ArrayList<Construction>();
@@ -806,26 +833,32 @@ public class RestrictionsDialog extends JDialog{
 
 
 	public Construction[] getForbConst() {
-		// TODO Auto-generated method stub
 		return forbInstances;
 	}
 
 
 	public String[] getForbClassesNames() {
-		// TODO Auto-generated method stub
 		return forbClassesNames;
 	}
 
 
 	public String[] getMustHaveClassesNames() {
-		// TODO Auto-generated method stub
 		return mustHaveClassesNames;
 	}
 
 
 	public Construction[] getMustHaveConst() {
-		// TODO Auto-generated method stub
 		return mustHaveInstances;
+	}
+
+
+	public double getMustHavePenalty() {
+		return mustHavePenalty;
+	}
+
+
+	public double getForbPenalty() {
+		return forbiddenPenalty;
 	}
 
 

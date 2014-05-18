@@ -405,8 +405,8 @@ public class GUInterface {
 
 		
 		landuses[id] = restrictionsDialog.getTempLanduse();
-		landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), 0.1);
-		landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), 0.1);
+		landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), restrictionsDialog.getForbPenalty());
+		landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), restrictionsDialog.getMustHavePenalty());
 		
 		id = restrictionsDialog.getLanduseID();
 
@@ -415,8 +415,8 @@ public class GUInterface {
 			restrictionsDialog = new RestrictionsDialog(frame, true, "Landuse Settings", landuses, tiles, id);
 			if (!restrictionsDialog.isCanceled()){
 				landuses[id] = restrictionsDialog.getTempLanduse();
-				landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), 0.1);
-				landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), 0.1);
+				landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), restrictionsDialog.getForbPenalty());
+				landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), restrictionsDialog.getMustHavePenalty());
 
 				id = restrictionsDialog.getLanduseID();
 			} else {
