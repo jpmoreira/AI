@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
-import mainPackage.Population;
+import mainPackage.TileProblemPopulation;
 import mainPackage.Tile;
 import mainPackage.constructions.Construction;
 
@@ -42,7 +42,7 @@ public class GUInterface {
 	private Tile[] tiles;
 
 	/** The population. */
-	private Population population;
+	private TileProblemPopulation population;
 
 	/** The pop size. */
 	private int popSize;
@@ -271,7 +271,7 @@ public class GUInterface {
 
 		configGeneticGenerator();
 
-		population = new Population(tiles, landuses, popSize, mutationProb, pairingStates);
+		population = new TileProblemPopulation(tiles, landuses, popSize, mutationProb, pairingStates);
 
 		population.coinTosser.setMutationProbability(mutationProb, mutationProbVarFac);
 		population.coinTosser.setDiversityUsage(diversityUsageFac);
@@ -467,7 +467,7 @@ public class GUInterface {
 	 *
 	 * @return the population
 	 */
-	public Population getPopulation() {
+	public TileProblemPopulation getPopulation() {
 		return population;
 	}
 
@@ -476,7 +476,7 @@ public class GUInterface {
 	 *
 	 * @param population the new population
 	 */
-	public void setPopulation(Population population) {
+	public void setPopulation(TileProblemPopulation population) {
 		this.population = population;
 	}
 
@@ -716,7 +716,7 @@ public class GUInterface {
 				";   Nr. of Landuses: " + landuses.length +
 				";   Population Size: " + popSize +
 				";   Nr of Pairing states: " + pairingStates +
-				";   Generation Nr: " + population.getIteration());
+				";   Generation Nr: " + population.getCurrentIterationNr());
 
 		if (directFitnessToProb) {
 			genStatusOuputLabel.setText("Mutation Probability: " + mutationProb +

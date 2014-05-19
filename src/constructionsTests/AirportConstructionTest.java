@@ -1,7 +1,7 @@
 package constructionsTests;
 
 import static org.junit.Assert.*;
-import mainPackage.State;
+import mainPackage.TileProblemState;
 import mainPackage.Tile;
 import mainPackage.constructions.AirportConstruction;
 import mainPackage.constructions.Construction;
@@ -17,7 +17,7 @@ public class AirportConstructionTest {
 		Tile t=new Tile();
 		t.setMaxInclination(0.9);
 		
-		State s=new State(new Construction[]{airport},new Tile[]{t});
+		TileProblemState s=new TileProblemState(new Construction[]{airport},new Tile[]{t});
 		
 		assertEquals(0.6, airport.affinityToTileInState(t, s),0.00001);
 	}

@@ -1,8 +1,8 @@
 package tests;
 
 import static org.junit.Assert.*;
-import mainPackage.Population;
-import mainPackage.State;
+import mainPackage.TileProblemPopulation;
+import mainPackage.TileProblemState;
 import mainPackage.Tile;
 import mainPackage.constructions.AirportConstruction;
 import mainPackage.constructions.Construction;
@@ -24,7 +24,7 @@ public class StateTests {
 		constructions[0] = new Construction("Parque") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
@@ -32,7 +32,7 @@ public class StateTests {
 		constructions[1] = new Construction("Moradia") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
@@ -40,19 +40,19 @@ public class StateTests {
 		constructions[2] = new Construction("Aeroporto") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
 		};
 
-		Population p = new Population(tiles, constructions, 2, 1.0, 0);
+		TileProblemPopulation p = new TileProblemPopulation(tiles, constructions, 2,1.0);
 
-		State a = p.states()[0];
-		State b = p.states()[1];
+		TileProblemState a = p.states()[0];
+		TileProblemState b = p.states()[1];
 		Integer[] segments = { 0, 1, 2 };
 
-		State[] childs = a.pairWith(b, segments);
+		TileProblemState[] childs = a.pairWith(b, segments);
 
 		assertArrayEquals(childs[0].constructions, a.constructions);
 	}
@@ -66,14 +66,14 @@ public class StateTests {
 		constructions[0] = new Construction("Parque") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 0;
 			}
 		};
 		constructions[1] = new Construction("Moradia") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
@@ -81,21 +81,21 @@ public class StateTests {
 		constructions[2] = new Construction("Apartamentos") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
 		};
 
-		Population p = new Population(tiles, constructions, 2, 1.0, 0);
+		TileProblemPopulation p = new TileProblemPopulation(tiles, constructions, 2);
 
-		State a = p.states()[0];
-		State b = p.states()[1];
+		TileProblemState a = p.states()[0];
+		TileProblemState b = p.states()[1];
 		Integer[] segments = { 0, 2 };
 
-		State[] childs = a.pairWith(b, segments);
-		State c = childs[0];
-		State d = childs[1];
+		TileProblemState[] childs = a.pairWith(b, segments);
+		TileProblemState c = childs[0];
+		TileProblemState d = childs[1];
 
 		assertEquals(c.constructions[0], a.constructions[0]);
 		assertEquals(c.constructions[1], b.constructions[1]);
@@ -115,7 +115,7 @@ public class StateTests {
 		Construction c = new Construction("Moradia") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 0;
 			}
 		};
@@ -123,14 +123,14 @@ public class StateTests {
 		Construction c2 = new Construction("Apartamento") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 0;
 			}
 		};
 
 		Construction[] array = { c, c2 };
 		Tile[] tiles = { new Tile(), new Tile() };
-		State s = new State(array, tiles);
+		TileProblemState s = new TileProblemState(array, tiles);
 
 		int[] expectedChromo = { 1, 2 };
 
@@ -147,7 +147,7 @@ public class StateTests {
 		Construction c1 = new Construction("Moradia") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
@@ -155,7 +155,7 @@ public class StateTests {
 		Construction c2 = new Construction("Parque") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
@@ -163,7 +163,7 @@ public class StateTests {
 		Construction c3 = new Construction("Escola") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
@@ -173,10 +173,10 @@ public class StateTests {
 		Construction[] constructions1 = { c1, c2, c3 };
 		Construction[] constructions2 = { c2, c2, c1 };
 
-		State state1 = new State(constructions1, tiles);
-		State state2 = new State(constructions2, tiles);
+		TileProblemState state1 = new TileProblemState(constructions1, tiles);
+		TileProblemState state2 = new TileProblemState(constructions2, tiles);
 
-		State[] states = { state1, state2 };
+		TileProblemState[] states = { state1, state2 };
 
 		assertEquals(2/3.0, state1.diversity(states),0.0001);
 
@@ -191,7 +191,7 @@ public class StateTests {
 		Construction c1 = new Construction("Moradia") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
@@ -199,7 +199,7 @@ public class StateTests {
 		Construction c2 = new Construction("Apartamento") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
@@ -207,7 +207,7 @@ public class StateTests {
 		Construction c3 = new Construction("Parque") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 				return 0;
 			}
@@ -217,10 +217,10 @@ public class StateTests {
 		Construction[] constructions1 = { c1, c2, c3 };
 		Construction[] constructions2 = { c1, c2, c1 };
 
-		State state1 = new State(constructions1, tiles);
-		State state2 = new State(constructions2, tiles);
+		TileProblemState state1 = new TileProblemState(constructions1, tiles);
+		TileProblemState state2 = new TileProblemState(constructions2, tiles);
 
-		State[] states = { state1,state2 };
+		TileProblemState[] states = { state1,state2 };
 
 		assertEquals(1/3.0, state1.diversity(states),0.0001);
 
@@ -234,21 +234,21 @@ public class StateTests {
 		Construction c1=new Construction("A") {
 			
 			@Override
-			public double affinityToTileInState(Tile tile, State state) {
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
 				return 0;
 			}
 		};
 		Construction c2=new Construction("B") {
 			
 			@Override
-			public double affinityToTileInState(Tile tile, State state) {
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
 				return 0;
 			}
 		};
 		Construction c3=new Construction("C") {
 			
 			@Override
-			public double affinityToTileInState(Tile tile, State state) {
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
 				return 0;
 			}
 		};
@@ -260,7 +260,7 @@ public class StateTests {
 		Construction[] constructions={c1,c2,c3};
 		Tile[] tiles={t1,t2,t3};
 		
-		State s=new State(constructions, tiles);
+		TileProblemState s=new TileProblemState(constructions, tiles);
 		
 		
 		assertEquals(s.constructions[0], c1);
@@ -290,11 +290,11 @@ public class StateTests {
 		t2.addAdjacentTile(t1);
 		t3.addAdjacentTile(t4);
 		
-		State s=new State(new Construction[]{c,airport,factory,house},new Tile[]{t1,t2,t3,t4});
+		TileProblemState s=new TileProblemState(new Construction[]{c,airport,factory,house},new Tile[]{t1,t2,t3,t4});
 		
-		assertTrue(s.fitness(1.0)<=1.0);
+		assertTrue(s.fitness()<=1.0);
 		double mean=(c.affinityToTileInState(t1, s)+airport.affinityToTileInState(t2, s)+factory.affinityToTileInState(t3, s)+house.affinityToTileInState(t4, s))/4;
-		assertEquals(s.fitness(1.0),mean ,0.0001);
+		assertEquals(s.fitness(),mean ,0.0001);
 		
 		
 		

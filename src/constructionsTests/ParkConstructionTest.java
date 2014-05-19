@@ -1,7 +1,7 @@
 package constructionsTests;
 
 import static org.junit.Assert.*;
-import mainPackage.State;
+import mainPackage.TileProblemState;
 import mainPackage.Tile;
 import mainPackage.constructions.AirportConstruction;
 import mainPackage.constructions.FactoryConstruction;
@@ -27,7 +27,7 @@ public class ParkConstructionTest {
 		park_tile.addAdjacentTile(factory_tile);
 		
 		
-		State s=new State(new Construction[]{park,airport,factory},new Tile[]{park_tile,airport_tile,factory_tile});
+		TileProblemState s=new TileProblemState(new Construction[]{park,airport,factory},new Tile[]{park_tile,airport_tile,factory_tile});
 		
 		double aff=park.affinityToTileInState(park_tile, s);
 		
