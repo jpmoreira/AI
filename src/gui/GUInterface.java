@@ -305,6 +305,8 @@ public class GUInterface {
 			createResultWidgets();
 			addResultWidgets();
 			
+			updateResultPanel();
+			
 			centerPanel.repaint();
 		};
 
