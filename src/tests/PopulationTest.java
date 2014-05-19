@@ -157,7 +157,7 @@ public class PopulationTest {
 
 		Tile[] tiles = { tile1, tile2 };
 		Construction[] constructions = { c1, c2, c3, c4 };
-		TileProblemPopulation pop = new TileProblemPopulation(tiles, constructions, 4,1.0);
+		TileProblemPopulation pop = new TileProblemPopulation(tiles, constructions, 4);
 		GeneticEngine gen=new GeneticEngine(pop, 1.0, 2);
 
 		TileProblemState st1 = pop.states()[0];
