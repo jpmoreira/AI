@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 import junit.extensions.RepeatedTest;
 import mainPackage.State;
-import mainPackage.constructions.Construction;
+
 
 @SuppressWarnings("serial")
-public class GeneticRandomGenerator implements Serializable{
+public class GeneticEngine extends AlgorithmEngine implements Serializable {
 
 	/**
 	 * the lower bound for all the probability to rank algorithm sub intervals.
@@ -41,6 +41,12 @@ public class GeneticRandomGenerator implements Serializable{
 	 * 
 	 */
 	private double mutationProbVarFactor;
+	
+	/**
+	 * 
+	 * The number of states to pair
+	 */
+	private int statesToPair;
 
 	/**
 	 * The current probability of a mutation occurring
@@ -76,12 +82,7 @@ public class GeneticRandomGenerator implements Serializable{
 	 */
 	private boolean directFitnessToProbability;
 
-	/**
-	 * 
-	 * The Population We are dealing with
-	 * 
-	 */
-	Population population;
+
 
 	/**
 	 * 
@@ -95,11 +96,15 @@ public class GeneticRandomGenerator implements Serializable{
 	 */
 	public State[] statesForReproduction(RandomNrGenerator gen) {
 
+		
+		State [] states;
 		if (this.directFitnessToProbability)
-			return this
+			states= this
 					.statesForReproduction_Direct_Fitness_To_Probability(gen);
 		else
-			return this.statesForReproduction_Fitness_To_Rank(gen);
+			states= this.statesForReproduction_Fitness_To_Rank(gen);
+		
+		return states;
 
 	}
 
@@ -118,8 +123,8 @@ public class GeneticRandomGenerator implements Serializable{
 		if (gen == null)
 			gen = defaultGenerator;
 
-		GeneticRandomGenerator.BubbleSort(population.states(),
-				population.states().length, this.diversityUsageFactor,population.getRepetedConstructionsFactor());// sort
+		GeneticEngine.BubbleSort(population.states(),
+				population.states().length, this.diversityUsageFactor);// sort
 																		// states
 
 		ArrayList<State> statesForReproduction = new ArrayList<State>();
@@ -127,7 +132,7 @@ public class GeneticRandomGenerator implements Serializable{
 		double randomNumber;
 		State[] states = this.population.states();
 
-		while (statesForReproduction.size() < this.population.statesToPair()) {
+		while (statesForReproduction.size() < this.statesToPair) {
 
 			randomNumber = gen.nextRandomNr();
 			for (int i = 0; i < states.length; i++) {
@@ -167,11 +172,11 @@ public class GeneticRandomGenerator implements Serializable{
 		int stateIndex = 0;
 		State currentState;
 
-		while (statesForReproduction.size() < this.population.statesToPair()) {
+		while (statesForReproduction.size() < this.statesToPair) {
 
 			randomNumber = gen.nextRandomNr();
 			currentState = this.population.states()[stateIndex];
-			probForReproduction = currentState.fitness(population.getRepetedConstructionsFactor()) / overallFitness;
+			probForReproduction = currentState.fitness() / overallFitness;
 			if (randomNumber <= probForReproduction)//FIXME here its not working for fitness of the state being 0
 				statesForReproduction.add(currentState);
 
@@ -207,7 +212,7 @@ public class GeneticRandomGenerator implements Serializable{
 		ArrayList<Integer> segments = new ArrayList<Integer>();
 		double randomNr = gen.nextRandomNr();
 
-		for (int i = 0; i < state.tiles.length; i++) {
+		for (int i = 0; i < state.nrSegments(); i++) {
 
 			if (randomNr < 0.5)
 				segments.add(i);
@@ -223,10 +228,10 @@ public class GeneticRandomGenerator implements Serializable{
 		State[] orderedStates = this.population.states().clone();
 
 		int nrOfElitistStatesToSelect = this.population.states().length
-				- this.population.statesToPair();
+				- this.statesToPair;
 
-		GeneticRandomGenerator.BubbleSort(orderedStates,
-				nrOfElitistStatesToSelect, diversityUsageFactor,population.getRepetedConstructionsFactor());
+		GeneticEngine.BubbleSort(orderedStates,
+				nrOfElitistStatesToSelect, diversityUsageFactor);
 
 		State[] statesForNextGen = new State[nrOfElitistStatesToSelect];
 
@@ -275,7 +280,7 @@ public class GeneticRandomGenerator implements Serializable{
 	int mutatingSegmentForState(State s, RandomNrGenerator gen) {
 		if (gen == null)
 			gen = this.defaultGenerator;
-		return (int) gen.nextRandomNr() * s.tiles.length;
+		return (int) gen.nextRandomNr() * s.nrSegments();
 
 	}
 
@@ -284,16 +289,18 @@ public class GeneticRandomGenerator implements Serializable{
 	 * A simple constructor.
 	 * 
 	 * @param pop
-	 *            the Population to whom this {@link GeneticRandomGenerator} is
+	 *            the Population to whom this {@link GeneticEngine} is
 	 *            link
 	 * @param statesToPair
 	 *            the number of states to pair
 	 * @param mutationProb
 	 *            the initial mutation probability
 	 */
-	public GeneticRandomGenerator(Population pop,
-			double mutationProb) {
+	public GeneticEngine(Population pop,
+			double mutationProb,int statesToPair) {
+		super(pop);
 
+		this.statesToPair=statesToPair;
 		this.directFitnessToProbability = true;
 		this.diversityUsageFactor = 0.0;
 		this.mutationProbVarFactor = 1.0;
@@ -302,6 +309,7 @@ public class GeneticRandomGenerator implements Serializable{
 		this.defaultGenerator = new DefaultRandomGenerator();
 
 	}
+	
 
 	/**
 	 * 
@@ -318,13 +326,13 @@ public class GeneticRandomGenerator implements Serializable{
 	 *            array
 	 */
 	public static void BubbleSort(State[] states, int nrStatesToOrder,
-			double diversityFactor,double repetedFactor) {
+			double diversityFactor) {
 		for (int i = 0; i < states.length && i < nrStatesToOrder; i++) {
 			for (int x = states.length - 1; x > i; x--) {
 
-				double valueX = states[x].fitness(repetedFactor) * (1 - diversityFactor)
+				double valueX = states[x].fitness() * (1 - diversityFactor)
 						+ states[x].diversity(states) * diversityFactor;
-				double valueBeforeX = states[x - 1].fitness(repetedFactor)
+				double valueBeforeX = states[x - 1].fitness()
 						* (1 - diversityFactor)
 						+ states[x - 1].diversity(states) * diversityFactor;
 
@@ -455,7 +463,7 @@ public class GeneticRandomGenerator implements Serializable{
 		if (gen == null)
 			gen = defaultGenerator;
 
-		int nrMaxBit = Construction.latestConstructionIndex() / 2 + 1;// the
+		int nrMaxBit = population.maxBitToToggle();// the
 																		// number
 																		// of
 																		// the
@@ -480,28 +488,70 @@ public class GeneticRandomGenerator implements Serializable{
 
 		this.diversityUsageFactor = usageFactor;
 	}
-
-	public double getMutationProb() {
-
-		return mutationProbability;
-	}
-
-	public double getMutationProbVarFac() {
-
-		return mutationProbVarFactor;
-	}
-
-	public double getDiversityUsageFac() {
 	
-		return diversityUsageFactor;
+	
+	
+	public void pair(){
+		
+		State[] statesToBePaired=statesForReproduction(null);
+		State st1,st2;
+		Integer[] segments;
+		State[] childs;
+		
+		ArrayList<State> statesAfterPairing=new ArrayList<State>();
+		
+		
+		for(int i=0;i<statesToBePaired.length-1;i+=2){
+			st1=statesToBePaired[i];
+			st2=statesToBePaired[i+1];
+			segments=segmentsOfState(st1,null);
+			childs=st1.pairWith(st2, segments);
+			statesAfterPairing.add(childs[0]);
+			statesAfterPairing.add(childs[1]);
+			
+		}
+		
+		
+		State[] directToNextGenStates=statesForNextGen();
+		
+		State[] states=population.states();
+		
+		for(int i=0;i<directToNextGenStates.length;i++){//add states passing intact
+			states[i]=directToNextGenStates[i];
+		}
+
+		for(int i=directToNextGenStates.length;i<states.length;i++){//ass states paired
+			states[i]=statesAfterPairing.get(i-directToNextGenStates.length);
+		}
+		
+		
 	}
 
-	public boolean getDirectFitnessToProb() {
-		return directFitnessToProbability;
+
+	public void iterate() {
+		
+		this.pair();
+		this.mutate();
+		this.updateParameters();
+		this.population.updateStatistics();
 	}
 
-	public double getProbToRank() {
-		return probToRankFactor;
+	private void mutate() {
+		boolean mutate;
+		for(State s: population.states()){
+			mutate=stateShouldMutate(s,null);
+			if(mutate){
+				this.population.addMutationThisIteration();
+				s.mutate(mutatingSegmentForState(s,null),bitToToggle(null));
+			}
+			
+		}
+		
+		
+	}
+
+	public int statesToPair() {
+		return this.statesToPair;
 	}
 
 

@@ -1,7 +1,7 @@
 package constructionsTests;
 
 import static org.junit.Assert.*;
-import mainPackage.State;
+import mainPackage.TileProblemState;
 import mainPackage.Tile;
 import mainPackage.constructions.Construction;
 import mainPackage.constructions.PrisonConstruction;
@@ -25,7 +25,7 @@ public class ConstructionTests {
 		Construction c=new Construction("dummy") {
 			
 			@Override
-			public double affinityToTileInState(Tile tile, State state) {
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
 				
 				return 0;
 			}
@@ -33,7 +33,7 @@ public class ConstructionTests {
 		Construction c2=new Construction("dummy2") {
 			
 			@Override
-			public double affinityToTileInState(Tile tile, State state) {
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
 				
 				return 0;
 			}
@@ -84,7 +84,7 @@ public class ConstructionTests {
 		Construction [] allConstructions={c1,c2,c3,c4};
 		Tile [] allTiles={t1,t2,t3,t4};
 		
-		State s=new State(allConstructions, allTiles);
+		TileProblemState s=new TileProblemState(allConstructions, allTiles);
 		
 		double c1Aff=c1.affinityToTileInState(t1, s);
 		double c2Aff=c2.affinityToTileInState(t2, s);

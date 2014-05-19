@@ -1,10 +1,11 @@
 package tests;
 
 import static org.junit.Assert.*;
-import mainPackage.GeneticRandomGenerator;
-import mainPackage.Population;
-import mainPackage.RandomNrGenerator;
+import mainPackage.GeneticEngine;
 import mainPackage.State;
+import mainPackage.TileProblemPopulation;
+import mainPackage.RandomNrGenerator;
+import mainPackage.TileProblemState;
 import mainPackage.Tile;
 import mainPackage.constructions.Construction;
 
@@ -22,7 +23,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c1 = new Construction("Moradia") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 1;
 			}
 		};
@@ -30,7 +31,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c2 = new Construction("Apartamento") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 2;
 			}
 		};
@@ -38,7 +39,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c3 = new Construction("Escola") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 3;
 			}
 		};
@@ -46,7 +47,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c4 = new Construction("Aeroporto") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 4;
 			}
 		};
@@ -56,17 +57,17 @@ public class GeneticRandomGeneratorTests {
 		Construction[] constructions3 = { c3 };
 		Construction[] constructions4 = { c4 };
 		Tile[] tiles = { new Tile() };
-		State s1 = new State(constructions1, tiles);
+		TileProblemState s1 = new TileProblemState(constructions1, tiles,1.0);
 
-		State s2 = new State(constructions2, tiles);
+		TileProblemState s2 = new TileProblemState(constructions2, tiles,1.0);
 
-		State s3 = new State(constructions3, tiles);
+		TileProblemState s3 = new TileProblemState(constructions3, tiles,1.0);
 
-		State s4 = new State(constructions4, tiles);
+		TileProblemState s4 = new TileProblemState(constructions4, tiles,1.0);
 
-		State[] statesArray = { s1, s2, s3, s4 };
+		TileProblemState[] statesArray = { s1, s2, s3, s4 };
 
-		GeneticRandomGenerator.BubbleSort(statesArray, 1, 0.0,1.0);
+		GeneticEngine.BubbleSort(statesArray, 1, 0.0);
 
 		assertEquals(statesArray[0], s4);
 
@@ -79,7 +80,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c1 = new Construction("Moradia") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 1;
 			}
 		};
@@ -87,7 +88,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c2 = new Construction("Apartamento") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 2;
 			}
 		};
@@ -95,7 +96,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c3 = new Construction("Escola") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 3;
 			}
 		};
@@ -103,7 +104,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c4 = new Construction("Aeroporto") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 4;
 			}
 		};
@@ -114,17 +115,17 @@ public class GeneticRandomGeneratorTests {
 		Construction[] constructions4 = { c4 };
 		Tile[] tiles = { new Tile() };
 
-		State s1 = new State(constructions1, tiles);
+		TileProblemState s1 = new TileProblemState(constructions1, tiles,1.0);
 
-		State s2 = new State(constructions2, tiles);
+		TileProblemState s2 = new TileProblemState(constructions2, tiles,1.0);
 
-		State s3 = new State(constructions3, tiles);
+		TileProblemState s3 = new TileProblemState(constructions3, tiles,1.0);
 
-		State s4 = new State(constructions4, tiles);
+		TileProblemState s4 = new TileProblemState(constructions4, tiles,1.0);
 
-		State[] statesArray = { s1, s2, s3, s4 };
+		TileProblemState[] statesArray = { s1, s2, s3, s4 };
 
-		GeneticRandomGenerator.BubbleSort(statesArray, 2, 0.0,1.0);
+		GeneticEngine.BubbleSort(statesArray, 2, 0.0);
 
 		assertEquals(statesArray[0], s4);
 		assertEquals(statesArray[1], s3);
@@ -137,7 +138,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c1 = new Construction("Moradia") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 1;
 			}
 		};
@@ -145,7 +146,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c2 = new Construction("Apartamento") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 2;
 			}
 		};
@@ -153,7 +154,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c3 = new Construction("Aeroporto") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 3;
 			}
 		};
@@ -161,7 +162,7 @@ public class GeneticRandomGeneratorTests {
 		Construction c4 = new Construction("Escola") {
 
 			@Override
-			public double affinityToTileInState(Tile tile, State s) {
+			public double affinityToTileInState(Tile tile, TileProblemState s) {
 				return 4;
 			}
 		};
@@ -171,17 +172,17 @@ public class GeneticRandomGeneratorTests {
 		Construction[] constructions3 = { c3, c4 };
 		Construction[] constructions4 = { c4, c4 };
 		Tile[] tiles = { new Tile(), new Tile() };
-		State s1 = new State(constructions1, tiles);
+		TileProblemState s1 = new TileProblemState(constructions1, tiles,1.0);
 
-		State s2 = new State(constructions2, tiles);
+		TileProblemState s2 = new TileProblemState(constructions2, tiles,1.0);
 
-		State s3 = new State(constructions3, tiles);
+		TileProblemState s3 = new TileProblemState(constructions3, tiles,1.0);
 
-		State s4 = new State(constructions4, tiles);
+		TileProblemState s4 = new TileProblemState(constructions4, tiles,1.0);
 
-		State[] statesArray = { s1, s4, s3, s2 };
+		TileProblemState[] statesArray = { s1, s4, s3, s2 };
 
-		GeneticRandomGenerator.BubbleSort(statesArray, 1, 0.0,1.0);
+		GeneticEngine.BubbleSort(statesArray, 1, 0.0);
 
 		
 		assertEquals(statesArray[0], s4);
@@ -197,7 +198,7 @@ public class GeneticRandomGeneratorTests {
 			Construction c1 = new Construction("Aeroporto") {
 
 				@Override
-				public double affinityToTileInState(Tile tile, State s) {
+				public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 					return 1;
 				}
@@ -205,14 +206,14 @@ public class GeneticRandomGeneratorTests {
 			Construction c2 = new Construction("Moradia") {
 
 				@Override
-				public double affinityToTileInState(Tile tile, State s) {
+				public double affinityToTileInState(Tile tile, TileProblemState s) {
 					return 2;
 				}
 			};
 			Construction c3 = new Construction("Parque") {
 
 				@Override
-				public double affinityToTileInState(Tile tile, State s) {
+				public double affinityToTileInState(Tile tile, TileProblemState s) {
 					return 3;
 				}
 			};
@@ -227,18 +228,18 @@ public class GeneticRandomGeneratorTests {
 			Construction[] constructions2 = { c2 };
 			Construction[] constructions3 = { c3 };
 
-			State s1 = new State(constructions1, tiles);
-			State s2 = new State(constructions2, tiles);
-			State s3 = new State(constructions3, tiles);
+			TileProblemState s1 = new TileProblemState(constructions1, tiles,1.0);
+			TileProblemState s2 = new TileProblemState(constructions2, tiles,1.0);
+			TileProblemState s3 = new TileProblemState(constructions3, tiles,1.0);
 
-			Population pop = new Population(tiles, constructions, 3, 0.5, 1);
+			TileProblemPopulation pop = new TileProblemPopulation(tiles, constructions, 3,1.0);
 			// alter states not to be random
-			State[] states = pop.states();
+			TileProblemState[] states = pop.states();
 			states[0] = s1;
 			states[1] = s2;
 			states[2] = s3;
 
-			GeneticRandomGenerator gen = new GeneticRandomGenerator(pop, 0.5);
+			GeneticEngine gen = new GeneticEngine(pop, 0.5, 1);
 
 			State[] statesOfNextGen = gen.statesForNextGen();
 			State[] supposedStatesForNextGen = { s3, s2 };
@@ -257,7 +258,7 @@ public class GeneticRandomGeneratorTests {
 			Construction c1 = new Construction("Aeroporto") {
 
 				@Override
-				public double affinityToTileInState(Tile tile, State s) {
+				public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 					return 1;
 				}
@@ -265,14 +266,14 @@ public class GeneticRandomGeneratorTests {
 			Construction c2 = new Construction("Moradia") {
 
 				@Override
-				public double affinityToTileInState(Tile tile, State s) {
+				public double affinityToTileInState(Tile tile, TileProblemState s) {
 					return 2;
 				}
 			};
 			Construction c3 = new Construction("Parque") {
 
 				@Override
-				public double affinityToTileInState(Tile tile, State s) {
+				public double affinityToTileInState(Tile tile, TileProblemState s) {
 					return 3;
 				}
 			};
@@ -284,13 +285,13 @@ public class GeneticRandomGeneratorTests {
 			Construction[] constructions2 = { c2 };
 			Construction[] constructions3 = { c3 };
 
-			State s1 = new State(constructions1, tiles);
-			State s2 = new State(constructions2, tiles);
-			State s3 = new State(constructions3, tiles);
+			TileProblemState s1 = new TileProblemState(constructions1, tiles,0.0);
+			TileProblemState s2 = new TileProblemState(constructions2, tiles,0.0);
+			TileProblemState s3 = new TileProblemState(constructions3, tiles,0.0);
 
-			Population pop = new Population(tiles, constructions, 4, 0.5, 2);
+			TileProblemPopulation pop = new TileProblemPopulation(tiles, constructions, 4,1.0);
 
-			GeneticRandomGenerator gen = pop.coinTosser;
+			GeneticEngine gen = new GeneticEngine(pop, 0.5,2);
 
 			gen.enableFitnessToRank(0.5);
 
@@ -314,7 +315,7 @@ public class GeneticRandomGeneratorTests {
 			Construction c1 = new Construction("Aeroporto") {
 
 				@Override
-				public double affinityToTileInState(Tile tile, State s) {
+				public double affinityToTileInState(Tile tile, TileProblemState s) {
 
 					return 1;
 				}
@@ -322,37 +323,32 @@ public class GeneticRandomGeneratorTests {
 			Construction c2 = new Construction("Moradia") {
 
 				@Override
-				public double affinityToTileInState(Tile tile, State s) {
+				public double affinityToTileInState(Tile tile, TileProblemState s) {
 					return 2;
 				}
 			};
 			Construction c3 = new Construction("Parque") {
 
 				@Override
-				public double affinityToTileInState(Tile tile, State s) {
+				public double affinityToTileInState(Tile tile, TileProblemState s) {
 					return 3;
 				}
 			};
 
 			Construction[] constructions = { c1, c2, c3 };
-			Construction[] constructions1 = { c1 };
-			Construction[] constructions2 = { c2 };
-			Construction[] constructions3 = { c3 };
 
-			State s1 = new State(constructions1, tiles);
-			State s2 = new State(constructions2, tiles);
-			State s3 = new State(constructions3, tiles);
+	
 
-			Population pop = new Population(tiles, constructions, 3, 0.5, 2);
-			pop.coinTosser.enableFitnessToRank(0.5);
+			TileProblemPopulation pop = new TileProblemPopulation(tiles, constructions, 3);
 
-			GeneticRandomGenerator generator = pop.coinTosser;
-			GeneticRandomGenerator.BubbleSort(pop.states(),
-					pop.states().length, 0,1.0);
-			State bestState = pop.states()[0];
-			State secondBestState = pop.states()[1];
+			GeneticEngine generator= new GeneticEngine(pop, 0.5, 2);
+			generator.enableFitnessToRank(0.5);
+			GeneticEngine.BubbleSort(pop.states(),
+					pop.states().length, 0);
+			TileProblemState bestState = pop.states()[0];
+			TileProblemState secondBestState = pop.states()[1];
 
-			State[] statesForRep = generator
+			State[] statesForRep =  generator
 					.statesForReproduction(new RandomNrGenerator() {
 
 						int i = 0;
@@ -378,21 +374,21 @@ public class GeneticRandomGeneratorTests {
 		Construction c1=new Construction("A") {
 			
 			@Override
-			public double affinityToTileInState(Tile tile, State state) {
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
 				return 0;
 			}
 		};
 		Construction c2=new Construction("B") {
 			
 			@Override
-			public double affinityToTileInState(Tile tile, State state) {
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
 				return 0;
 			}
 		};
 		Construction c3=new Construction("C") {
 			
 			@Override
-			public double affinityToTileInState(Tile tile, State state) {
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
 				return 0;
 			}
 		};
@@ -404,9 +400,12 @@ public class GeneticRandomGeneratorTests {
 		Construction[] constructions={c1,c2,c3};
 		Tile[] tiles={t1,t2,t3};
 		
-		Population pop=new Population(tiles, constructions, 2, 0.5, 1);
+		TileProblemPopulation pop=new TileProblemPopulation(tiles, constructions, 2,1.0);
 		
-		int bit=pop.coinTosser.bitToToggle(new RandomNrGenerator() {
+		GeneticEngine gen=new GeneticEngine(pop, 0.5, 1);
+		
+		
+		int bit=gen.bitToToggle(new RandomNrGenerator() {
 			
 			@Override
 			public double nextRandomNr() {
@@ -416,7 +415,7 @@ public class GeneticRandomGeneratorTests {
 		
 		assertEquals(bit, 2);
 		
-		bit=pop.coinTosser.bitToToggle(new RandomNrGenerator() {
+		bit=gen.bitToToggle(new RandomNrGenerator() {
 			
 			@Override
 			public double nextRandomNr() {
@@ -426,7 +425,7 @@ public class GeneticRandomGeneratorTests {
 		
 		assertEquals(bit, 1);
 		
-		bit=pop.coinTosser.bitToToggle(new RandomNrGenerator() {
+		bit=gen.bitToToggle(new RandomNrGenerator() {
 			
 			@Override
 			public double nextRandomNr() {

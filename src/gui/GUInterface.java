@@ -34,7 +34,9 @@ import javax.swing.table.TableColumn;
 
 import com.sun.xml.internal.ws.org.objectweb.asm.Label;
 
-import mainPackage.Population;
+import mainPackage.GeneticEngine;
+import mainPackage.TileProblemPopulation;
+import mainPackage.TileProblemState;
 import mainPackage.Tile;
 import mainPackage.constructions.Construction;
 
@@ -52,7 +54,7 @@ public class GUInterface {
 	private Tile[] tiles;
 
 	/** The population. */
-	private Population population;
+	private TileProblemPopulation population;
 
 	/** The pop size. */
 	private int popSize;
@@ -214,6 +216,8 @@ public class GUInterface {
 
 	private JLabel bestStateVisualization;
 
+	private GeneticEngine geneticEngine;
+
 
 
 	/**
@@ -289,15 +293,16 @@ public class GUInterface {
 
 			configGeneticGenerator();
 
-			population = new Population(tiles, landuses, popSize, mutationProb, pairingStates);
+			population = new TileProblemPopulation(tiles, landuses, popSize);
 
-			population.coinTosser.setMutationProbability(mutationProb, mutationProbVarFac);
-			population.coinTosser.setDiversityUsage(diversityUsageFac);
+			geneticEngine = new GeneticEngine(population, mutationProb, pairingStates);
+			geneticEngine.setMutationProbability(mutationProb, mutationProbVarFac);
+			geneticEngine.setDiversityUsage(diversityUsageFac);
 
 			if (directFitnessToProb) {
-				population.coinTosser.enableDirectMethod();
+				geneticEngine.enableDirectMethod();
 			} else {
-				population.coinTosser.enableFitnessToRank(probToRank);
+				geneticEngine.enableFitnessToRank(probToRank);
 			}
 			
 			updateStatusPanel();
@@ -591,7 +596,7 @@ public class GUInterface {
 	 *
 	 * @return the population
 	 */
-	public Population getPopulation() {
+	public TileProblemPopulation getPopulation() {
 		return population;
 	}
 
@@ -600,7 +605,7 @@ public class GUInterface {
 	 *
 	 * @param population the new population
 	 */
-	public void setPopulation(Population population) {
+	public void setPopulation(TileProblemPopulation population) {
 		this.population = population;
 	}
 
@@ -629,7 +634,7 @@ public class GUInterface {
 
 
 	private void evolution() {
-		population.iterate();
+		geneticEngine.iterate();
 
 		updateStatusPanel();
 		updateResultPanel();
@@ -649,7 +654,7 @@ public class GUInterface {
 		
 		for (int i = 0 ; i < tiles.length; i++){
 			
-			bestSolutionTable.setValueAt(population.bestStateEver().constructions[i].name(),i,1);
+			bestSolutionTable.setValueAt(((TileProblemState) population.bestStateEver()).constructions[i].name(),i,1);
 			
 		}
 		
@@ -850,21 +855,21 @@ public class GUInterface {
 		statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
 				";   Nr. of Landuses: " + landuses.length +
 				";   Population Size: " + population.populationSize() +
-				";   Nr of Pairing states: " + population.statesToPair() +
+				";   Nr of Pairing states: " + geneticEngine.statesToPair() +
 				";   Generation Nr: " + population.getIteration());
 
 		if (directFitnessToProb) {
-			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",population.coinTosser.getMutationProb()) +
-					";   Mutation Probability Variation Factor: " + String.format("%.2f",population.coinTosser.getMutationProbVarFac()) +
-					";   Diversity Factor: " + String.format("%.2f",population.coinTosser.getDiversityUsageFac()) +
-					";   Direct Fitness to Probability: " + population.coinTosser.getDirectFitnessToProb() +
+			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",mutationProb) +
+					";   Mutation Probability Variation Factor: " + String.format("%.2f",mutationProbVarFac) +
+					";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
+					";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
 					";   Probability to Rank: N/A");
 		} else {
 			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",mutationProb) +
 					";   Mutation Probability Variation Factor: " + String.format("%.2f",mutationProbVarFac) +
-					";   Diversity Factor: " + String.format("%.2f",population.coinTosser.getDiversityUsageFac()) +
-					";   Direct Fitness to Probability: " + population.coinTosser.getDirectFitnessToProb() +
-					";   Probability to Rank: " + String.format("%.2f",population.coinTosser.getProbToRank()));
+					";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
+					";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
+					";   Probability to Rank: " + String.format("%.2f",geneticEngine.getProbToRank()));
 		}
 
 	}
@@ -1141,11 +1146,11 @@ public class GUInterface {
 				
 				pairingStates = population.statesToPair();
 				popSize = population.populationSize();
-				mutationProb = population.coinTosser.getMutationProb();
-				mutationProbVarFac = population.coinTosser.getMutationProbVarFac();
-				diversityUsageFac = population.coinTosser.getDiversityUsageFac();
-				directFitnessToProb = population.coinTosser.getDirectFitnessToProb();
-				probToRank = population.coinTosser.getProbToRank();
+				mutationProb = geneticEngine.getMutationProb();
+				mutationProbVarFac = geneticEngine.getMutationProbVarFac();
+				diversityUsageFac = geneticEngine.getDiversityUsageFac();
+				directFitnessToProb = geneticEngine.getDirectFitnessToProb();
+				probToRank = geneticEngine.getProbToRank();
 				
 				resultsPanel.removeAll();
 				createResultWidgets();
@@ -1378,13 +1383,13 @@ public class GUInterface {
 
 			configGeneticGenerator();
 
-			population.coinTosser.setMutationProbability(mutationProb, mutationProbVarFac);
-			population.coinTosser.setDiversityUsage(diversityUsageFac);
+			geneticEngine.setMutationProbability(mutationProb, mutationProbVarFac);
+			geneticEngine.setDiversityUsage(diversityUsageFac);
 
 			if (directFitnessToProb) {
-				population.coinTosser.enableDirectMethod();
+				geneticEngine.enableDirectMethod();
 			} else {
-				population.coinTosser.enableFitnessToRank(probToRank);
+				geneticEngine.enableFitnessToRank(probToRank);
 			}
 
 			updateStatusPanel();

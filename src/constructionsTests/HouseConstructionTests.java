@@ -1,6 +1,6 @@
 package constructionsTests;
 import static org.junit.Assert.*;
-import mainPackage.State;
+import mainPackage.TileProblemState;
 import mainPackage.Tile;
 import mainPackage.Tile.SoilType;
 import mainPackage.constructions.Construction;
@@ -21,7 +21,7 @@ public class HouseConstructionTests {
 		Tile prisonTile=new Tile(SoilType.SoilType_Peaty,150,0.9,10);
 		prisonTile.addAdjacentTile(houseTile);
 		
-		State s=new State(new Construction[] {c,p}, new Tile[] {houseTile,prisonTile});
+		TileProblemState s=new TileProblemState(new Construction[] {c,p}, new Tile[] {houseTile,prisonTile});
 		
 		double aff=c.affinityToTileInState(houseTile, s);
 		assertEquals(0.35,aff,0.0001);
@@ -42,7 +42,7 @@ public class HouseConstructionTests {
 		parkTile.addAdjacentTile(houseTile);
 		
 		
-		State s=new State(new Construction[] {c,p,pa}, new Tile[] {houseTile,prisonTile,parkTile});
+		TileProblemState s=new TileProblemState(new Construction[] {c,p,pa}, new Tile[] {houseTile,prisonTile,parkTile});
 		
 		double aff=c.affinityToTileInState(houseTile, s);
 		assertEquals(0.4,aff,0.0001);

@@ -3,7 +3,7 @@ package mainPackage.constructions;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import mainPackage.State;
+import mainPackage.TileProblemState;
 import mainPackage.Tile;
 import mainPackage.Tile.SoilType;
 
@@ -44,7 +44,7 @@ public class Construction implements Serializable{
 			nullConstruction = new Construction("NULL") {
 
 				@Override
-				public double affinityToTileInState(Tile tile,State s) {
+				public double affinityToTileInState(Tile tile,TileProblemState s) {
 
 					return 0;
 				}
@@ -320,7 +320,7 @@ public class Construction implements Serializable{
 	 *         doesn't suit this construction.
 	 * 
 	 * */
-	public double affinityToTileInState(Tile tile, State state){
+	public double affinityToTileInState(Tile tile, TileProblemState state){
 		
 		double currentAffinity = 1.0;
 
@@ -412,7 +412,7 @@ public class Construction implements Serializable{
 	 * @param c
 	 * @return
 	 */
-	protected double defaultPenaltyForAdjacentConstruction(Tile[] adjacentTiles, State s){
+	protected double defaultPenaltyForAdjacentConstruction(Tile[] adjacentTiles, TileProblemState s){
 		
 		double penalty=0.0;
 		
@@ -517,7 +517,7 @@ public class Construction implements Serializable{
 	 * @param s the state for the constraint to be evaluated
 	 * @return the value of the penalty to be given to this construction
 	 */
-	protected double defaultMustHaveAdjacenciesPenalty(Tile[] adjacentTiles,State s){
+	protected double defaultMustHaveAdjacenciesPenalty(Tile[] adjacentTiles,TileProblemState s){
 		
 		boolean instancesMatches[]=new boolean[this.mustHaveAdjacenciesInstances.length];//initialized to false
 		boolean classesMatches[]=new boolean[this.mustHaveAdjacentClasses.length];
@@ -561,7 +561,7 @@ public class Construction implements Serializable{
 	}
 	
 	
-	protected double allDefaultPenalties(Tile t,State s){
+	protected double allDefaultPenalties(Tile t,TileProblemState s){
 		
 		
 		double currentPenalty=0.0;

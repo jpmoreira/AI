@@ -1,7 +1,7 @@
 package constructionsTests;
 
 import static org.junit.Assert.*;
-import mainPackage.State;
+import mainPackage.TileProblemState;
 import mainPackage.Tile;
 import mainPackage.constructions.AirportConstruction;
 import mainPackage.constructions.Construction;
@@ -20,7 +20,7 @@ public class PrisonConstructionTest {
 		Tile airportTile=new Tile();
 		prisonTile.addAdjacentTile(airportTile);
 		
-		State s=new State(new Construction[]{pri,air},new Tile[]{prisonTile,airportTile} );
+		TileProblemState s=new TileProblemState(new Construction[]{pri,air},new Tile[]{prisonTile,airportTile} );
 		
 		double aff=pri.affinityToTileInState(prisonTile, s);
 		
@@ -38,7 +38,7 @@ public class PrisonConstructionTest {
 		prisonTile.addAdjacentTile(airportTile);
 		prisonTile.setPricePerAreaUnit(100);
 		
-		State s=new State(new Construction[]{pri,air},new Tile[]{prisonTile,airportTile} );
+		TileProblemState s=new TileProblemState(new Construction[]{pri,air},new Tile[]{prisonTile,airportTile} );
 		
 		double aff=pri.affinityToTileInState(prisonTile, s);
 		
@@ -53,7 +53,7 @@ public class PrisonConstructionTest {
 		Tile prisonTile=new Tile();
 		Tile airportTile=new Tile();
 		
-		State s=new State(new Construction[]{pri,air},new Tile[]{prisonTile,airportTile} );
+		TileProblemState s=new TileProblemState(new Construction[]{pri,air},new Tile[]{prisonTile,airportTile} );
 		
 		double aff=pri.affinityToTileInState(prisonTile, s);
 		
