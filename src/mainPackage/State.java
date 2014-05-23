@@ -49,5 +49,5 @@ public interface State {
 	public double repetitionFactor();
 	public void setRepetitionFactor(double newFactor);
 	
-	public int statesToPair();
+	
 }
