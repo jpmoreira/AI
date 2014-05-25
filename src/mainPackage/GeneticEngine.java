@@ -554,6 +554,26 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		return this.statesToPair;
 	}
 
+	public double getDiversityUsageFac() {
+		return this.diversityUsageFactor;
+	}
+
+	public boolean getDirectFitnessToProb() {
+		return this.directFitnessToProbability;
+	}
+
+	public double getProbToRank() {
+		return this.probToRankFactor;
+	}
+
+	public double getMutationProb() {
+		return this.mutationProbability;
+	}
+
+	public double getMutationProbVarFac() {
+		return this.mutationProbVarFactor;
+	}
+
 
 
 }

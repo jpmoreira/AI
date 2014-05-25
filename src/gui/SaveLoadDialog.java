@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +20,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import mainPackage.GeneticEngine;
 import mainPackage.Population;
+import mainPackage.TileProblemPopulation;
 
 public class SaveLoadDialog extends JDialog{
 
@@ -56,7 +59,9 @@ public class SaveLoadDialog extends JDialog{
 	/** The cancel button. */
 	private JButton cancelButton;
 
-	private Population tempPopulation;
+	private TileProblemPopulation tempPopulation;
+	
+	private GeneticEngine tempGeneticEngine;
 	
 	private JFrame frame;
 
@@ -69,8 +74,9 @@ public class SaveLoadDialog extends JDialog{
 	 * @param modal the modal
 	 * @param myMessage the my message
 	 * @param population 
+	 * @param geneticEngine 
 	 */
-	public SaveLoadDialog(JFrame frame, boolean modal, String myMessage, Population population)
+	public SaveLoadDialog(JFrame frame, boolean modal, String myMessage, TileProblemPopulation population, GeneticEngine geneticEngine)
 	{
 
 		super(frame,modal);
@@ -78,6 +84,8 @@ public class SaveLoadDialog extends JDialog{
 
 		this.frame = frame;
 		this.tempPopulation = population;
+		this.tempGeneticEngine = geneticEngine;
+		this.setTitle("Save/Load Problem");
 		
 		createWidgets();
 		addWidgets(getContentPane());
@@ -229,7 +237,7 @@ public class SaveLoadDialog extends JDialog{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
-			saveProblem = true;			 
+				 
 
 			String name = pathInputField.getText();
 			name.concat(".dat");
@@ -288,10 +296,16 @@ public class SaveLoadDialog extends JDialog{
 				ObjectOutputStream os = new ObjectOutputStream(fileOut);
 
 				/* Write the game in a file */
-				os.writeObject(tempPopulation);
+				
+//				tempPopulation.setCoinTosser(tempGeneticEngine);
+				
+//				os.writeObject(tempPopulation);
+				os.writeObject(tempGeneticEngine);
 
 				fileOut.close();
 				os.close();
+				
+				saveProblem = true;
 
 			}
 			catch (IOException i )
@@ -319,7 +333,10 @@ public class SaveLoadDialog extends JDialog{
 				ObjectInputStream is = new ObjectInputStream(fileIn);
 
 				/* load the saved game in the file to the object tempGame */
-				setTempPopulation((Population) is.readObject());
+//				setTempPopulation((TileProblemPopulation) is.readObject());
+//				setTempGeneticEngine(tempPopulation.getCoinTosser());
+				
+				setTempGeneticEngine((GeneticEngine) is.readObject());
 
 				is.close();
 				fileIn.close();
@@ -328,18 +345,28 @@ public class SaveLoadDialog extends JDialog{
 
 
 			}
-			catch (ClassNotFoundException i)
+			catch (FileNotFoundException i)
 			{
 				JOptionPane.showMessageDialog(frame,"File not supported.");
 			}
+			catch (ClassNotFoundException e) {
+				JOptionPane.showMessageDialog(frame,"Object error.");
+				e.printStackTrace();
+			}
 			catch (IOException i )
 			{
-				JOptionPane.showMessageDialog(frame,"File not found.");
+				JOptionPane.showMessageDialog(frame,"Input/OutPut error.");
+				i.printStackTrace();
 			}
 			
 		}
 		else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
 
+	}
+
+
+	private void setTempGeneticEngine(GeneticEngine readObject) {
+		this.tempGeneticEngine = readObject;
 	}
 
 
@@ -354,13 +381,18 @@ public class SaveLoadDialog extends JDialog{
 	}
 
 
-	public Population getTempPopulation() {
+	public TileProblemPopulation getTempPopulation() {
 		return tempPopulation;
 	}
 
 
-	public void setTempPopulation(Population tempPopulation) {
+	public void setTempPopulation(TileProblemPopulation tempPopulation) {
 		this.tempPopulation = tempPopulation;
+	}
+
+
+	public GeneticEngine getTempGeneticEngine() {
+		return tempGeneticEngine;
 	}
 
 }

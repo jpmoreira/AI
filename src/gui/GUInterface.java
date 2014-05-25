@@ -15,10 +15,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -45,6 +47,9 @@ import mainPackage.constructions.Construction;
  * The Class GUInterface.
  */
 public class GUInterface {
+
+
+
 
 
 	/** The landuses. */
@@ -80,6 +85,10 @@ public class GUInterface {
 	
 	/** The pairing states. */
 	private int pairingStates;
+	
+	private JLabel bestStateVisualization;
+
+	private GeneticEngine geneticEngine;
 
 
 
@@ -126,6 +135,8 @@ public class GUInterface {
 	/** The history panel */
 	private JPanel historyPanel;
 
+	
+	private JLabel populationLabel;
 
 	/**  Genetic Algorithm Label. */
 	private JLabel geneticLabel;
@@ -178,6 +189,7 @@ public class GUInterface {
 	/** The annealing label. */
 	private JLabel annealingLabel;
 
+	private JButton annealingButton;
 
 
 	/** The population dialog. */
@@ -204,6 +216,7 @@ public class GUInterface {
 	/** The save and load dialog */
 	private SaveLoadDialog saveLoadDialog;
 
+	private SolverDialog solverDialog;
 
 
 	/** Timer */
@@ -214,9 +227,30 @@ public class GUInterface {
 
 	protected int evolutionCount = 0;
 
-	private JLabel bestStateVisualization;
+	private int solverOption;
+	
+	
+	//////////////////////////////////////////
+	//										//
+	//			Best State Stats			//
+	//										//
+	//////////////////////////////////////////
+	
+	private JLabel bestSolutionLabel;
 
-	private GeneticEngine geneticEngine;
+	private JLabel generationBestStateLabel;
+
+	private JLabel fitnessBestStateLabel;
+
+	private JLabel fitnessBestState;
+
+	private JLabel generationBestState;
+
+
+
+
+
+
 
 
 
@@ -268,54 +302,175 @@ public class GUInterface {
 		evolutionTimer = new Timer(evolutionRate, evolutionListener);
 
 	}
-
-
-
-
-
+	
+	
+	
 	/**
-	 * Start new problem.
+	 * Creates the widgets.
 	 */
-	private void startNewProblem() {
+	private void createWidgets() {
 
 
-		Construction.resetConstructions();
+		/* Left Panel and Elements */
+		leftPanel = new JPanel();
+		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+		leftPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+		leftPanel.setMaximumSize(new Dimension(175, 735));
 
-		if (configPopulation()){
-			
-			configSites();
-
-			configAdjacencies();
-
-			configLandUses();
-			//TODO 
-			configRestrictions();
-
-			configGeneticGenerator();
-
-			population = new TileProblemPopulation(tiles, landuses, popSize);
-
-			geneticEngine = new GeneticEngine(population, mutationProb, pairingStates);
-			geneticEngine.setMutationProbability(mutationProb, mutationProbVarFac);
-			geneticEngine.setDiversityUsage(diversityUsageFac);
-
-			if (directFitnessToProb) {
-				geneticEngine.enableDirectMethod();
-			} else {
-				geneticEngine.enableFitnessToRank(probToRank);
-			}
-			
-			updateStatusPanel();
-			
-			createResultWidgets();
-			addResultWidgets();
-			
-			updateResultPanel();
-			
-			centerPanel.repaint();
-		};
-
+		/* Genetic Algorithm Panel */
+		geneticPanel = new JPanel();
+		geneticPanel.setLayout(new GridLayout(9,1));
+		populationLabel = new JLabel("Problem Settings");
 		
+		populationLabel.setHorizontalAlignment(JLabel.CENTER);
+		populationLabel.setVerticalAlignment(JLabel.CENTER);
+
+		geneticLabel = new JLabel("Genetic Algorithms");
+		geneticLabel.setHorizontalAlignment(JLabel.CENTER);
+		geneticLabel.setVerticalAlignment(JLabel.CENTER);
+		geneticPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		restrictionsButton = new JButton("<html><center>LandUses<br>Restrictions</center></html>");
+		restrictionsButton.addActionListener(new LandUseRestrictionsListener());
+
+		adjacenciesButton = new JButton("<html><center>Adjacencies<br>Settings</center></html>");
+		adjacenciesButton.addActionListener(new AdjacenciesSettingsListener());
+		 
+		sitesSettingsButton = new JButton("<html><center>Tiles<br>Settings</center></html>");
+		sitesSettingsButton.addActionListener(new SiteSettingsListener());
+
+		landuseSettingButton = new JButton("<html><center>Landuses<br>Settings</center></html>");
+		landuseSettingButton.addActionListener(new LanduseSettingsListener());
+
+		geneticButton = new JButton("<html><center>Genetic<br>Settings</center></html>");
+		geneticButton.addActionListener(new GeneticListener());
+
+		annealingLabel = new JLabel("Simulated Annealing");
+		annealingLabel.setHorizontalAlignment(JLabel.CENTER);
+		annealingLabel.setVerticalAlignment(JLabel.CENTER);
+		
+		annealingButton = new JButton("<html><center>Annealing<br>Settings</center></html>");
+		annealingButton.addActionListener(new AnnealingListener());
+		
+
+		/* Top Panel */
+		topPanel = new JPanel();
+		topPanel.setLayout(new BorderLayout(0,0));
+		topPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+
+		statusOuputLabel = new JLabel("Nr. of Sites:  ND" + 
+				";   Nr. of Landuses: ND" + 
+				";   Population Size: ND" +
+				";   Nr of Pairing states: ND" +
+				";   Generation Nr: ND");
+		statusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
+		statusOuputLabel.setVisible(true);
+
+		genStatusOuputLabel = new JLabel("Mutation Probability: ND" +
+				";   Mutation Probability Variation Factor: ND" +
+				";   Diversity Factor: ND" +
+				";   Direct Fitness to Probability: ND" +
+				";   Probability to Rank: ND");
+		genStatusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
+		genStatusOuputLabel.setVisible(true);
+
+
+		/* Center and Top Panels and Elements */
+		centerPanel = new JPanel();
+		centerPanel.setLayout(new BorderLayout(0, 0));
+
+		runPanel = new JPanel();
+		runPanel.setLayout(new GridLayout(1, 6));
+		runPanel.setBorder(new EmptyBorder(5,5,5,5));
+
+		runBtn = new JButton("Run");
+		runBtn.addActionListener(new RunListener());
+
+		run1GenBtn = new JButton("Run 1 Generation");
+		run1GenBtn.addActionListener(new Run1GenListener());
+
+		run10GenBtn = new JButton("Run 10 Generations");
+		run10GenBtn.addActionListener(new Run10GenListener());
+
+		run100GenBtn = new JButton("Run 100 Generations");
+		run100GenBtn.addActionListener(new Run100GenListener());
+
+		run1000GenBtn = new JButton("Run 1000 Generations");
+		run1000GenBtn.addActionListener(new Run1000GenListener());
+
+		pauseBtn = new JButton("Pause");
+		pauseBtn.addActionListener(new PauseListener());
+
+
+		/* Result Panel */
+		resultsPanel = new JPanel();
+		resultsPanel.setLayout(new BorderLayout());
+		
+
+		/* Exit Panel */
+
+		exitPanel = new JPanel();
+		exitPanel.setLayout(new GridLayout(3,1));
+		exitPanel.setBorder(new EmptyBorder(5,5,5,5));
+		
+
+		newProblemButton = new JButton("New Problem");
+		newProblemButton.addActionListener(new NewProblemListener());
+		
+		saveProblemButton = new JButton("<html><center>Save/Load<br>Problem</center></html>");
+		saveProblemButton.addActionListener(new SaveLoadProblemListener());
+
+
+		exitButton = new JButton("Exit");
+		exitButton.addActionListener(new ExitListener());
+
+	}
+
+	
+	
+	/**
+	 * Adds the widgets.
+	 *
+	 * @param contentPane the content pane
+	 */
+	private void addWidgets(Container contentPane) {
+
+		geneticPanel.add(populationLabel);
+		geneticPanel.add(sitesSettingsButton);
+		geneticPanel.add(adjacenciesButton);
+		geneticPanel.add(landuseSettingButton);
+		geneticPanel.add(restrictionsButton);
+		geneticPanel.add(geneticLabel);
+		geneticPanel.add(geneticButton);
+
+		geneticPanel.add(annealingLabel);
+		geneticPanel.add(annealingButton);
+
+		exitPanel.add(newProblemButton);
+		exitPanel.add(saveProblemButton);
+		exitPanel.add(exitButton);
+
+		leftPanel.add(geneticPanel);
+		leftPanel.add(Box.createVerticalStrut(125));
+		leftPanel.add(exitPanel);
+		contentPane.add(leftPanel,BorderLayout.WEST);
+
+		topPanel.add(statusOuputLabel,BorderLayout.NORTH);
+		topPanel.add(genStatusOuputLabel,BorderLayout.CENTER);
+
+		runPanel.add(run1GenBtn);
+		runPanel.add(run10GenBtn);
+		runPanel.add(run100GenBtn);
+		runPanel.add(run1000GenBtn);
+		runPanel.add(runBtn);
+		runPanel.add(pauseBtn);	
+		topPanel.add(runPanel,BorderLayout.SOUTH);	
+		
+		centerPanel.add(topPanel,BorderLayout.NORTH);
+
+		centerPanel.add(resultsPanel,BorderLayout.CENTER);
+
+		contentPane.add(centerPanel,BorderLayout.CENTER);
 
 	}
 
@@ -407,30 +562,111 @@ public class GUInterface {
 		
 	}
 
+
+	
+	//////////////////////////////////////
+	//									//
+	//			Flow Methods			//
+	//									//
+	//////////////////////////////////////
+
+
+
 	/**
-	 * Config restrictions.
+	 * Start new problem.
 	 */
-	private void configRestrictions() {
+	private void startNewProblem() {
+
+
+		Construction.resetConstructions();
+
+		if (configPopulation()){
+			
+			configSites();
+
+			configAdjacencies();
+
+			configLandUses();
+			//TODO switch windows order
+			configRestrictions();
+
+			configSolver();
+			
+
+
+			population = new TileProblemPopulation(tiles, landuses, popSize);
+
+			geneticEngine = new GeneticEngine(population, mutationProb, pairingStates);
+			geneticEngine.setMutationProbability(mutationProb, mutationProbVarFac);
+			geneticEngine.setDiversityUsage(diversityUsageFac);
+
+			if (directFitnessToProb) {
+				geneticEngine.enableDirectMethod();
+			} else {
+				geneticEngine.enableFitnessToRank(probToRank);
+			}
+			
+			updateStatusPanel();
+			
+			createResultWidgets();
+			addResultWidgets();
+			
+			updateResultPanel();
+			
+			centerPanel.repaint();
+		};
+
 		
+
+	}
+
+	/**
+	 * Config population.
+	 * @return 
+	 */
+	private boolean configPopulation() {
+		startDialog = new StartDialog(frame, true, "New Problem");
+
+		if (startDialog.getNewProblem()) {
+			
+			setTiles(new Tile[startDialog.getTilesNumber()]);
+			for (int i = 0; i < startDialog.getTilesNumber(); i++){
+				Tile tempTile = new Tile();
+				tiles[i] = tempTile;
+			}
+			
+			landuses = new Construction[startDialog.getLandUseNumber()];
+			
+			popSize = startDialog.getPopulationSize();
+			pairingStates = popSize/2;
+			
+			return true;
+		}	
+		
+		return false;
+
+	}
+
+
+
+	/**
+	 * Config sites.
+	 */
+	private void configSites() {
+
 		int id = 0;
-		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, tiles, id);
-
+		siteDialog = new TileDialog(frame, true, "Tile Settings", getTiles(), id);
 		
-		landuses[id] = restrictionsDialog.getTempLanduse();
-		landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), restrictionsDialog.getForbPenalty());
-		landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), restrictionsDialog.getMustHavePenalty());
-		
-		id = restrictionsDialog.getLanduseID();
+		getTiles()[id] = siteDialog.getTempTile();
+		id = siteDialog.getTileID();
 
-		while (!restrictionsDialog.isFinished() && !restrictionsDialog.isCanceled()){
 
-			restrictionsDialog = new RestrictionsDialog(frame, true, "Landuse Settings", landuses, tiles, id);
-			if (!restrictionsDialog.isCanceled()){
-				landuses[id] = restrictionsDialog.getTempLanduse();
-				landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), restrictionsDialog.getForbPenalty());
-				landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), restrictionsDialog.getMustHavePenalty());
+		while (!siteDialog.isFinished() && !siteDialog.isCanceled()){
 
-				id = restrictionsDialog.getLanduseID();
+			siteDialog = new TileDialog(frame, true, "Tile Settings", getTiles(), id);
+			if (!siteDialog.isCanceled()){
+				getTiles()[id] = siteDialog.getTempTile();
+				id = siteDialog.getTileID();
 			} else {
 				break;
 			}
@@ -439,6 +675,8 @@ public class GUInterface {
 
 	}
 
+
+	
 	/**
 	 * Config adjacencies.
 	 */
@@ -478,31 +716,8 @@ public class GUInterface {
 		
 
 	}
-
-	/**
-	 * Config genetic generator.
-	 */
-	private void configGeneticGenerator() {
-
-		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", popSize/2, pairingStates, mutationProb, mutationProbVarFac, diversityUsageFac, directFitnessToProb, probToRank);
-
-		if (geneticGeneratorDialog.isNewSettings()){
-			pairingStates = geneticGeneratorDialog.getPairingStates();
-			mutationProb = geneticGeneratorDialog.getMutationProb();
-
-			mutationProbVarFac = geneticGeneratorDialog.getMutationProbVarFac();		
-			diversityUsageFac = geneticGeneratorDialog.getDiversityUsageFac();
-
-			if (geneticGeneratorDialog.isDirectFitnessToProb()){
-				directFitnessToProb = true;
-			} else {
-				directFitnessToProb = false;
-				probToRank = geneticGeneratorDialog.getProbToRank();
-			}
-		}	
-
-	}
-
+	
+	
 	/**
 	 * Config land uses.
 	 */
@@ -537,25 +752,31 @@ public class GUInterface {
 		}
 
 	}
-
+	
 	/**
-	 * Config sites.
+	 * Config restrictions.
 	 */
-	private void configSites() {
-
-		int id = 0;
-		siteDialog = new TileDialog(frame, true, "Tile Settings", getTiles(), id);
+	private void configRestrictions() {
 		
-		getTiles()[id] = siteDialog.getTempTile();
-		id = siteDialog.getTileID();
+		int id = 0;
+		restrictionsDialog = new RestrictionsDialog(frame, true, "LandUse Restrictions", landuses, tiles, id);
 
+		
+		landuses[id] = restrictionsDialog.getTempLanduse();
+		landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), restrictionsDialog.getForbPenalty());
+		landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), restrictionsDialog.getMustHavePenalty());
+		
+		id = restrictionsDialog.getLanduseID();
 
-		while (!siteDialog.isFinished() && !siteDialog.isCanceled()){
+		while (!restrictionsDialog.isFinished() && !restrictionsDialog.isCanceled()){
 
-			siteDialog = new TileDialog(frame, true, "Tile Settings", getTiles(), id);
-			if (!siteDialog.isCanceled()){
-				getTiles()[id] = siteDialog.getTempTile();
-				id = siteDialog.getTileID();
+			restrictionsDialog = new RestrictionsDialog(frame, true, "Landuse Settings", landuses, tiles, id);
+			if (!restrictionsDialog.isCanceled()){
+				landuses[id] = restrictionsDialog.getTempLanduse();
+				landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), restrictionsDialog.getForbPenalty());
+				landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), restrictionsDialog.getMustHavePenalty());
+
+				id = restrictionsDialog.getLanduseID();
 			} else {
 				break;
 			}
@@ -564,32 +785,135 @@ public class GUInterface {
 
 	}
 
-	/**
-	 * Config population.
-	 * @return 
-	 */
-	private boolean configPopulation() {
-		startDialog = new StartDialog(frame, true, "New Problem");
 
-		if (startDialog.getNewProblem()) {
-			
-			setTiles(new Tile[startDialog.getTilesNumber()]);
-			for (int i = 0; i < startDialog.getTilesNumber(); i++){
-				Tile tempTile = new Tile();
-				tiles[i] = tempTile;
-			}
-			
-			landuses = new Construction[startDialog.getLandUseNumber()];
-			
-			popSize = startDialog.getPopulationSize();
-			pairingStates = popSize/2;
-			
-			return true;
-		}	
+
+	private void configSolver() {
+		// TODO Auto-generated method stub
 		
-		return false;
+		try {
+			solverDialog = new SolverDialog(frame,true,"Solver Settings");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		solverOption = solverDialog.getOption();
+		
+		if (solverOption == 1) {
+			configAnnealing();
+		} else if (solverOption == 2){
+			configGeneticGenerator();
+		} else {
+			configAnnealing();
+			configGeneticGenerator();
+		}
+		
+	}
+
+	private void configAnnealing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Config genetic generator.
+	 */
+	private void configGeneticGenerator() {
+
+		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", popSize/2, pairingStates, mutationProb, mutationProbVarFac, diversityUsageFac, directFitnessToProb, probToRank);
+
+		if (geneticGeneratorDialog.isNewSettings()){
+			pairingStates = geneticGeneratorDialog.getPairingStates();
+			mutationProb = geneticGeneratorDialog.getMutationProb();
+
+			mutationProbVarFac = geneticGeneratorDialog.getMutationProbVarFac();		
+			diversityUsageFac = geneticGeneratorDialog.getDiversityUsageFac();
+
+			if (geneticGeneratorDialog.isDirectFitnessToProb()){
+				directFitnessToProb = true;
+			} else {
+				directFitnessToProb = false;
+				probToRank = geneticGeneratorDialog.getProbToRank();
+			}
+		}	
 
 	}
+
+	
+	//////////////////////////////////////
+	//									//
+	//			Update Methods			//
+	//									//
+	//////////////////////////////////////
+
+	
+	private void evolution() {
+		geneticEngine.iterate();
+
+		updateStatusPanel();
+		updateResultPanel();
+		centerPanel.repaint();
+	}
+	
+	private void updateResultPanel() {
+		
+		if (population.bestStateEver() == null){
+			return;
+		}
+		generationBestState.setText("");
+		
+		fitnessBestState.setText("");
+	
+		bestStateVisualization.setText(population.bestStateEver().visualRepresentation());
+		
+		for (int i = 0 ; i < tiles.length; i++){
+			
+			bestSolutionTable.setValueAt(((TileProblemState) population.bestStateEver()).constructions[i].name(),i,1);
+			
+		}
+		
+		
+	}
+
+	
+
+
+	/**
+	 * Update status panel.
+	 */
+	private void updateStatusPanel() {
+
+		statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
+				";   Nr. of Landuses: " + landuses.length +
+				";   Population Size: " + population.populationSize() +
+				";   Nr of Pairing states: " + geneticEngine.statesToPair() +
+				";   Generation Nr: " + population.getCurrentIterationNr());
+
+		if (directFitnessToProb) {
+			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",mutationProb) +
+					";   Mutation Probability Variation Factor: " + String.format("%.2f",mutationProbVarFac) +
+					";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
+					";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
+					";   Probability to Rank: N/A");
+		} else {
+			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",mutationProb) +
+					";   Mutation Probability Variation Factor: " + String.format("%.2f",mutationProbVarFac) +
+					";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
+					";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
+					";   Probability to Rank: " + String.format("%.2f",geneticEngine.getProbToRank()));
+		}
+
+	}
+
+	
+	
+	
+	//////////////////////////////////////////
+	//										//
+	//			Getters & Setters			//
+	//										//
+	//////////////////////////////////////////
+
+
 
 	/**
 	 * Gets the population.
@@ -633,33 +957,19 @@ public class GUInterface {
 	}
 
 
-	private void evolution() {
-		geneticEngine.iterate();
 
-		updateStatusPanel();
-		updateResultPanel();
-		centerPanel.repaint();
-	}
-	
-	private void updateResultPanel() {
-		
-		if (population.bestStateEver() == null){
-			return;
-		}
-		generationBestState.setText("");
-		
-		fitnessBestState.setText("");
-	
-		bestStateVisualization.setText(population.bestStateEver().visualRepresentation());
-		
-		for (int i = 0 ; i < tiles.length; i++){
-			
-			bestSolutionTable.setValueAt(((TileProblemState) population.bestStateEver()).constructions[i].name(),i,1);
-			
-		}
-		
-		
-	}
+
+
+
+
+
+	//////////////////////////////////////
+	//									//
+	//			Listeners				//
+	//									//
+	//////////////////////////////////////
+
+
 
 	ActionListener evolutionListener = new ActionListener() {
 
@@ -675,214 +985,6 @@ public class GUInterface {
 			
 		}		
 	};
-
-	private JLabel bestSolutionLabel;
-
-	private JLabel generationBestStateLabel;
-
-	private JLabel fitnessBestStateLabel;
-
-	private JLabel fitnessBestState;
-
-	private JLabel generationBestState;
-	
-	
-	/**
-	 * Adds the widgets.
-	 *
-	 * @param contentPane the content pane
-	 */
-	private void addWidgets(Container contentPane) {
-
-		geneticPanel.add(geneticLabel);
-		geneticPanel.add(sitesSettingsButton);
-		geneticPanel.add(adjacenciesButton);
-		geneticPanel.add(landuseSettingButton);
-		geneticPanel.add(restrictionsButton);
-		geneticPanel.add(geneticButton);
-
-		geneticPanel.add(annealingLabel);
-		geneticPanel.add(new JLabel(""));
-		geneticPanel.add(new JLabel(""));
-
-		exitPanel.add(newProblemButton);
-		exitPanel.add(saveProblemButton);
-		exitPanel.add(exitButton);
-
-		leftPanel.add(geneticPanel);
-		leftPanel.add(Box.createVerticalStrut(125));
-		leftPanel.add(exitPanel);
-		contentPane.add(leftPanel,BorderLayout.WEST);
-
-		topPanel.add(statusOuputLabel,BorderLayout.NORTH);
-		topPanel.add(genStatusOuputLabel,BorderLayout.CENTER);
-
-		runPanel.add(run1GenBtn);
-		runPanel.add(run10GenBtn);
-		runPanel.add(run100GenBtn);
-		runPanel.add(run1000GenBtn);
-		runPanel.add(runBtn);
-		runPanel.add(pauseBtn);	
-		topPanel.add(runPanel,BorderLayout.SOUTH);	
-		
-		centerPanel.add(topPanel,BorderLayout.NORTH);
-
-		centerPanel.add(resultsPanel,BorderLayout.CENTER);
-
-		contentPane.add(centerPanel,BorderLayout.CENTER);
-
-	}
-
-	/**
-	 * Creates the widgets.
-	 */
-	private void createWidgets() {
-
-
-		/* Left Panel and Elements */
-		leftPanel = new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		leftPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-		leftPanel.setMaximumSize(new Dimension(175, 735));
-
-		/* Genetic Algorithm Panel */
-		geneticPanel = new JPanel();
-		geneticPanel.setLayout(new GridLayout(9,1));
-
-		geneticLabel = new JLabel("Genetic Algorithms");
-		geneticLabel.setHorizontalAlignment(JLabel.CENTER);
-		geneticLabel.setVerticalAlignment(JLabel.CENTER);
-		geneticPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		restrictionsButton = new JButton("<html><center>LandUses<br>Restrictions</center></html>");
-		restrictionsButton.addActionListener(new LandUseRestrictionsListener());
-
-		adjacenciesButton = new JButton("<html><center>Adjacencies<br>Settings</center></html>");
-		adjacenciesButton.addActionListener(new AdjacenciesSettingsListener());
-		 
-		sitesSettingsButton = new JButton("<html><center>Tiles<br>Settings</center></html>");
-		sitesSettingsButton.addActionListener(new SiteSettingsListener());
-
-		landuseSettingButton = new JButton("<html><center>Landuses<br>Settings</center></html>");
-		landuseSettingButton.addActionListener(new LanduseSettingsListener());
-
-		geneticButton = new JButton("<html><center>Generator<br>Settings</center></html>");
-		geneticButton.addActionListener(new GeneticListener());
-
-		annealingLabel = new JLabel("Simulated Annealing");
-		annealingLabel.setHorizontalAlignment(JLabel.CENTER);
-		annealingLabel.setVerticalAlignment(JLabel.CENTER);
-
-		/* Top Panel */
-		topPanel = new JPanel();
-		topPanel.setLayout(new BorderLayout(0,0));
-		topPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-
-		statusOuputLabel = new JLabel("Nr. of Sites:  ND" + 
-				";   Nr. of Landuses: ND" + 
-				";   Population Size: ND" +
-				";   Nr of Pairing states: ND" +
-				";   Generation Nr: ND");
-		statusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
-		statusOuputLabel.setVisible(true);
-
-		genStatusOuputLabel = new JLabel("Mutation Probability: ND" +
-				";   Mutation Probability Variation Factor: ND" +
-				";   Diversity Factor: ND" +
-				";   Direct Fitness to Probability: ND" +
-				";   Probability to Rank: ND");
-		genStatusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
-		genStatusOuputLabel.setVisible(true);
-
-
-		/* Center and Top Panels and Elements */
-		centerPanel = new JPanel();
-		centerPanel.setLayout(new BorderLayout(0, 0));
-
-		runPanel = new JPanel();
-		runPanel.setLayout(new GridLayout(1, 6));
-		runPanel.setBorder(new EmptyBorder(5,5,5,5));
-
-		runBtn = new JButton("Run");
-		runBtn.addActionListener(new RunListener());
-
-		run1GenBtn = new JButton("Run 1 Generation");
-		run1GenBtn.addActionListener(new Run1GenListener());
-
-		run10GenBtn = new JButton("Run 10 Generations");
-		run10GenBtn.addActionListener(new Run10GenListener());
-
-		run100GenBtn = new JButton("Run 100 Generations");
-		run100GenBtn.addActionListener(new Run100GenListener());
-
-		run1000GenBtn = new JButton("Run 1000 Generations");
-		run1000GenBtn.addActionListener(new Run1000GenListener());
-
-		pauseBtn = new JButton("Pause");
-		pauseBtn.addActionListener(new PauseListener());
-
-
-		/* Result Panel */
-		resultsPanel = new JPanel();
-		resultsPanel.setLayout(new BorderLayout());
-		
-
-		/* Exit Panel */
-
-		exitPanel = new JPanel();
-		exitPanel.setLayout(new GridLayout(3,1));
-		exitPanel.setBorder(new EmptyBorder(5,5,5,5));
-		
-
-		newProblemButton = new JButton("New Problem");
-		newProblemButton.addActionListener(new NewProblemListener());
-		
-		saveProblemButton = new JButton("<html><center>Save/Load<br>Problem</center></html>");
-		saveProblemButton.addActionListener(new SaveLoadProblemListener());
-
-
-		exitButton = new JButton("Exit");
-		exitButton.addActionListener(new ExitListener());
-
-	}
-
-
-	/**
-	 * Update status panel.
-	 */
-	private void updateStatusPanel() {
-
-		statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
-				";   Nr. of Landuses: " + landuses.length +
-				";   Population Size: " + population.populationSize() +
-				";   Nr of Pairing states: " + geneticEngine.statesToPair() +
-				";   Generation Nr: " + population.getIteration());
-
-		if (directFitnessToProb) {
-			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",mutationProb) +
-					";   Mutation Probability Variation Factor: " + String.format("%.2f",mutationProbVarFac) +
-					";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
-					";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
-					";   Probability to Rank: N/A");
-		} else {
-			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",mutationProb) +
-					";   Mutation Probability Variation Factor: " + String.format("%.2f",mutationProbVarFac) +
-					";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
-					";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
-					";   Probability to Rank: " + String.format("%.2f",geneticEngine.getProbToRank()));
-		}
-
-	}
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1132,7 +1234,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 
 			// JDialog - SAVE/LOAD GAME
-			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem",population);
+			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem",population, geneticEngine);
 
 			if(saveLoadDialog.problemSaved())
 			{
@@ -1142,9 +1244,11 @@ public class GUInterface {
 			{
 				population = saveLoadDialog.getTempPopulation();
 				tiles = population.tiles();
-				landuses = population.getLandUses();
+				landuses = population.getConstructions();
 				
-				pairingStates = population.statesToPair();
+				geneticEngine = saveLoadDialog.getTempGeneticEngine();
+				
+				pairingStates = geneticEngine.statesToPair();
 				popSize = population.populationSize();
 				mutationProb = geneticEngine.getMutationProb();
 				mutationProbVarFac = geneticEngine.getMutationProbVarFac();
@@ -1394,6 +1498,20 @@ public class GUInterface {
 
 			updateStatusPanel();
 			centerPanel.repaint();
+
+		}
+
+	}
+
+	
+	
+
+
+	public class AnnealingListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
 
 		}
 

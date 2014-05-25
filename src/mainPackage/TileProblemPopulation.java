@@ -422,4 +422,8 @@ public class TileProblemPopulation implements Serializable,Population{
 	public int maxBitToToggle() {
 		return Construction.latestConstructionIndex() / 2 + 1;
 	}
+
+	public Construction[] getConstructions() {
+		return this.constructions;
+	}
 }
