@@ -1502,10 +1502,10 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 
-			if (population == null){
-				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
-				return;
-			}
+//			if (population == null){
+//				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+//				return;
+//			}
 
 			configGeneticGenerator();
 

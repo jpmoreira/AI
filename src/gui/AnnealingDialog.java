@@ -93,6 +93,7 @@ public class AnnealingDialog extends JDialog {
 			variationValuePanel.setLayout(new BoxLayout(variationValuePanel, BoxLayout.X_AXIS));
 			{
 				JSlider sliderVariatation = new JSlider();
+				sliderVariatation.setSnapToTicks(true);
 				sliderVariatation.setValue(10);
 				sliderVariatation.setMajorTickSpacing(10);
 				sliderVariatation.setMinorTickSpacing(1);
@@ -150,7 +151,7 @@ public class AnnealingDialog extends JDialog {
 							okButtonPressed();
 
 						} catch (NumberFormatException n){
-								JOptionPane.showMessageDialog(getParent(), "Stop value must be bigger than 0.");
+								JOptionPane.showMessageDialog(getParent(), "Input must be a number bigger than 0.");
 						} catch (RangeException r) {
 							if (r.getMessage().equals("stop")){
 								JOptionPane.showMessageDialog(getParent(), "Stop value must be bigger than 0.");
