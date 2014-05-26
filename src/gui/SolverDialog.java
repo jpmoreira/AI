@@ -18,6 +18,7 @@ import java.awt.GridLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 
+import mainPackage.SimulatedAnnealingEngine;
 import mainPackage.constructions.AirportConstruction;
 import mainPackage.constructions.Construction;
 import mainPackage.constructions.FactoryConstruction;
@@ -31,6 +32,7 @@ import java.awt.event.ActionEvent;
 public class SolverDialog extends JDialog {
 	
 	private boolean newSettings;
+
 	
 	private int option;
 
@@ -45,11 +47,12 @@ public class SolverDialog extends JDialog {
 
 	/**
 	 * Create the dialog.
+	 * @param annealingEngine 
 	 */
 	public SolverDialog(JFrame frame, boolean modal, String myMessage) {
 		
 		super(frame,modal);
-
+		
 		getContentPane().setLayout(new BorderLayout());
 		optionsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		getContentPane().add(optionsPanel, BorderLayout.CENTER);

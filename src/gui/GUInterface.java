@@ -37,6 +37,7 @@ import javax.swing.table.TableColumn;
 import com.sun.xml.internal.ws.org.objectweb.asm.Label;
 
 import mainPackage.GeneticEngine;
+import mainPackage.SimulatedAnnealingEngine;
 import mainPackage.TileProblemPopulation;
 import mainPackage.TileProblemState;
 import mainPackage.Tile;
@@ -89,6 +90,8 @@ public class GUInterface {
 	private JLabel bestStateVisualization;
 
 	private GeneticEngine geneticEngine;
+	
+	private SimulatedAnnealingEngine annealingEngine;
 
 
 
@@ -811,6 +814,13 @@ public class GUInterface {
 
 	private void configAnnealing() {
 		// TODO Auto-generated method stub
+		
+		try {
+			annealingDialog = new AnnealingDialog(frame, true, "Simulated Annealing Settings",annealingEngine);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 
