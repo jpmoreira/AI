@@ -2,45 +2,33 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.Timer;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-
-import com.sun.xml.internal.ws.org.objectweb.asm.Label;
 
 import mainPackage.GeneticEngine;
 import mainPackage.SimulatedAnnealingEngine;
+import mainPackage.Tile;
 import mainPackage.TileProblemPopulation;
 import mainPackage.TileProblemState;
-import mainPackage.Tile;
 import mainPackage.constructions.Construction;
 
 // TODO: Auto-generated Javadoc
@@ -48,6 +36,12 @@ import mainPackage.constructions.Construction;
  * The Class GUInterface.
  */
 public class GUInterface {
+
+
+
+
+
+
 
 
 
@@ -251,6 +245,8 @@ public class GUInterface {
 
 	private JLabel generationBestState;
 
+	private JButton geneticStopsButton;
+
 
 
 
@@ -326,7 +322,7 @@ public class GUInterface {
 
 		/* Genetic Algorithm Panel */
 		geneticPanel = new JPanel();
-		geneticPanel.setLayout(new GridLayout(9,1));
+		geneticPanel.setLayout(new GridLayout(10,1));
 		populationLabel = new JLabel("Problem Settings");
 		
 		populationLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -351,6 +347,9 @@ public class GUInterface {
 
 		geneticButton = new JButton("<html><center>Genetic<br>Settings</center></html>");
 		geneticButton.addActionListener(new GeneticListener());
+		
+		geneticStopsButton = new JButton("<html><center>Genetic Stop<br>Conditions</center></html>");
+		geneticStopsButton.addActionListener(new GeneticStopListener());
 
 		annealingLabel = new JLabel("Simulated Annealing");
 		annealingLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -449,6 +448,7 @@ public class GUInterface {
 		geneticPanel.add(restrictionsButton);
 		geneticPanel.add(geneticLabel);
 		geneticPanel.add(geneticButton);
+		geneticPanel.add(geneticStopsButton);
 
 		geneticPanel.add(annealingLabel);
 		geneticPanel.add(annealingButton);
@@ -593,9 +593,11 @@ public class GUInterface {
 
 			configAdjacencies();
 
-			configLandUses();
+			initializeLandUses();
+			
+//			configLandUses();
 			//TODO switch windows order
-			configRestrictions();
+//			configRestrictions();
 
 			configSolver();
 			
@@ -724,6 +726,17 @@ public class GUInterface {
 
 	}
 	
+
+	private void initializeLandUses() {
+		// TODO Auto-generated method stub
+		
+		
+		configLandUses();
+		
+		configRestrictions();
+		
+	}
+
 	
 	/**
 	 * Config land uses.
@@ -849,15 +862,25 @@ public class GUInterface {
 				probToRank = geneticGeneratorDialog.getProbToRank();
 			}
 			
-			
-			try {
-				geneticStopDialog = new GeneticStopDialog(frame, true, "Genetic Generator Stop Conditions");
-	
-			} catch (Exception e) {
-
-			}
 		}	
+		
+		configStopCondDialog(); 
 
+	}
+	
+	
+
+	public void configStopCondDialog() {
+		// TODO Auto-generated method stub
+		
+		
+		try {
+			geneticStopDialog = new GeneticStopDialog(frame, true, "Genetic Generator Stop Conditions");
+
+		} catch (Exception e) {
+
+		}
+		
 	}
 
 	
@@ -1525,7 +1548,22 @@ public class GUInterface {
 
 	}
 
-	
+	public class GeneticStopListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			
+//			if (population == null){
+//			JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+//			return;
+//		}
+			
+			configStopCondDialog();
+
+		}
+
+	}
 	
 
 
@@ -1548,6 +1586,9 @@ public class GUInterface {
 		}
 
 	}
+
+
+
 
 
 }

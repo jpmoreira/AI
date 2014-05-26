@@ -185,14 +185,20 @@ public class GeneticStopDialog extends JDialog {
 	private void editSettings() throws NumberFormatException{
 		// TODO Auto-generated method stub
 		
-		int tempGen;
-		int tempMin;
+		if (chckbxTimeOut.isSelected()){
+			int tempMin;
+			tempMin = Integer.parseInt(textFieldMinStop.getText());
+			if (tempMin <= 0) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR, "min");
+			
+		}
 		
-		tempGen = Integer.parseInt(textFieldGenStop.getText());
-		tempMin = Integer.parseInt(textFieldMinStop.getText());
+		if (chckbxGenerationsStop.isSelected()) {
+			int tempGen;
+			tempGen = Integer.parseInt(textFieldGenStop.getText());
+			if (tempGen <= 0)
+				throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR, "gen");
+		}
 		
-		if (tempGen <= 0) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR, "gen");
-		if (tempMin <= 0) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR, "min");
 		
 		
 		
@@ -201,17 +207,20 @@ public class GeneticStopDialog extends JDialog {
 	protected void okButtonPressed() {
 		// TODO Auto-generated method stub
 		try {
+			
 			editSettings();
 			
 			
 		} catch (NumberFormatException n) {
 			JOptionPane.showMessageDialog(getParent(), "Input must be bigger than 0.");
+			return;
 		} catch (RangeException r) {
 			if (r.getMessage().equals("gen")){
 				JOptionPane.showMessageDialog(getParent(), "Number of generations must be bigger than 0.");
 			} else if (r.getMessage().equals("min")){
 				JOptionPane.showMessageDialog(getParent(), "Number of minutes must be bigger than 0.");
 			}
+			return;
 		}
 		
 		
