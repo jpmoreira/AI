@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.Assert.*;
 import mainPackage.GeneticEngine;
+import mainPackage.GeneticState;
 import mainPackage.State;
 import mainPackage.TileProblemPopulation;
 import mainPackage.RandomNrGenerator;
@@ -241,7 +242,7 @@ public class GeneticRandomGeneratorTests {
 
 			GeneticEngine gen = new GeneticEngine(pop, 0.5, 1);
 
-			State[] statesOfNextGen = gen.statesForNextGen();
+			GeneticState[] statesOfNextGen =  gen.statesForNextGen();
 			State[] supposedStatesForNextGen = { s3, s2 };
 
 			assertArrayEquals(statesOfNextGen, supposedStatesForNextGen);
@@ -348,7 +349,7 @@ public class GeneticRandomGeneratorTests {
 			TileProblemState bestState = pop.states()[0];
 			TileProblemState secondBestState = pop.states()[1];
 
-			State[] statesForRep =  generator
+			GeneticState[] statesForRep = generator
 					.statesForReproduction(new RandomNrGenerator() {
 
 						int i = 0;

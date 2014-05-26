@@ -12,7 +12,7 @@ import mainPackage.constructions.Construction;
  * 
  * */
 @SuppressWarnings("serial")
-public class TileProblemState implements Serializable, State {
+public class TileProblemState  extends State implements Serializable,GeneticState,SimulatedAnnealingState{
 
 	/**
 	 * 
@@ -58,7 +58,7 @@ public class TileProblemState implements Serializable, State {
 	 * A method for getting the chromosome representation of the state
 	 * 
 	 * */
-	public int[] chromosome() {
+	public int[] chromossome() {
 
 		int[] chromosome = new int[tiles.length];
 
@@ -82,7 +82,7 @@ public class TileProblemState implements Serializable, State {
 	 *            first of the childs
 	 * @return the state resulting from the pairing
 	 */
-	public TileProblemState[] pairWith(State other_state,
+	public TileProblemState[] pairWith(GeneticState other_state,
 			Integer[] segmentsFromSelf) {
 
 		TileProblemState otherState = (TileProblemState) other_state;
@@ -302,4 +302,48 @@ public class TileProblemState implements Serializable, State {
 		this.repetedConstructionFactor=newFactor;
 		
 	}
+
+
+
+	@Override
+	public SimulatedAnnealingState evolve(double randomNr) {
+		
+		int constructionToChange=(int)((this.tiles.length-1)*randomNr);
+		
+		Construction cToChange=constructions[constructionToChange];
+		
+		
+		Construction newC;
+		if(cToChange==Construction.nullConstruction()){
+			newC=Construction.constructionWithCromossome(1);
+		}
+		else{
+			newC=Construction.constructionWithCromossome(cToChange.toCromossome()<<1);
+		}
+		
+		
+		if(newC==null){
+			
+			newC=Construction.constructionWithCromossome(1);
+			
+		}
+		
+		Construction[] newConstructionArray=this.constructions.clone();
+		
+		newConstructionArray[constructionToChange]=newC;
+		
+		
+		return new TileProblemState(newConstructionArray, this.tiles);
+	}
+
+	@Override
+	public int nrSuccessors() {
+		return (Construction.latestConstructionIndex()+1)*this.tiles.length;
+	}
+	
+	
+
+
+
+	
 }

@@ -3,14 +3,14 @@ package mainPackage;
 public interface GeneticState {
 	
 	
-	int nrSegments();
+	public int nrSegments();
 	
 	/**
 	 * 
 	 * A method for getting the chromosome representation of the state
 	 * 
 	 * */
-	int[] chromossome();
+	public int[] chromossome();
 	
 	/**
 	 * 
