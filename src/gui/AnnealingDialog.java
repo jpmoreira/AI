@@ -1,39 +1,35 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import javax.swing.BoxLayout;
-
-import java.awt.Component;
-
-import javax.swing.JTextField;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JCheckBox;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import mainPackage.SimulatedAnnealingEngine;
 
+import org.w3c.dom.ranges.RangeException;
+
 public class AnnealingDialog extends JDialog {
-	
-	
+
+
 	private SimulatedAnnealingEngine tempAnnealingEngine;
 
 	private final JPanel temperaturePanel = new JPanel();
 	private JTextField textFieldInitialValue;
 	private JTextField textFieldStopValue;
 	private JTextField textFieldTimeOut;
-	
+
 	private JCheckBox chckbxTimeOutStop;
 	private boolean newAnnealingEngine;
 
@@ -42,12 +38,12 @@ public class AnnealingDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public AnnealingDialog(JFrame frame, boolean modal, String myMessage, SimulatedAnnealingEngine annealingEngine) {
-		
+
 		super(frame,modal);
-		
+
 		this.setTempAnnealingEngine(annealingEngine);
 		this.setTitle("Simulated Annealing Settings");
-		
+
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		temperaturePanel.setBorder(new EmptyBorder(5, 5, 0, 5));
 		getContentPane().add(temperaturePanel);
@@ -125,6 +121,7 @@ public class AnnealingDialog extends JDialog {
 			}
 			{
 				textFieldTimeOut = new JTextField();
+				textFieldTimeOut.setText("5");
 				textFieldTimeOut.setEnabled(false);
 				timeOutPanel.add(textFieldTimeOut);
 				textFieldTimeOut.setColumns(5);
@@ -148,7 +145,19 @@ public class AnnealingDialog extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						okButtonPressed();
+						try {
+
+							okButtonPressed();
+
+						} catch (NumberFormatException n){
+								JOptionPane.showMessageDialog(getParent(), "Stop value must be bigger than 0.");
+						} catch (RangeException r) {
+							if (r.getMessage().equals("stop")){
+								JOptionPane.showMessageDialog(getParent(), "Stop value must be bigger than 0.");
+							} else if (r.getMessage().equals("initial")){
+								JOptionPane.showMessageDialog(getParent(), "Initial value must be bigger than stop value.");
+							}
+						}
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -157,7 +166,7 @@ public class AnnealingDialog extends JDialog {
 			}
 
 		}
-		
+
 		pack();
 		setLocationRelativeTo(frame);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -175,20 +184,40 @@ public class AnnealingDialog extends JDialog {
 	}
 
 
-	protected void okButtonPressed() {
+	public boolean isNewAnnealingEngine() {
+		return newAnnealingEngine;
+	}
+
+
+	public void setNewAnnealingEngine(boolean newAnnealingEngine) {
+		this.newAnnealingEngine = newAnnealingEngine;
+	}
+
+
+	private void okButtonPressed() throws NumberFormatException, RangeException{
 		// TODO Auto-generated method stub
-		
-		newAnnealingEngine = true;
+
+
+		double tempInitial;
+		double tempStop;
+
+		tempInitial = Double.parseDouble(textFieldInitialValue.getText());
+		tempStop = Double.parseDouble(textFieldStopValue.getText());
+
+		if (tempStop < 0) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR,"stop");
+		if (tempInitial <= tempStop) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR,"initial");
+
+		setNewAnnealingEngine(true);
 		setVisible(false);
 	}
 
 
 	protected void cancelButtonPressed() {
 		// TODO Auto-generated method stub
-		
-		newAnnealingEngine = false;
+
+		setNewAnnealingEngine(false);
 		setVisible(false);
-		
+
 	}
 
 }

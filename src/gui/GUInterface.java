@@ -220,6 +220,8 @@ public class GUInterface {
 	private SaveLoadDialog saveLoadDialog;
 
 	private SolverDialog solverDialog;
+	
+	private GeneticStopDialog geneticStopDialog;
 
 
 	/** Timer */
@@ -248,6 +250,8 @@ public class GUInterface {
 	private JLabel fitnessBestState;
 
 	private JLabel generationBestState;
+
+
 
 
 
@@ -843,6 +847,14 @@ public class GUInterface {
 			} else {
 				directFitnessToProb = false;
 				probToRank = geneticGeneratorDialog.getProbToRank();
+			}
+			
+			
+			try {
+				geneticStopDialog = new GeneticStopDialog(frame, true, "Genetic Generator Stop Conditions");
+	
+			} catch (Exception e) {
+
 			}
 		}	
 
@@ -1522,6 +1534,16 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
+			
+//			if (population == null){
+//				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+//				return;
+//			}
+			
+			configAnnealing();
+			
+			//updateStatusPanel();
+			//centerPanel.repaint();
 
 		}
 
