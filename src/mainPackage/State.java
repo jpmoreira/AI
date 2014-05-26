@@ -23,7 +23,7 @@ public  abstract class State {
 	 * A method that returns a string with the visual representation of a state
 	 * @return the visual representation of a state
 	 */
-	abstract String visualRepresentation();
+	public abstract String visualRepresentation();
 
 	
 	abstract public int nrSegments();
