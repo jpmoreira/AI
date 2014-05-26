@@ -134,7 +134,7 @@ public class StateTests {
 
 		int[] expectedChromo = { 1, 2 };
 
-		assertArrayEquals(expectedChromo, s.chromosome());
+		assertArrayEquals(expectedChromo, s.chromossome());
 
 	}
 
@@ -302,4 +302,30 @@ public class StateTests {
 
 	}
 
+	
+	@Test
+	public void evolveTest(){
+		
+		
+		Construction.resetConstructions();
+		
+		Construction c1=new Construction("A");
+		Construction c2=new Construction("B");
+		Tile t1=new Tile();
+		Tile t2=new Tile();
+		
+		TileProblemState s=new TileProblemState(new Construction[]{c2,c1}, new Tile[]{t1,t2});
+		
+		TileProblemState s2=(TileProblemState) s.evolve(0);
+		
+		
+		
+		assertEquals(s2.constructions[0],Construction.nullConstruction());
+		
+		s2=(TileProblemState)s2.evolve(0);
+		
+		assertEquals(s2.constructions[0],c1);
+		
+		
+	}
 }

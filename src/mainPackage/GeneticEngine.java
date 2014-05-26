@@ -22,14 +22,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 * 
 	 */
 	public double[] upperBound;
-	/**
-	 * 
-	 * the default random number generator to be used in case no other was
-	 * specified. Specification of random generator is made on a method basis,
-	 * mainly to facilitate testing.
-	 * 
-	 */
-	private RandomNrGenerator defaultGenerator;
+	
 
 	/**
 	 * 
@@ -94,10 +87,10 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 *            {@link #defaultGenerator} will be used.
 	 * @return an array withTheStatesForNextGeneration
 	 */
-	public State[] statesForReproduction(RandomNrGenerator gen) {
+	public GeneticState[] statesForReproduction(RandomNrGenerator gen) {
 
 		
-		State [] states;
+		GeneticState [] states;
 		if (this.directFitnessToProbability)
 			states= this
 					.statesForReproduction_Direct_Fitness_To_Probability(gen);
@@ -118,7 +111,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 *            {@link #defaultGenerator} will be used instead.
 	 * @return the states to be used in reproduction
 	 */
-	private State[] statesForReproduction_Fitness_To_Rank(RandomNrGenerator gen) {
+	private GeneticState[] statesForReproduction_Fitness_To_Rank(RandomNrGenerator gen) {
 
 		if (gen == null)
 			gen = defaultGenerator;
@@ -127,7 +120,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 				population.states().length, this.diversityUsageFactor);// sort
 																		// states
 
-		ArrayList<State> statesForReproduction = new ArrayList<State>();
+		ArrayList<GeneticState> statesForReproduction = new ArrayList<GeneticState>();
 
 		double randomNumber;
 		State[] states = this.population.states();
@@ -138,13 +131,13 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 			for (int i = 0; i < states.length; i++) {
 				if (randomNumber >= this.lowerBound[i]
 						&& randomNumber <= this.upperBound[i]) {
-					statesForReproduction.add(states[i]);
+					statesForReproduction.add((GeneticState)states[i]);
 					break;
 				}
 			}
 		}
 
-		return statesForReproduction.toArray(new State[statesForReproduction
+		return statesForReproduction.toArray(new GeneticState[statesForReproduction
 				.size()]);
 
 	}
@@ -159,7 +152,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 *            {@link #defaultGenerator} will be used.
 	 * @return the states to be used in reproduction
 	 */
-	public State[] statesForReproduction_Direct_Fitness_To_Probability(
+	public GeneticState[] statesForReproduction_Direct_Fitness_To_Probability(
 			RandomNrGenerator gen) {
 
 		if (gen == null)
@@ -170,15 +163,15 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		double randomNumber;
 		double probForReproduction;
 		int stateIndex = 0;
-		State currentState;
+		GeneticState currentState;
 
 		while (statesForReproduction.size() < this.statesToPair) {
 
 			randomNumber = gen.nextRandomNr();
-			currentState = this.population.states()[stateIndex];
-			probForReproduction = currentState.fitness() / overallFitness;
+			currentState =(GeneticState) this.population.states()[stateIndex];
+			probForReproduction = ((State)currentState).fitness() / overallFitness;//may not be safe
 			if (randomNumber <= probForReproduction)//FIXME here its not working for fitness of the state being 0
-				statesForReproduction.add(currentState);
+				statesForReproduction.add((State)currentState);
 
 			stateIndex++;
 			if (stateIndex == this.population.states().length)
@@ -186,7 +179,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 
 		}
 
-		return statesForReproduction.toArray(new State[statesForReproduction
+		return statesForReproduction.toArray(new GeneticState[statesForReproduction
 				.size()]);
 
 	}
@@ -223,7 +216,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 
 	}
 
-	public State[] statesForNextGen() {
+	public GeneticState[] statesForNextGen() {
 
 		State[] orderedStates = this.population.states().clone();
 
@@ -233,10 +226,10 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		GeneticEngine.BubbleSort(orderedStates,
 				nrOfElitistStatesToSelect, diversityUsageFactor);
 
-		State[] statesForNextGen = new State[nrOfElitistStatesToSelect];
+		GeneticState[] statesForNextGen = new GeneticState[nrOfElitistStatesToSelect];
 
 		for (int i = 0; i < nrOfElitistStatesToSelect; i++) {
-			statesForNextGen[i] = orderedStates[i];
+			statesForNextGen[i] = (GeneticState)orderedStates[i];
 		}
 
 		return statesForNextGen;
@@ -253,7 +246,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 *            {@link #defaultGenerator} will be used.
 	 * @return a boolean stating if a state should mutate
 	 */
-	boolean stateShouldMutate(State s, RandomNrGenerator gen) {
+	boolean stateShouldMutate(GeneticState s, RandomNrGenerator gen) {
 
 		if (gen == null)
 			gen = this.defaultGenerator;
@@ -277,7 +270,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 *            {@link #defaultGenerator} will be used.
 	 * @return the zero based index of the chromossome segment to be mutated
 	 */
-	int mutatingSegmentForState(State s, RandomNrGenerator gen) {
+	int mutatingSegmentForState(GeneticState s, RandomNrGenerator gen) {
 		if (gen == null)
 			gen = this.defaultGenerator;
 		return (int) gen.nextRandomNr() * s.nrSegments();
@@ -306,7 +299,6 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		this.mutationProbVarFactor = 1.0;
 		this.population = pop;
 		this.mutationProbability = mutationProb;
-		this.defaultGenerator = new DefaultRandomGenerator();
 
 	}
 	
@@ -493,18 +485,18 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	
 	public void pair(){
 		
-		State[] statesToBePaired=statesForReproduction(null);
-		State st1,st2;
+		GeneticState[] statesToBePaired=statesForReproduction(null);
+		GeneticState st1,st2;
 		Integer[] segments;
-		State[] childs;
+		GeneticState[] childs;
 		
-		ArrayList<State> statesAfterPairing=new ArrayList<State>();
+		ArrayList<GeneticState> statesAfterPairing=new ArrayList<GeneticState>();
 		
 		
 		for(int i=0;i<statesToBePaired.length-1;i+=2){
-			st1=statesToBePaired[i];
-			st2=statesToBePaired[i+1];
-			segments=segmentsOfState(st1,null);
+			st1=(GeneticState)statesToBePaired[i];
+			st2=(GeneticState)statesToBePaired[i+1];
+			segments=segmentsOfState((State)st1,null);//may not be a safe cast
 			childs=st1.pairWith(st2, segments);
 			statesAfterPairing.add(childs[0]);
 			statesAfterPairing.add(childs[1]);
@@ -512,23 +504,25 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		}
 		
 		
-		State[] directToNextGenStates=statesForNextGen();
+		GeneticState[] directToNextGenStates=statesForNextGen();
 		
 		State[] states=population.states();
 		
 		for(int i=0;i<directToNextGenStates.length;i++){//add states passing intact
-			states[i]=directToNextGenStates[i];
+			states[i]=(State)directToNextGenStates[i];
 		}
 
 		for(int i=directToNextGenStates.length;i<states.length;i++){//ass states paired
-			states[i]=statesAfterPairing.get(i-directToNextGenStates.length);
+			states[i]=(State)statesAfterPairing.get(i-directToNextGenStates.length);
 		}
 		
 		
 	}
 
-
+	//FIXME test stop conditions met
 	public void iterate() {
+		
+		if(this.stopConditionMet())return;
 		
 		this.pair();
 		this.mutate();
@@ -538,7 +532,9 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 
 	private void mutate() {
 		boolean mutate;
-		for(State s: population.states()){
+		for(State state: population.states()){
+			
+			GeneticState s=(GeneticState) state;
 			mutate=stateShouldMutate(s,null);
 			if(mutate){
 				this.population.addMutationThisIteration();

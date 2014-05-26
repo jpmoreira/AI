@@ -2,6 +2,10 @@ package mainPackage;
 
 public interface SimulatedAnnealingState {
 	
-	SimulatedAnnealingState evolve();
+	//FIXME test this
+	SimulatedAnnealingState evolve(double randomNr);
+	
+	//FIXME test this
+	int nrSuccessors();
 
 }
