@@ -186,14 +186,14 @@ public class LanduseDialog extends JDialog{
 		this.setLanduseID(landuseID);
 		numLanduses = landuses.length;
 		
-		if (landuses[landuseID] == null) {
-			constructionTypeDialog = new TypeDialog(frame, true, "ConstructionType");
-			if (canceled) {
-				setVisible(false);
-			}
-		} else {
+//		if (landuses[landuseID] == null) {
+//			constructionTypeDialog = new TypeDialog(frame, true, "ConstructionType");
+//			if (canceled) {
+//				setVisible(false);
+//			}
+//		} else {
 			this.tempLanduse = landuses[landuseID];
-		}
+//		}
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 		this.setTitle("LandUse Settings");

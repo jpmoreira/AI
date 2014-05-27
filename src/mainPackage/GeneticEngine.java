@@ -524,10 +524,11 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		
 		if(this.stopConditionMet())return;
 		
+		this.population.updateStatistics();
 		this.pair();
 		this.mutate();
 		this.updateParameters();
-		this.population.updateStatistics();
+		
 	}
 
 	private void mutate() {

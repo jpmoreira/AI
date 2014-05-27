@@ -1,6 +1,8 @@
 package mainPackage;
 
-public abstract class AlgorithmEngine {
+import java.io.Serializable;
+
+public abstract class AlgorithmEngine implements Serializable{
 
 	protected Population population;
 	
@@ -40,7 +42,7 @@ public abstract class AlgorithmEngine {
 
 	public abstract void iterate();
 
-	Population getPopulation() {
+	public Population getPopulation() {
 
 		return population;
 	}

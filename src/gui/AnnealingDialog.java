@@ -21,9 +21,9 @@ import mainPackage.SimulatedAnnealingEngine;
 import org.w3c.dom.ranges.RangeException;
 
 public class AnnealingDialog extends JDialog {
-
-
-	private SimulatedAnnealingEngine tempAnnealingEngine;
+	
+	private double initTemp;
+	private int tempVariation;
 
 	private final JPanel temperaturePanel = new JPanel();
 	private JTextField textFieldInitialValue;
@@ -37,11 +37,12 @@ public class AnnealingDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public AnnealingDialog(JFrame frame, boolean modal, String myMessage, SimulatedAnnealingEngine annealingEngine) {
+	public AnnealingDialog(JFrame frame, boolean modal, String myMessage, double initTemp, double tempVariation) {
 
 		super(frame,modal);
 
-		this.setTempAnnealingEngine(annealingEngine);
+		this.initTemp = initTemp;
+		this.tempVariation = (int) (tempVariation*100);
 		this.setTitle("Simulated Annealing Settings");
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -174,15 +175,6 @@ public class AnnealingDialog extends JDialog {
 		setVisible(true);
 	}
 
-
-	public SimulatedAnnealingEngine getTempAnnealingEngine() {
-		return tempAnnealingEngine;
-	}
-
-
-	public void setTempAnnealingEngine(SimulatedAnnealingEngine tempAnnealingEngine) {
-		this.tempAnnealingEngine = tempAnnealingEngine;
-	}
 
 
 	public boolean isNewAnnealingEngine() {

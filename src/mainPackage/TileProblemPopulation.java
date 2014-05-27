@@ -149,6 +149,7 @@ public class TileProblemPopulation implements Serializable,Population{
 		//this.coinTosser=new GeneticEngine( this, mutationProb);
 		for(int i=0;i<populationSize;i++){
 			TileProblemState stateToAdd=new TileProblemState(this.generateRandomConstructionArray(tiles.length),tiles,repetedConstructionFactor);
+			stateToAdd.setRepetitionFactor(repetedFactor);
 			states[i]=stateToAdd;
 		
 		}
@@ -293,9 +294,10 @@ public class TileProblemPopulation implements Serializable,Population{
 			this.bestStateIterationNr=this.currentIteration;
 			
 		}
-		mutationsThisIteration=0;
+		
 		currentIteration++;
 		mutationsSoFar+=mutationsThisIteration;
+		mutationsThisIteration=0;
 	}
 	
 

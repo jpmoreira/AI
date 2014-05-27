@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -35,35 +36,31 @@ public class LandUseInitializationDialog extends JDialog {
 
 	private final JPanel rdbPanel = new JPanel();
 	private JTextField textFieldName;
+	
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			//LandUseInitializationDialog dialog = new LandUseInitializationDialog();
-			//dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			//dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
+
 	private JRadioButton rdbtnOther;
 	private JRadioButton rdbtnPrison;;
 	private JRadioButton rdbtnPark;
 	private JRadioButton rdbtnHouse;
 	private JRadioButton rdbtnFactory;
 	private JRadioButton rdbtnAirport;
-	
-	
-	
+
+	private JButton saveButton;
+	private JButton btnNext;
+	private JButton btnPrevious;
+	private JButton cancelButton;
+
+
 	private Construction tempLanduse;
 	private Construction[] landuses;
 	private int landuseID;
 	private int numLanduses;
-	
+	private boolean finished = false;
+	private boolean canceled = false;
+	private ButtonGroup buttonGroup;
+
+
 
 	/**
 	 * Create the dialog.
@@ -75,6 +72,7 @@ public class LandUseInitializationDialog extends JDialog {
 		this.setLanduseID(landuseID);
 		numLanduses = landuses.length;
 
+		
 		getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 		this.setTitle("Landuse Initialization");
 		{
@@ -83,7 +81,7 @@ public class LandUseInitializationDialog extends JDialog {
 			getContentPane().add(lblPanel);
 			lblPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 			{
-				JLabel lblLanduseID = new JLabel("Landuse ID:");
+				JLabel lblLanduseID = new JLabel("Landuse ID:" + this.landuseID);
 				lblPanel.add(lblLanduseID);
 			}
 		}
@@ -130,7 +128,7 @@ public class LandUseInitializationDialog extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton cancelButton = new JButton("Cancel");
+				cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						cancelButtonPressed();
@@ -140,7 +138,7 @@ public class LandUseInitializationDialog extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 			{
-				JButton btnPrevious = new JButton("Previous");
+				btnPrevious = new JButton("Previous");
 				btnPrevious.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						previousButtonPressed();
@@ -149,7 +147,7 @@ public class LandUseInitializationDialog extends JDialog {
 				buttonPane.add(btnPrevious);
 			}
 			{
-				JButton btnNext = new JButton("Next");
+				btnNext = new JButton("Next");
 				btnNext.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						nextButtonPressed();
@@ -158,18 +156,66 @@ public class LandUseInitializationDialog extends JDialog {
 				buttonPane.add(btnNext);
 			}
 			{
-				JButton okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
+				saveButton = new JButton("Save");
+				saveButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						okButtonPressed();
+						saveButtonPressed();
 					}
 				});
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				buttonPane.add(saveButton);
 			}
 		}
 		
+		buttonGroup = new ButtonGroup();
+		
+		buttonGroup.add(rdbtnAirport);
+		buttonGroup.add(rdbtnFactory);
+		buttonGroup.add(rdbtnHouse);
+		buttonGroup.add(rdbtnPark);
+		buttonGroup.add(rdbtnPrison);
+		buttonGroup.add(rdbtnOther);
+		
+		
+		if (landuses[landuseID] != null) {
+			
+			JOptionPane.showMessageDialog(getParent(), "<html>Warning!<br>Landuses already initialized.");
+			
+			if (landuses[landuseID].getClass().equals(AirportConstruction.class)){
+				rdbtnAirport.setSelected(true);
+			} else if (landuses[landuseID].getClass().equals(FactoryConstruction.class)){
+				rdbtnFactory.setSelected(true);
+			} else if (landuses[landuseID].getClass().equals(HouseConstruction.class)){
+				rdbtnHouse.setSelected(true);
+			} else if (landuses[landuseID].getClass().equals(ParkConstruction.class)){
+				rdbtnPark.setSelected(true);
+			} else if (landuses[landuseID].getClass().equals(PrisonConstruction.class)){
+				rdbtnPrison.setSelected(true);
+			} else {
+				rdbtnOther.setSelected(true);
+				textFieldName.setText(this.landuses[this.landuseID].name());
+				textFieldName.setEnabled(true);
+			}
+		}
+		
+
+		if (getLanduseID() != numLanduses-1){
+			saveButton.setEnabled(false);
+		} else{
+			saveButton.setEnabled(true);	
+		}
+
+		if (getLanduseID() == numLanduses-1){
+			btnNext.setEnabled(false);
+		} else{
+			btnNext.setEnabled(true);	
+		}
+
+		if (getLanduseID() == 0){
+			btnPrevious.setEnabled(false);
+		} else{
+			btnPrevious.setEnabled(true);	
+		}
+
 		pack();
 		setLocationRelativeTo(frame);
 		setVisible(true);
@@ -184,114 +230,214 @@ public class LandUseInitializationDialog extends JDialog {
 
 
 
+
+
 	public void setLanduseID(int landuseID) {
 		this.landuseID = landuseID;
+	}
+
+
+	public Construction getTempLanduse() {
+		// TODO Auto-generated method stub
+		return tempLanduse;
+	}
+
+
+
+	private void initializeLandUse() throws Exception {
+		// TODO Auto-generated method stub
+
+		if (rdbtnOther.isSelected()){
+			
+			if (textFieldName.getText().equals("")) throw new Exception("name");
+			
+			tempLanduse = Construction.anonymousConstruction(textFieldName.getText());
+
+		} else if (rdbtnAirport.isSelected()){
+
+			tempLanduse = new AirportConstruction();
+
+		} else if (rdbtnFactory.isSelected()){
+
+			tempLanduse = new FactoryConstruction();
+
+		} else if (rdbtnHouse.isSelected()){
+
+			tempLanduse = new HouseConstruction();
+
+		} else if (rdbtnPark.isSelected()){
+
+			tempLanduse = new ParkConstruction();
+
+		} else if (rdbtnPrison.isSelected()){
+
+			tempLanduse = new PrisonConstruction();
+
+		} else {
+			throw new Exception("type");
+		}
+//
+//		landuses[getLanduseID()] = tempLanduse;
+
+	}
+	
+	
+
+
+	private void editLanduse() throws Exception {
+		// TODO Auto-generated method stub
+		
+		if (rdbtnOther.isSelected()){
+			
+			if (textFieldName.getText().equals("")) throw new Exception("name");
+			
+			tempLanduse.setName(textFieldName.getText());
+			tempLanduse = (Construction) tempLanduse;
+
+		} else if (rdbtnAirport.isSelected()){
+
+			tempLanduse = (AirportConstruction) tempLanduse;
+
+		} else if (rdbtnFactory.isSelected()){
+
+			tempLanduse = (FactoryConstruction) tempLanduse;
+
+		} else if (rdbtnHouse.isSelected()){
+
+			tempLanduse = (HouseConstruction) tempLanduse;
+
+		} else if (rdbtnPark.isSelected()){
+
+			tempLanduse = (ParkConstruction) tempLanduse;
+
+		} else if (rdbtnPrison.isSelected()){
+
+			tempLanduse = (PrisonConstruction) tempLanduse;
+
+		} else {
+			throw new Exception("type");
+		}
+		
 	}
 
 
 
 	protected void cancelButtonPressed() {
 		// TODO Auto-generated method stub
-		
+
+		canceled = true;
+
+		setVisible(false);
+
 	}
 
 
 
 	protected void previousButtonPressed() {
 		// TODO Auto-generated method stub
-		
+
 		try {
-			initializeLandUse();
 			
+			if (landuses[landuseID] == null){
+				initializeLandUse();
+			} else {
+				editLanduse();
+			}
+
 			landuseID--;
-			
+
 			setVisible(false);
 		}
-		catch(ConstructionException c) {
-			JOptionPane.showMessageDialog(getParent(), "Introduce the name of landuse");
-		}
 		catch (Exception e1){
-			JOptionPane.showMessageDialog(getParent(), "Unknow error");
+			if (e1.getMessage().equals("name")) {
+				JOptionPane.showMessageDialog(getParent(), "Introduce the name of landuse.");
+			} else if (e1.getMessage().equals("type")) {
+				JOptionPane.showMessageDialog(getParent(), "Select one landuse type.");
+			} else {
+				JOptionPane.showMessageDialog(getParent(), "Unknow error");
+			}
+			
 		}
-		
-	}
-	
 
-	
+	}
+
+
 	protected void nextButtonPressed() {
 		// TODO Auto-generated method stub
-		
-		
+
+
 		try {
-			initializeLandUse();
 			
+			if (landuses[landuseID] == null){
+				initializeLandUse();
+			} else {
+				editLanduse();
+			}
+
 			landuseID++;
-			
+
 			setVisible(false);
 		}
-		catch(ConstructionException c) {
-			JOptionPane.showMessageDialog(getParent(), "Introduce the name of landuse");
-		}
 		catch (Exception e1){
-			JOptionPane.showMessageDialog(getParent(), "Unknow error");
+			if (e1.getMessage().equals("name")) {
+				JOptionPane.showMessageDialog(getParent(), "Introduce the name of landuse.");
+			} else if (e1.getMessage().equals("type")) {
+				JOptionPane.showMessageDialog(getParent(), "Select one landuse type.");
+			} else {
+				JOptionPane.showMessageDialog(getParent(), "Unknow error");
+			}
+			
 		}
 	}
-	
 
-	protected void okButtonPressed() {
+
+	protected void saveButtonPressed() {
 		// TODO Auto-generated method stub
 		try {
-			
-			initializeLandUse();
-			
+
+			if (landuses[landuseID] == null){
+				initializeLandUse();
+			} else {
+				editLanduse();
+			}
+		
+			finished = true;
+
 			setVisible(false);
-			
-		}
-		catch(ConstructionException c) {
-			JOptionPane.showMessageDialog(getParent(), "Introduce the name of landuse");
+
 		}
 		catch (Exception e1){
-			JOptionPane.showMessageDialog(getParent(), "Unknow error");
+			if (e1.getMessage().equals("name")) {
+				JOptionPane.showMessageDialog(getParent(), "Introduce the name of landuse.");
+			} else if (e1.getMessage().equals("type")) {
+				JOptionPane.showMessageDialog(getParent(), "Select one landuse type.");
+			} else {
+				JOptionPane.showMessageDialog(getParent(), "Unknow error");
+			}
+			
 		}
 
-		
+
 	}
 
 
 
-	private void initializeLandUse() throws ConstructionException, Exception {
+	public boolean isFinished() {
 		// TODO Auto-generated method stub
-		
-		if (rdbtnOther.isSelected()){
-			
-			tempLanduse = Construction.anonymousConstruction(textFieldName.getText());
-			
-		} else if (rdbtnAirport.isSelected()){
-			
-			tempLanduse = new AirportConstruction();
-			
-		} else if (rdbtnFactory.isSelected()){
-			
-			tempLanduse = new FactoryConstruction();
-			
-		} else if (rdbtnHouse.isSelected()){
-			
-			tempLanduse = new HouseConstruction();
-			
-		} else if (rdbtnPark.isSelected()){
-			
-			tempLanduse = new ParkConstruction();
-			
-		} else if (rdbtnPrison.isSelected()){
-			
-			tempLanduse = new PrisonConstruction();
-			
-		} else {
-			JOptionPane.showMessageDialog(getParent(), "Select a construction type");
-			return;
-		}
-		
-		landuses[getLanduseID()] = tempLanduse;
-		
+		return finished;
 	}
+
+
+
+	public boolean isCanceled() {
+		// TODO Auto-generated method stub
+		return canceled;
+	}
+
+
+
+
+
+
+
 }

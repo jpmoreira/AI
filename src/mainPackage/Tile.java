@@ -150,5 +150,9 @@ public class Tile implements Serializable{
 	public void setId(int id) {
 		this.id = id;
 	}
+	public static void resetTiles() {
+		idForNextTile = 0;	
+		
+	}
 
 }

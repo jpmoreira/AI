@@ -40,28 +40,45 @@ public class GUInterface {
 
 
 
-
-
-
-
-
+	//////////////////////////////////////////
+	//										//
+	//			Problem Variables			//
+	//										//
+	//////////////////////////////////////////	
 
 
 	/** The landuses. */
-	Construction[] landuses;
+	private Construction[] landuses;
 
 	/** The tiles. */
 	private Tile[] tiles;
 
 	/** The population. */
 	private TileProblemPopulation population;
-
+	
 	/** The pop size. */
 	private int popSize;
 
+	
+	
+	//////////////////////////////////////////
+	//										//
+	//			Solution Variables			//
+	//										//
+	//////////////////////////////////////////	
+	
+	
+
 	/** The pause. */
 	boolean pause = false;
+	
+	/** The pairing states. */
+	private int pairingStates;
+	
+//	private JLabel bestStateVisualization;
 
+	private GeneticEngine geneticEngine;
+	
 	/* Genetic Generator Settings */
 	/** The mutation prob. */
 	private double mutationProb = 0.75;
@@ -78,16 +95,34 @@ public class GUInterface {
 	/** The direct fitness to prob. */
 	private boolean directFitnessToProb = true;
 	
-	/** The pairing states. */
-	private int pairingStates;
-	
-	private JLabel bestStateVisualization;
-
-	private GeneticEngine geneticEngine;
-	
+	/* Simulated Annealing Engine */
 	private SimulatedAnnealingEngine annealingEngine;
+	
+	private double initTemp = 100.0;
+	
+//	private double stopTemp;
+	
+	private double tempVariation = 0.9;
+	
+	
 
+	
+	/** Timer */
+	private Timer evolutionTimer;
+	
+	/** Timer rate */
+	private int evolutionRate = 1;
 
+	protected int evolutionCount = 0;
+
+	private int solverOption;
+
+	
+	//////////////////////////////////////
+	//									//
+	//		Main Window Components		//
+	//									//
+	//////////////////////////////////////
 
 	/** The frame. */
 	private JFrame frame;
@@ -130,7 +165,12 @@ public class GUInterface {
 	private JTable bestSolutionTable;
 	
 	/** The history panel */
-	private JPanel historyPanel;
+//	private JPanel historyPanel;
+	private JScrollPane historyPanel;
+	
+	private JTable historyTable;
+	
+	private DefaultTableModel historyTableModel;
 
 	
 	private JLabel populationLabel;
@@ -140,6 +180,8 @@ public class GUInterface {
 
 	/** The pop settings button. */
 	private JButton adjacenciesButton;
+	
+	private JButton landuseTypes;
 
 	/** The sites settings button. */
 	private JButton sitesSettingsButton;
@@ -188,6 +230,12 @@ public class GUInterface {
 
 	private JButton annealingButton;
 
+	
+	//////////////////////////////////////
+	//									//
+	//			Dialog Windows 			//
+	//									//
+	//////////////////////////////////////
 
 	/** The population dialog. */
 	private AnnealingDialog annealingDialog;
@@ -218,15 +266,7 @@ public class GUInterface {
 	private GeneticStopDialog geneticStopDialog;
 
 
-	/** Timer */
-	private Timer evolutionTimer;
-	
-	/** Timer rate */
-	private int evolutionRate = 1;
 
-	protected int evolutionCount = 0;
-
-	private int solverOption;
 	
 	
 	//////////////////////////////////////////
@@ -246,6 +286,13 @@ public class GUInterface {
 	private JLabel generationBestState;
 
 	private JButton geneticStopsButton;
+
+	private LandUseInitializationDialog landusesInitializationDialog;
+
+	
+
+
+
 
 
 
@@ -322,7 +369,7 @@ public class GUInterface {
 
 		/* Genetic Algorithm Panel */
 		geneticPanel = new JPanel();
-		geneticPanel.setLayout(new GridLayout(10,1));
+		geneticPanel.setLayout(new GridLayout(11,1));
 		populationLabel = new JLabel("Problem Settings");
 		
 		populationLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -338,6 +385,9 @@ public class GUInterface {
 
 		adjacenciesButton = new JButton("<html><center>Adjacencies<br>Settings</center></html>");
 		adjacenciesButton.addActionListener(new AdjacenciesSettingsListener());
+		
+		landuseTypes = new JButton("<html><center>Landuses<br>Types</center></html>");
+		landuseTypes.addActionListener(new TilesTypesListener());
 		 
 		sitesSettingsButton = new JButton("<html><center>Tiles<br>Settings</center></html>");
 		sitesSettingsButton.addActionListener(new SiteSettingsListener());
@@ -444,6 +494,7 @@ public class GUInterface {
 		geneticPanel.add(populationLabel);
 		geneticPanel.add(sitesSettingsButton);
 		geneticPanel.add(adjacenciesButton);
+		geneticPanel.add(landuseTypes);
 		geneticPanel.add(landuseSettingButton);
 		geneticPanel.add(restrictionsButton);
 		geneticPanel.add(geneticLabel);
@@ -458,7 +509,7 @@ public class GUInterface {
 		exitPanel.add(exitButton);
 
 		leftPanel.add(geneticPanel);
-		leftPanel.add(Box.createVerticalStrut(125));
+		leftPanel.add(Box.createVerticalStrut(100));
 		leftPanel.add(exitPanel);
 		contentPane.add(leftPanel,BorderLayout.WEST);
 
@@ -497,7 +548,6 @@ public class GUInterface {
 		generationBestStateLabel.setHorizontalTextPosition(JLabel.CENTER);
 		//generationBestStateLabel.setPreferredSize(cell);
 
-		
 		fitnessBestStateLabel = new JLabel("Fitness");
 		fitnessBestStateLabel.setHorizontalTextPosition(JLabel.CENTER);
 //		fitnessBestStateLabel.setPreferredSize(cell);
@@ -513,7 +563,7 @@ public class GUInterface {
 		
 		int resultsNr = tiles.length;
 			
-		bestSolutionTable = new JTable(new DefaultTableModel(new String[]{"Site","Landuse"},resultsNr));
+		bestSolutionTable = new JTable(new DefaultTableModel(new String[]{"Site","Cromossome","Landuse"},resultsNr));
 		
 		for (int i = 0 ; i < resultsNr; i++){
 			bestSolutionTable.setValueAt("Lot " + i, i, 0);
@@ -527,10 +577,26 @@ public class GUInterface {
 
 		
 		/* Result Panel */
-		historyPanel = new JPanel();
-		historyPanel.setLayout(new BorderLayout());
+		historyPanel = new JScrollPane();
+//		historyPanel.setLayout(new BorderLayout());
 		
-		bestStateVisualization = new JLabel("");
+		String[] header = new String[]{
+				"Iteration Nr.",
+				"Best State",
+				"Best State Fitness",
+				"Population Mean Fitness",
+				"Fitness Variation",
+				"Mutations",
+				"Mutations So Far"
+				};
+		
+		historyTableModel = new DefaultTableModel(header,0);
+		
+		historyTable = new JTable(historyTableModel);
+		
+		historyPanel.setViewportView(historyTable);
+		
+//		bestStateVisualization = new JLabel("");
 		
 		
 	}
@@ -551,12 +617,12 @@ public class GUInterface {
 		temp.add(bestStatisticsPanel,BorderLayout.NORTH);	
 		
 
-		historyPanel.add(bestStateVisualization,BorderLayout.CENTER);
+//		historyPanel.add(bestStateVisualization,BorderLayout.CENTER);
 
-		temp.add(historyPanel);
+		temp.add(historyPanel,BorderLayout.CENTER);
 		
 		JPanel rightPanel = new JPanel();
-		rightPanel.setPreferredSize(new Dimension(175,735));
+		rightPanel.setPreferredSize(new Dimension(200,735));
 		rightPanel.setLayout(new BoxLayout(rightPanel,BoxLayout.Y_AXIS));
 		rightPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			
@@ -565,6 +631,7 @@ public class GUInterface {
 		
 		resultsPanel.add(rightPanel,BorderLayout.EAST);
 		resultsPanel.add(temp,BorderLayout.CENTER);
+//		resultsPanel.add(historyPanel,BorderLayout.CENTER);
 		
 		
 	}
@@ -586,6 +653,7 @@ public class GUInterface {
 
 
 		Construction.resetConstructions();
+		Tile.resetTiles();
 
 		if (configPopulation()){
 			
@@ -595,25 +663,17 @@ public class GUInterface {
 
 			initializeLandUses();
 			
-//			configLandUses();
-			//TODO switch windows order
-//			configRestrictions();
+			configLandUses();
 
-			configSolver();
-			
+			configRestrictions();
 
-
-			population = new TileProblemPopulation(tiles, landuses, popSize);
-
-			geneticEngine = new GeneticEngine(population, mutationProb, pairingStates);
-			geneticEngine.setMutationProbability(mutationProb, mutationProbVarFac);
-			geneticEngine.setDiversityUsage(diversityUsageFac);
-
-			if (directFitnessToProb) {
-				geneticEngine.enableDirectMethod();
+			if (startDialog.allowRepeatedConst()){
+				population = new TileProblemPopulation(tiles, landuses, popSize);
 			} else {
-				geneticEngine.enableFitnessToRank(probToRank);
+				population = new TileProblemPopulation(tiles, landuses, popSize, 0.1);
 			}
+			
+			configSolver();			
 			
 			updateStatusPanel();
 			
@@ -730,10 +790,27 @@ public class GUInterface {
 	private void initializeLandUses() {
 		// TODO Auto-generated method stub
 		
-		
-		configLandUses();
-		
-		configRestrictions();
+		int id = 0;
+		landusesInitializationDialog = new LandUseInitializationDialog(frame, true, "LandUse Initialization", landuses, id);
+
+		landuses[id] = landusesInitializationDialog.getTempLanduse();		
+		id = landusesInitializationDialog.getLanduseID();
+
+		while (!landusesInitializationDialog.isFinished() && !landusesInitializationDialog.isCanceled()){
+
+			landusesInitializationDialog = new LandUseInitializationDialog(frame, true, "LandUse Initialization", landuses, id);
+			if (!landusesInitializationDialog.isCanceled()){
+				landuses[id] = landusesInitializationDialog.getTempLanduse();
+//				landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), restrictionsDialog.getForbPenalty());
+//				landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), restrictionsDialog.getMustHavePenalty());
+
+				id = landusesInitializationDialog.getLanduseID();
+			} else {
+				break;
+			}
+
+		}
+
 		
 	}
 
@@ -833,7 +910,9 @@ public class GUInterface {
 		// TODO Auto-generated method stub
 		
 		try {
-			annealingDialog = new AnnealingDialog(frame, true, "Simulated Annealing Settings",annealingEngine);
+			annealingDialog = new AnnealingDialog(frame, true, "Simulated Annealing Settings", initTemp, tempVariation);
+			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -863,6 +942,16 @@ public class GUInterface {
 			}
 			
 		}	
+		
+		geneticEngine = new GeneticEngine(population, mutationProb, pairingStates);
+		geneticEngine.setMutationProbability(mutationProb, mutationProbVarFac);
+		geneticEngine.setDiversityUsage(diversityUsageFac);
+
+		if (directFitnessToProb) {
+			geneticEngine.enableDirectMethod();
+		} else {
+			geneticEngine.enableFitnessToRank(probToRank);
+		}
 		
 		configStopCondDialog(); 
 
@@ -904,15 +993,17 @@ public class GUInterface {
 		if (population.bestStateEver() == null){
 			return;
 		}
-		generationBestState.setText("");
+		generationBestState.setText("" + population.iterationNrForBestStateEver());
 		
-		fitnessBestState.setText("");
+		fitnessBestState.setText("" + ((TileProblemState) population.bestStateEver()).fitness());
 	
-		bestStateVisualization.setText(population.bestStateEver().visualRepresentation());
+//		bestStateVisualization.setText(population.bestStateEver().visualRepresentation());
+		addLineToHistoryPanel();
 		
 		for (int i = 0 ; i < tiles.length; i++){
 			
-			bestSolutionTable.setValueAt(((TileProblemState) population.bestStateEver()).constructions[i].name(),i,1);
+			bestSolutionTable.setValueAt(((TileProblemState) population.bestStateEver()).constructions[i].name(),i,2);
+			bestSolutionTable.setValueAt(((TileProblemState) population.bestStateEver()).constructions[i].toCromossome(),i,1);
 			
 		}
 		
@@ -947,6 +1038,23 @@ public class GUInterface {
 					";   Probability to Rank: " + String.format("%.2f",geneticEngine.getProbToRank()));
 		}
 
+	}
+
+	
+	public void addLineToHistoryPanel(){
+		
+		double fitnessVariation = (population.mostFitState().fitness()-population.meanFitness())/population.mostFitState().fitness()*100;
+		
+		Object[] line = new Object[] {
+				population.getCurrentIterationNr(),								//	"Iteration Nr.",
+				population.mostFitState().visualRepresentation(),				//	"Best State",
+				String.format("%.5f",population.mostFitState().fitness()),		//	"Best State Fitness",
+				String.format("%.5f",population.meanFitness()),					//	"Population Mean Fitness",						
+				String.format("%.5f",fitnessVariation),							//	"Fitness Variation"	
+				population.mutationsThisIteration(),							//	"Mutations"
+				population.mutationsSoFar()										//  "Total Mutations"
+		};
+		historyTableModel.addRow(line);
 	}
 
 	
@@ -1366,6 +1474,26 @@ public class GUInterface {
 
 
 
+
+	public class TilesTypesListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (getTiles() == null){
+				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
+				return;
+			}
+			
+			initializeLandUses();
+			
+			centerPanel.repaint();
+			
+			
+		}
+
+	}
+
+
 	/**
 	 * The listener interface for receiving stateSettings events.
 	 * The class that is interested in processing a stateSettings
@@ -1384,10 +1512,12 @@ public class GUInterface {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
 			if (getTiles() == null){
 				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
 				return;
 			}
+			
 			configRestrictions();
 			updateStatusPanel();
 

@@ -341,6 +341,7 @@ public class SaveLoadDialog extends JDialog{
 				is.close();
 				fileIn.close();
 				
+				tempPopulation = (TileProblemPopulation) tempGeneticEngine.getPopulation();
 				loadProblem = true;
 
 

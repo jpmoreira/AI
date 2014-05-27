@@ -118,8 +118,8 @@ public class StartDialog extends JDialog{
 		
 		contentPane.add(inputPanel,BorderLayout.CENTER);
 
-		inputButtonsPanel.add(okButton);
 		inputButtonsPanel.add(cancelButton);
+		inputButtonsPanel.add(okButton);
 		contentPane.add(inputButtonsPanel,BorderLayout.SOUTH);
 
 	}
@@ -215,7 +215,7 @@ public class StartDialog extends JDialog{
 
 
 
-	public boolean isRepeatedConst() {
+	public boolean allowRepeatedConst() {
 		return repeatedConst;
 	}
 
@@ -227,7 +227,7 @@ public class StartDialog extends JDialog{
 
 
 
-	public boolean isUseAllConstructions() {
+	public boolean mustUseAllConstructions() {
 		return useAllConstructions;
 	}
 
