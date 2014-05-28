@@ -571,6 +571,10 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		return this.mutationProbVarFactor;
 	}
 
+	public void setPairingStates(int pairingStates) {
+		this.statesToPair = pairingStates;
+	}
+
 
 
 }

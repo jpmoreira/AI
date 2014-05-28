@@ -81,7 +81,7 @@ public class GUInterface {
 	
 	/* Genetic Generator Settings */
 	/** The mutation prob. */
-	private double mutationProb = 0.75;
+	private double mutationProb = 0.10;
 	
 	/** The mutation prob var fac. */
 	private double mutationProbVarFac = 1.0;
@@ -677,6 +677,9 @@ public class GUInterface {
 			
 			updateStatusPanel();
 			
+			
+			if (resultsPanel != null) resultsPanel.removeAll();
+			
 			createResultWidgets();
 			addResultWidgets();
 			
@@ -706,8 +709,7 @@ public class GUInterface {
 			
 			landuses = new Construction[startDialog.getLandUseNumber()];
 			
-			popSize = startDialog.getPopulationSize();
-			pairingStates = popSize/2;
+			pairingStates = startDialog.getPopulationSize()/2;
 			
 			return true;
 		}	
@@ -924,8 +926,13 @@ public class GUInterface {
 	 * Config genetic generator.
 	 */
 	private void configGeneticGenerator() {
+		
+		if (geneticEngine == null) {
+			geneticEngine = new GeneticEngine(population, mutationProb, pairingStates);
+		}
 
-		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", popSize/2, pairingStates, mutationProb, mutationProbVarFac, diversityUsageFac, directFitnessToProb, probToRank);
+		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", geneticEngine);
+//		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", popSize/2, pairingStates, mutationProb, mutationProbVarFac, diversityUsageFac, directFitnessToProb, probToRank, tiles.length-1);
 
 		if (geneticGeneratorDialog.isNewSettings()){
 			pairingStates = geneticGeneratorDialog.getPairingStates();
@@ -943,7 +950,7 @@ public class GUInterface {
 			
 		}	
 		
-		geneticEngine = new GeneticEngine(population, mutationProb, pairingStates);
+		geneticEngine.setPairingStates(pairingStates);
 		geneticEngine.setMutationProbability(mutationProb, mutationProbVarFac);
 		geneticEngine.setDiversityUsage(diversityUsageFac);
 
