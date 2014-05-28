@@ -619,10 +619,10 @@ public class GeneticGeneratorDialog extends JDialog{
 
 			mutationProb = ((double) mutationProbSlider.getValue())/100;
 
-			double tempMutVarFac;
+			
 
 			try {
-
+				double tempMutVarFac;
 				tempMutVarFac = Double.parseDouble(mutationVarField.getText());
 
 				if (tempMutVarFac < 0) throw new Exception();

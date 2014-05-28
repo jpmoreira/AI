@@ -668,7 +668,7 @@ public class GUInterface {
 
 			configRestrictions();
 			
-			configLandusePrefs();
+			configForbiddenTiles();
 
 			if (startDialog.allowRepeatedConst()){
 				population = new TileProblemPopulation(tiles, landuses, popSize);
@@ -904,7 +904,7 @@ public class GUInterface {
 
 
 
-	public void configLandusePrefs() {
+	public void configForbiddenTiles() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1049,7 +1049,7 @@ public class GUInterface {
 
 		if (geneticEngine.getDirectFitnessToProb()) {
 			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",geneticEngine.getMutationProb()) +
-					";   Mutation Probability Variation Factor: " + String.format("%.2f",geneticEngine.getMutationProbVarFac()) +
+					";   Mutation Probability Variation Factor: " + String.format("%.3f",geneticEngine.getMutationProbVarFac()) +
 					";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
 					";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
 					";   Probability to Rank: N/A");
@@ -1424,14 +1424,6 @@ public class GUInterface {
 
 				geneticEngine = saveLoadDialog.getTempGeneticEngine();
 
-				//pairingStates = geneticEngine.statesToPair();
-				//popSize = population.populationSize();
-				//mutationProb = geneticEngine.getMutationProb();
-				//mutationProbVarFac = geneticEngine.getMutationProbVarFac();
-				//diversityUsageFac = geneticEngine.getDiversityUsageFac();
-				//directFitnessToProb = geneticEngine.getDirectFitnessToProb();
-				//probToRank = geneticEngine.getProbToRank();
-
 				resultsPanel.removeAll();
 				createResultWidgets();
 				addResultWidgets();
@@ -1575,7 +1567,7 @@ public class GUInterface {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-			configLandusePrefs();
+			configForbiddenTiles();
 
 		}
 
