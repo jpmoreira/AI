@@ -2,6 +2,10 @@ package mainPackage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+
+import com.sun.tools.javac.code.Attribute.Array;
 
 import junit.extensions.RepeatedTest;
 import mainPackage.State;
@@ -76,6 +80,8 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	private boolean directFitnessToProbability;
 
 
+	//FIXME document it
+	private int crossOverPoints=1;
 
 	/**
 	 * 
@@ -120,7 +126,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 				population.states().length, this.diversityUsageFactor);// sort
 																		// states
 
-		ArrayList<GeneticState> statesForReproduction = new ArrayList<GeneticState>();
+		HashSet<GeneticState> statesForReproduction = new HashSet<GeneticState>();
 
 		double randomNumber;
 		State[] states = this.population.states();
@@ -157,7 +163,8 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 
 		if (gen == null)
 			gen = this.defaultGenerator;
-		ArrayList<State> statesForReproduction = new ArrayList<State>();
+		
+		HashSet<State> statesForRep=new HashSet<State>();
 
 		double overallFitness = this.population.overallFitness();
 		double randomNumber;
@@ -165,13 +172,13 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		int stateIndex = 0;
 		GeneticState currentState;
 
-		while (statesForReproduction.size() < this.statesToPair) {
+		while (statesForRep.size() < this.statesToPair) {
 
 			randomNumber = gen.nextRandomNr();
 			currentState =(GeneticState) this.population.states()[stateIndex];
 			probForReproduction = ((State)currentState).fitness() / overallFitness;//may not be safe
 			if (randomNumber <= probForReproduction)//FIXME here its not working for fitness of the state being 0
-				statesForReproduction.add((State)currentState);
+				statesForRep.add((State)currentState);
 
 			stateIndex++;
 			if (stateIndex == this.population.states().length)
@@ -179,40 +186,8 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 
 		}
 
-		return statesForReproduction.toArray(new GeneticState[statesForReproduction
+		return statesForRep.toArray(new GeneticState[statesForRep
 				.size()]);
-
-	}
-
-	/**
-	 * 
-	 * A method that returns the index of the segments of the choromosome of a
-	 * given state to be passed along to his first descendant
-	 * 
-	 * @param state
-	 *            the state whose chromosome is to be passed to his descendant
-	 * @param gen
-	 *            the random generator to be used. If null is passed the
-	 *            {@link #defaultGenerator} will be used.
-	 * @return the zero based index of the chromosome segments to be passed
-	 *         along to the passed state's first descendant
-	 */
-	public Integer[] segmentsOfState(State state, RandomNrGenerator gen) {
-
-		if (gen == null)
-			gen = this.defaultGenerator;
-
-		ArrayList<Integer> segments = new ArrayList<Integer>();
-		double randomNr = gen.nextRandomNr();
-
-		for (int i = 0; i < state.nrSegments(); i++) {
-
-			if (randomNr < 0.5)
-				segments.add(i);
-
-		}
-
-		return segments.toArray(new Integer[segments.size()]);
 
 	}
 
@@ -299,7 +274,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		this.mutationProbVarFactor = 1.0;
 		this.population = pop;
 		this.mutationProbability = mutationProb;
-
+		
 	}
 	
 
@@ -485,6 +460,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	
 	public void pair(){
 		
+		if(crossOverPoints==0)return;//if no crossoverpoints no pairing
 		GeneticState[] statesToBePaired=statesForReproduction(null);
 		GeneticState st1,st2;
 		Integer[] segments;
@@ -496,7 +472,8 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		for(int i=0;i<statesToBePaired.length-1;i+=2){
 			st1=(GeneticState)statesToBePaired[i];
 			st2=(GeneticState)statesToBePaired[i+1];
-			segments=segmentsOfState((State)st1,null);//may not be a safe cast
+			//FIXME continue here
+			segments=crossoverPoints((State)st1,null);//may not be a safe cast
 			childs=st1.pairWith(st2, segments);
 			statesAfterPairing.add(childs[0]);
 			statesAfterPairing.add(childs[1]);
@@ -575,6 +552,35 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		this.statesToPair = pairingStates;
 	}
 
+	
+	//FIXME document this
+	public Integer[] crossoverPoints(State s, RandomNrGenerator gen){
+		
+		if(gen==null)gen=defaultGenerator;
+		
+		HashSet<Integer> pointsToReturn=new HashSet<Integer>();
+		int crossOverPoint;
+		
+		while(pointsToReturn.size()<this.crossOverPoints){
+			crossOverPoint=(int)(gen.nextRandomNr()*(s.nrSegments()-2)+1.5);
+			pointsToReturn.add(new Integer(crossOverPoint));
+		}
+		
+		Integer[] points=pointsToReturn.toArray(new Integer[pointsToReturn.size()]);
+		Arrays.sort(points);
+		
+		return points;
+		
+		
+	}
+	
 
+	
+	//FIXME document it
+	public void setCrossoverPoints(int crossoverPoints){
+		
+		this.crossOverPoints=crossoverPoints;
+		
+	}
 
 }

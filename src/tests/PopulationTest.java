@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import mainPackage.GeneticEngine;
+import mainPackage.GeneticState;
 import mainPackage.TileProblemPopulation;
 import mainPackage.TileProblemState;
 import mainPackage.Tile;
@@ -105,13 +106,13 @@ public class PopulationTest {
 		TileProblemState state1 = pop.states()[0];
 		TileProblemState state2 = pop.states()[1];
 
-		Integer[] array = { 0 };
-		TileProblemState[] newStates = pop.pairStatesAtIndexes(0, 1, array);
+		Integer[] array = { 1 };
+		GeneticState[] newStates = pop.pairStatesAtIndexes(0, 1, array);
 
-		assertEquals(newStates[0].constructions[0], state1.constructions[0]);
-		assertEquals(newStates[0].constructions[1], state2.constructions[1]);
-		assertEquals(newStates[1].constructions[0], state2.constructions[0]);
-		assertEquals(newStates[1].constructions[1], state1.constructions[1]);
+		assertEquals(((TileProblemState)newStates[0]).constructions[0], state1.constructions[0]);
+		assertEquals(((TileProblemState)newStates[0]).constructions[1], state2.constructions[1]);
+		assertEquals(((TileProblemState)newStates[1]).constructions[0], state2.constructions[0]);
+		assertEquals(((TileProblemState)newStates[1]).constructions[1], state1.constructions[1]);
 	}
 
 	@Test
