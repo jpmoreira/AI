@@ -14,7 +14,7 @@ public class ConstructionTests {
 	public void testIndex1() {
 		
 		Construction.resetConstructions();//reset constructions
-		assertEquals(Construction.latestConstructionIndex(), -1);
+		assertEquals(Construction.nrConstructions(), -1);
 		
 	}
 	
@@ -39,11 +39,11 @@ public class ConstructionTests {
 			}
 		};
 		
-		assertEquals(Construction.latestConstructionIndex(), 1);
+		assertEquals(Construction.nrConstructions(), 1);
 		
 		Construction.resetConstructions();
 		
-		assertEquals(Construction.latestConstructionIndex(), -1);
+		assertEquals(Construction.nrConstructions(), -1);
 	}
 
 	@Test
