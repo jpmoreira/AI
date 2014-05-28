@@ -181,9 +181,17 @@ public class Construction implements Serializable{
 	private double pricePenalty=0.0;
 	
 	
+	public static void setConstructions(HashMap<Integer, Construction> constructions) {
+		Construction.constructions = constructions;
+	}
+
 	private static HashMap<Integer, Construction> constructions = new HashMap<Integer, Construction>();
 
 
+
+	public static HashMap<Integer, Construction> getConstructions() {
+		return constructions;
+	}
 
 	/**
 	 * 
