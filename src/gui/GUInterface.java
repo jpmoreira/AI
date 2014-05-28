@@ -25,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import mainPackage.GeneticEngine;
+import mainPackage.SavableObject;
 import mainPackage.SimulatedAnnealingEngine;
 import mainPackage.Tile;
 import mainPackage.TileProblemPopulation;
@@ -56,9 +57,11 @@ public class GUInterface {
 
 	/** The population. */
 	private TileProblemPopulation population;
-
+	
 	/** The pop size. */
 	private int popSize;
+	
+	private SavableObject savedObject;
 
 
 
@@ -75,8 +78,6 @@ public class GUInterface {
 
 	/** The pairing states. */
 	private int pairingStates;
-
-	//	private JLabel bestStateVisualization;
 
 	private GeneticEngine geneticEngine;
 
@@ -105,9 +106,7 @@ public class GUInterface {
 
 	private double tempVariation = 0.9;
 
-
-
-
+	
 	/** Timer */
 	private Timer evolutionTimer;
 
@@ -151,8 +150,6 @@ public class GUInterface {
 
 	/** The run panel. */
 	private JPanel runPanel;
-
-
 
 	/** The table results panel. */
 	private JPanel resultsPanel;
@@ -406,7 +403,7 @@ public class GUInterface {
 
 		annealingButton = new JButton("<html><center>Annealing<br>Settings</center></html>");
 		annealingButton.addActionListener(new AnnealingListener());
-
+		
 
 		/* Top Panel */
 		topPanel = new JPanel();
@@ -461,13 +458,11 @@ public class GUInterface {
 		resultsPanel = new JPanel();
 		resultsPanel.setLayout(new BorderLayout());
 
-
 		/* Exit Panel */
 
 		exitPanel = new JPanel();
 		exitPanel.setLayout(new GridLayout(3,1));
 		exitPanel.setBorder(new EmptyBorder(5,5,5,5));
-
 
 		newProblemButton = new JButton("New Problem");
 		newProblemButton.addActionListener(new NewProblemListener());
@@ -617,8 +612,7 @@ public class GUInterface {
 		temp.setLayout(new BorderLayout(5,5));
 		temp.add(bestStatisticsPanel,BorderLayout.NORTH);	
 
-
-		//		historyPanel.add(bestStateVisualization,BorderLayout.CENTER);
+//		historyPanel.add(bestStateVisualization,BorderLayout.CENTER);
 
 		temp.add(historyPanel,BorderLayout.CENTER);
 
@@ -678,6 +672,8 @@ public class GUInterface {
 
 			configSolver();			
 
+			savedObject = new SavableObject(geneticEngine, annealingEngine, Construction.getConstructions());
+			
 			updateStatusPanel();
 
 			createResultWidgets();
@@ -688,7 +684,7 @@ public class GUInterface {
 			centerPanel.repaint();
 		};
 
-
+		
 
 	}
 
@@ -807,14 +803,13 @@ public class GUInterface {
 			}
 
 		}
-
+		
 
 	}
 
-
 	private void initializeLandUses() {
-		// TODO Auto-generated method stub
 
+		
 		int id = 0;
 		landusesInitializationDialog = new LandUseInitializationDialog(frame, true, "LandUse Initialization", landuses, id);
 
@@ -900,7 +895,6 @@ public class GUInterface {
 
 	}
 
-	
 
 
 
@@ -940,8 +934,6 @@ public class GUInterface {
 
 		try {
 			annealingDialog = new AnnealingDialog(frame, true, "Simulated Annealing Settings", initTemp, tempVariation);
-
-
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1032,7 +1024,6 @@ public class GUInterface {
 
 
 	}
-
 
 
 
@@ -1193,7 +1184,6 @@ public class GUInterface {
 
 			evolutionTimer.start();
 
-
 		}
 
 	}
@@ -1258,7 +1248,6 @@ public class GUInterface {
 
 			evolutionCount = 1000;
 			evolutionTimer.start();
-
 
 		}
 
@@ -1402,15 +1391,13 @@ public class GUInterface {
 
 	}
 
-
-
 	public class SaveLoadProblemListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			// JDialog - SAVE/LOAD GAME
-			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem",population, geneticEngine);
+			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem", savedObject);
 
 			if(saveLoadDialog.problemSaved())
 			{
@@ -1418,11 +1405,23 @@ public class GUInterface {
 			} 
 			else if (saveLoadDialog.problemLoaded())
 			{
-				population = saveLoadDialog.getTempPopulation();
+				
+				savedObject = saveLoadDialog.getTempSavedObject();
+				
+				geneticEngine = savedObject.getGenetic_engine();
+				
+				annealingEngine = savedObject.getSim_engine();
+				
+				if (geneticEngine != null) {
+					population = (TileProblemPopulation) geneticEngine.getPopulation();
+				} else {
+					population = (TileProblemPopulation) annealingEngine.getPopulation();
+				}
+				
+				
 				tiles = population.tiles();
 				landuses = population.getConstructions();
 
-				geneticEngine = saveLoadDialog.getTempGeneticEngine();
 
 				resultsPanel.removeAll();
 				createResultWidgets();

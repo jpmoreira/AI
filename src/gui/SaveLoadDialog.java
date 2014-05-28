@@ -22,6 +22,8 @@ import javax.swing.JTextField;
 
 import mainPackage.GeneticEngine;
 import mainPackage.Population;
+import mainPackage.SavableObject;
+import mainPackage.SimulatedAnnealingEngine;
 import mainPackage.TileProblemPopulation;
 
 public class SaveLoadDialog extends JDialog{
@@ -58,12 +60,13 @@ public class SaveLoadDialog extends JDialog{
 	
 	/** The cancel button. */
 	private JButton cancelButton;
+	
+	private SavableObject tempSavedObject;
 
-	private TileProblemPopulation tempPopulation;
-	
-	private GeneticEngine tempGeneticEngine;
-	
+
+
 	private JFrame frame;
+
 
 	
 	
@@ -76,15 +79,14 @@ public class SaveLoadDialog extends JDialog{
 	 * @param population 
 	 * @param geneticEngine 
 	 */
-	public SaveLoadDialog(JFrame frame, boolean modal, String myMessage, TileProblemPopulation population, GeneticEngine geneticEngine)
+	public SaveLoadDialog(JFrame frame, boolean modal, String myMessage, SavableObject savedObject)
 	{
 
 		super(frame,modal);
 		getContentPane().setLayout(new GridLayout(3,1,5,5));
 
 		this.frame = frame;
-		this.tempPopulation = population;
-		this.tempGeneticEngine = geneticEngine;
+		this.tempSavedObject = savedObject;
 		this.setTitle("Save/Load Problem");
 		
 		createWidgets();
@@ -146,7 +148,7 @@ public class SaveLoadDialog extends JDialog{
 		// Button - Save Problem
 		saveButton = new JButton("Save Problem");
 		saveButton.addActionListener(new SaveProblemListener());
-		if (tempPopulation==null){
+		if (tempSavedObject==null){
 			saveButton.setEnabled(false);
 		}
 
@@ -297,10 +299,7 @@ public class SaveLoadDialog extends JDialog{
 
 				/* Write the game in a file */
 				
-//				tempPopulation.setCoinTosser(tempGeneticEngine);
-				
-//				os.writeObject(tempPopulation);
-				os.writeObject(tempGeneticEngine);
+				os.writeObject(tempSavedObject);
 
 				fileOut.close();
 				os.close();
@@ -333,15 +332,12 @@ public class SaveLoadDialog extends JDialog{
 				ObjectInputStream is = new ObjectInputStream(fileIn);
 
 				/* load the saved game in the file to the object tempGame */
-//				setTempPopulation((TileProblemPopulation) is.readObject());
-//				setTempGeneticEngine(tempPopulation.getCoinTosser());
 				
-				setTempGeneticEngine((GeneticEngine) is.readObject());
+				tempSavedObject = (SavableObject) is.readObject();
 
 				is.close();
 				fileIn.close();
 				
-				tempPopulation = (TileProblemPopulation) tempGeneticEngine.getPopulation();
 				loadProblem = true;
 
 
@@ -366,9 +362,6 @@ public class SaveLoadDialog extends JDialog{
 	}
 
 
-	private void setTempGeneticEngine(GeneticEngine readObject) {
-		this.tempGeneticEngine = readObject;
-	}
 
 
 	public void setSaveProblem(boolean b) {
@@ -380,20 +373,11 @@ public class SaveLoadDialog extends JDialog{
 		this.loadProblem = b;
 		
 	}
+	
 
-
-	public TileProblemPopulation getTempPopulation() {
-		return tempPopulation;
-	}
-
-
-	public void setTempPopulation(TileProblemPopulation tempPopulation) {
-		this.tempPopulation = tempPopulation;
-	}
-
-
-	public GeneticEngine getTempGeneticEngine() {
-		return tempGeneticEngine;
+	
+	public SavableObject getTempSavedObject() {
+		return tempSavedObject;
 	}
 
 }
