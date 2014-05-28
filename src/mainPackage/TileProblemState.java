@@ -114,6 +114,9 @@ public class TileProblemState  extends State implements Serializable,GeneticStat
 		TileProblemState s1=new TileProblemState(c1, this.tiles);
 		TileProblemState s2=new TileProblemState(c2, this.tiles);
 		
+		s1.repetedConstructionFactor=this.repetedConstructionFactor;
+		s2.repetedConstructionFactor=this.repetedConstructionFactor;
+		
 		GeneticState[] array={s1,s2};
 		return array;
 		

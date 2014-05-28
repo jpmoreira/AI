@@ -558,7 +558,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		int crossOverPoint;
 		
 		while(pointsToReturn.size()<this.crossOverPoints){
-			crossOverPoint=(int) gen.nextRandomNr()*s.nrSegments();
+			crossOverPoint=(int)(gen.nextRandomNr()*(s.nrSegments()-2)+1.5);
 			pointsToReturn.add(new Integer(crossOverPoint));
 		}
 		
