@@ -325,6 +325,10 @@ public class RestrictionsDialog extends JDialog{
 				
 				JCheckBox tempCheckBox = new JCheckBox(landuses[i].toCromossome() + "- " + landuses[i].name());
 				
+				if (landuses[i].toCromossome() == tempLanduse.toCromossome()){
+					tempCheckBox.setEnabled(false);
+				}
+					
 				if (isForbidden(landuses[i])){
 					tempCheckBox.setSelected(true);
 				}
@@ -359,6 +363,11 @@ public class RestrictionsDialog extends JDialog{
 			
 			if (tempName.equals(Construction.class.getCanonicalName())){ 
 				JCheckBox tempCheckBox = new JCheckBox(landuses[i].toCromossome() + "- " + landuses[i].name());
+				
+				if (landuses[i].toCromossome() == tempLanduse.toCromossome()){
+					tempCheckBox.setEnabled(false);
+				}
+				
 				if (mustHave(landuses[i])){
 					tempCheckBox.setSelected(true);
 				}

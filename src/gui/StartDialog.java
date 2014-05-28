@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import mainPackage.TileProblemPopulation;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class StartDialog.
@@ -25,35 +27,39 @@ public class StartDialog extends JDialog{
 
 	/** The size input. */
 	private boolean newProblem = false;
-	
+
 	/** The number of tiles. */
 	private int numTiles;
-	
+
 	/** The number of landuses. */
 	private int numLanduses;
-	
+
 	/** Population Size. */
 	private int populationSize;
-	
+
 	private boolean repeatedConst;
-	
-	private boolean useAllConstructions;
+
+
+
+	private boolean editing;
+
+	//	private boolean useAllConstructions;
 
 	/** The input panel. */
 	private JPanel inputPanel;
-	
+
 	/** The input buttons panel. */
 	private JPanel inputButtonsPanel;
 
 	/** The tiles label. */
 	private JLabel tilesLabel;
-	
+
 	/** The landuses label. */
 	private JLabel landuseLabel;
-	
+
 	/** The landuses label. */
 	private JLabel populationLabel;
-	
+
 	/** The input field. */
 	private JTextField populationField;
 
@@ -62,16 +68,19 @@ public class StartDialog extends JDialog{
 
 	/** The landuse field. */
 	private JTextField landuseField;
-	
+
 	private JCheckBox repeatedConstuctionsCheckbox;
-	
-	private JCheckBox useAllContructionsCheckbox;
-	
+
+	//private JCheckBox useAllContructionsCheckbox;
+
 	/** The ok input button. */
 	private JButton okButton;
-	
+
 	/** The cancel input button. */
 	private JButton cancelButton;
+
+	private TileProblemPopulation population;
+
 
 
 	/**
@@ -86,7 +95,8 @@ public class StartDialog extends JDialog{
 		super(frame,modal);
 
 		getContentPane().setLayout(new BorderLayout());
-		this.setTitle("New Problem");
+		this.setTitle("New Population");
+		this.editing = false;
 
 		createWidgets();
 		addWidgets(getContentPane());
@@ -97,6 +107,31 @@ public class StartDialog extends JDialog{
 
 	}
 	
+	/**
+	 * Instantiates a new start dialog.
+	 *
+	 * @param frame the frame
+	 * @param modal the modal
+	 * @param myMessage the my message
+	 */
+	public StartDialog (JFrame frame, boolean modal, String myMessage, TileProblemPopulation population){
+
+		super(frame,modal);
+
+		getContentPane().setLayout(new BorderLayout());
+		this.setTitle("Edit Problem");
+		this.editing = true;
+		this.population = population;
+
+		createWidgets();
+		addWidgets(getContentPane());
+
+		pack();
+		setLocationRelativeTo(frame);
+		setVisible(true);
+
+	}
+
 
 
 	/**
@@ -105,17 +140,16 @@ public class StartDialog extends JDialog{
 	 * @param contentPane the content pane
 	 */
 	private void addWidgets(Container contentPane) {
-		
+
 		inputPanel.add(populationLabel);
 		inputPanel.add(populationField);
 		inputPanel.add(tilesLabel);
 		inputPanel.add(tileField);
 		inputPanel.add(landuseLabel);
 		inputPanel.add(landuseField);
-		inputPanel.add(useAllContructionsCheckbox);
 		inputPanel.add(repeatedConstuctionsCheckbox);
 		inputPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		
+
 		contentPane.add(inputPanel,BorderLayout.CENTER);
 
 		inputButtonsPanel.add(cancelButton);
@@ -123,7 +157,7 @@ public class StartDialog extends JDialog{
 		contentPane.add(inputButtonsPanel,BorderLayout.SOUTH);
 
 	}
-	
+
 
 
 	/**
@@ -136,13 +170,12 @@ public class StartDialog extends JDialog{
 		inputPanel.setLayout(new GridLayout(4,2,5,5));
 
 		// Input Content
-		
+
 		populationLabel = new JLabel("Population Size:");
 
 		populationField = new JTextField();
 		populationField.setEditable(true);
-		
-		
+
 		tilesLabel = new JLabel("Number of Tiles:");
 
 		tileField = new JTextField();
@@ -152,10 +185,9 @@ public class StartDialog extends JDialog{
 
 		landuseField = new JTextField();
 		landuseField.setEditable(true);
-		
-		repeatedConstuctionsCheckbox = new JCheckBox("Repeat Landuses");
-		
-		useAllContructionsCheckbox = new JCheckBox("Use all Landuses");
+
+		repeatedConstuctionsCheckbox = new JCheckBox("Allow Repeated Landuses");
+
 
 		// Button Panel
 		inputButtonsPanel = new JPanel();
@@ -168,6 +200,20 @@ public class StartDialog extends JDialog{
 		// Button - CANCEL
 		cancelButton = new JButton("Cancel");	
 		cancelButton.addActionListener(new CancelButton());
+		
+		if (editing) {
+			
+			populationField.setEnabled(false);
+			populationField.setText(""+ population.states().length);
+			
+			landuseField.setEnabled(false);
+			landuseField.setText(""+ population.getConstructions().length);
+			
+			tileField.setEnabled(false);
+			tileField.setText("" + population.tiles().length);
+			
+			repeatedConstuctionsCheckbox.setSelected(population.getRepetedConstructionsFactor() == 1.0);
+		}
 
 	}
 
@@ -181,7 +227,7 @@ public class StartDialog extends JDialog{
 	public boolean getNewProblem() {
 		return newProblem;
 	}
-	
+
 
 	/**
 	 * Gets the tiles number.
@@ -191,7 +237,7 @@ public class StartDialog extends JDialog{
 	public int getTilesNumber() {
 		return numTiles;
 	}
-	
+
 
 	/**
 	 * Gets the land use number.
@@ -201,9 +247,9 @@ public class StartDialog extends JDialog{
 	public int getLandUseNumber() {
 		return numLanduses;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Gets the population size.
 	 *
@@ -227,15 +273,15 @@ public class StartDialog extends JDialog{
 
 
 
-	public boolean mustUseAllConstructions() {
-		return useAllConstructions;
-	}
-
-
-
-	public void setUseAllConstructions(boolean useAllConstructions) {
-		this.useAllConstructions = useAllConstructions;
-	}
+	//	public boolean mustUseAllConstructions() {
+	//		return useAllConstructions;
+	//	}
+	//
+	//
+	//
+	//	public void setUseAllConstructions(boolean useAllConstructions) {
+	//		this.useAllConstructions = useAllConstructions;
+	//	}
 
 
 
@@ -252,59 +298,61 @@ public class StartDialog extends JDialog{
 	 */
 	public class OkListener implements ActionListener {
 
-		
-	
-		
+
+
+
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			
-			int tempTiles;
-			int tempLanduse;
-			int tempPopSize;
-			
-			try {
-				tempPopSize = Integer.parseInt(populationField.getText());
-				tempTiles = Integer.parseInt(tileField.getText());
-				tempLanduse = Integer.parseInt(landuseField.getText());
-				
-				if (tempTiles > 0 && tempLanduse > 0 && tempPopSize > 0){
-					
-					if ((tempLanduse > tempTiles) && useAllContructionsCheckbox.isSelected()) throw new Exception("1");
-					
-					numTiles = tempTiles;
-					numLanduses = tempLanduse;
-					populationSize = tempPopSize;
-					
-					repeatedConst = repeatedConstuctionsCheckbox.isSelected();
-					useAllConstructions = useAllContructionsCheckbox.isSelected();
-					
-					newProblem = true;
-					setVisible(false);
-					
-				} else {
-					throw new Exception();
+
+			if (!editing) {
+
+				int tempTiles;
+				int tempLanduse;
+				int tempPopSize;
+
+				try {
+					tempPopSize = Integer.parseInt(populationField.getText());
+					tempTiles = Integer.parseInt(tileField.getText());
+					tempLanduse = Integer.parseInt(landuseField.getText());
+
+					if (tempTiles > 0 && tempLanduse > 0 && tempPopSize > 0){
+
+						//if ((tempLanduse > tempTiles) && useAllContructionsCheckbox.isSelected()) throw new Exception("1");
+
+						numTiles = tempTiles;
+						numLanduses = tempLanduse;
+						populationSize = tempPopSize;
+
+					} else {
+						throw new Exception();
+					}
+
 				}
-				
-			}
-			catch (NumberFormatException n) {
-				JOptionPane.showMessageDialog(getParent(), "Input must be an Integer");
-				return;
-			}
-			catch (Exception e1) {
-				if (e1.getMessage().equals("1")){
-					JOptionPane.showMessageDialog(getParent(), "Number of landuses must equal or lower than the number of lots.");
+				catch (NumberFormatException n) {
+					JOptionPane.showMessageDialog(getParent(), "Input must be an Integer");
 					return;
 				}
-				JOptionPane.showMessageDialog(getParent(), "The numbers must be greater than 0");
-				return;
-				
+				catch (Exception e1) {
+					if (e1.getMessage().equals("1")){
+						JOptionPane.showMessageDialog(getParent(), "Number of landuses must equal or lower than the number of lots.");
+						return;
+					}
+					JOptionPane.showMessageDialog(getParent(), "The numbers must be greater than 0");
+					return;
+
+				}
 			}
 			
+			repeatedConst = repeatedConstuctionsCheckbox.isSelected();
+
+			newProblem = true;
+			setVisible(false);
+
 		}
-	
+
 	}
 
 
@@ -324,6 +372,6 @@ public class StartDialog extends JDialog{
 
 	}
 
-	
-	
+
+
 }

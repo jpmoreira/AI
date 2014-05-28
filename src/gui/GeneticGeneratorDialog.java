@@ -18,6 +18,7 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 import mainPackage.GeneticEngine;
+import mainPackage.TileProblemPopulation;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -136,6 +137,9 @@ public class GeneticGeneratorDialog extends JDialog{
 	private int crossPoints;
 
 
+	private GeneticEngine geneticEngine;
+
+
 //	/**
 //	 * Instantiates a new genetic generator dialog.
 //	 *
@@ -185,16 +189,18 @@ public class GeneticGeneratorDialog extends JDialog{
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 		this.setTitle("Genetic Generator Settings");
+		
+		this.geneticEngine = geneticEngine;
 
 
-		this.maxPairing = geneticEngine.getPopulation().states().length/2;
-		this.pairingStates = geneticEngine.statesToPair()/2;
+		this.maxPairing = ((int)geneticEngine.getPopulation().states().length/2)*2;
+		this.pairingStates = geneticEngine.statesToPair();
 		this.mutationProb = geneticEngine.getMutationProb();
 		this.mutationProbVarFac = geneticEngine.getMutationProbVarFac();	
 		this.diversityUsageFac = geneticEngine.getDiversityUsageFac();
 		this.directFitnessToProb = geneticEngine.getDirectFitnessToProb();
 		this.probToRank = geneticEngine.getProbToRank();
-		this.maxCrossPoints = geneticEngine.getPopulation().states()[0].nrSegments()-1;
+		this.maxCrossPoints = ((TileProblemPopulation)geneticEngine.getPopulation()).tiles().length-1;
 
 		createWidgets();
 		addWidgets(getContentPane());
@@ -281,7 +287,8 @@ public class GeneticGeneratorDialog extends JDialog{
 
 		crossOverChkBox = new JCheckBox("Nr. of Crossover points:");
 		crossOverChkBox.addActionListener(new CrossOverListener());
-
+		crossOverChkBox.setSelected(geneticEngine.statesToPair()!=0);
+		
 		crossOverSlider = new JSlider(1, maxCrossPoints, 1);
 		crossOverSlider.setSnapToTicks(true);
 		crossOverSlider.setPaintTicks(true);
@@ -291,13 +298,12 @@ public class GeneticGeneratorDialog extends JDialog{
 		crossOverSlider.setEnabled(crossOverChkBox.isSelected());
 
 
-		statesToPairLabel = new JLabel("Nr of Pairings:");	
-		statesToPairSlider = new JSlider(1, maxPairing, pairingStates);
+		statesToPairLabel = new JLabel("States to Pair:");	
+		statesToPairSlider = new JSlider(0, maxPairing, pairingStates);
 		statesToPairSlider.setSnapToTicks(true);
 		statesToPairSlider.setPaintTicks(true);
 		statesToPairSlider.setPaintLabels(true);
-		statesToPairSlider.setMinorTickSpacing(1);
-		statesToPairSlider.setMajorTickSpacing(Math.max(maxPairing/4,1));
+		statesToPairSlider.setMajorTickSpacing(2);
 		statesToPairSlider.setPreferredSize(new Dimension(500,40));
 		statesToPairSlider.setEnabled(crossOverChkBox.isSelected());
 
@@ -314,7 +320,6 @@ public class GeneticGeneratorDialog extends JDialog{
 
 		mutationVarLabel = new JLabel("Mutation variation factor:");
 		mutationVarField = new JTextField(((Double) mutationProbVarFac).toString(), 4);
-		//		mutationVarSlider.setEnabled(mutationCheckBox.isSelected());
 
 		directFitnessCheckBox = new JCheckBox("Direct fitness to probability (%):");
 		directFitnessCheckBox.setSelected(directFitnessToProb);
@@ -604,7 +609,7 @@ public class GeneticGeneratorDialog extends JDialog{
 			if (crossOverChkBox.isSelected()){
 				
 				setCrossPoints(crossOverSlider.getValue());
-				pairingStates = statesToPairSlider.getValue()*2;
+				pairingStates = statesToPairSlider.getValue();
 				
 			} else {
 				setCrossPoints(0);
