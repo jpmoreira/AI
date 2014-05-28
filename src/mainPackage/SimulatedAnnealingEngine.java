@@ -32,7 +32,13 @@ public class SimulatedAnnealingEngine extends AlgorithmEngine implements Seriali
 	
 
 	
-	//FIXME document it and test it
+	/**
+	 * 
+	 * A method that returns the nextState on the evolution process of a state.
+	 * @param s the state to evolve
+	 * @param gen the random number generator. Null should be passed if the default randomGenerator is to be used
+	 * @return the new state. May be the same state in case no valid evolution could be found.
+	 */
 	public SimulatedAnnealingState nextState(SimulatedAnnealingState s,RandomNrGenerator gen){
 		
 		
@@ -75,24 +81,18 @@ public class SimulatedAnnealingEngine extends AlgorithmEngine implements Seriali
 	@Override
 	public void iterate() {
 		
-		//Verify stop conditions
-		if(this.stopConditionMet())return;
-		
 		State[] newStates=new State[this.population.states().length];
-		boolean noChange=true;
 		
 		double bestFitnessBefore=this.population.mostFitState().fitness();
 		
 		for(int i=0;i<this.population.states().length;i++){
-			SimulatedAnnealingState s=(SimulatedAnnealingState) population.states()[i];
-			newStates[i]=(State) s.evolve(defaultGenerator.nextRandomNr());
 			
-			if(newStates[i]!=this.population.states()[i])noChange=false;
+			SimulatedAnnealingState s=this.nextState((SimulatedAnnealingState) (population.states()[i]), null);
+			newStates[i]=(State) s;
 			
 		}
 		this.population.setStates(newStates);
-		if(noChange)consecutiveNonEvolvingGenerations++;
-		else consecutiveNonEvolvingGenerations=0;
+		
 		
 		double bestFitnessAfter=this.population.mostFitState().fitness();
 		
@@ -102,9 +102,17 @@ public class SimulatedAnnealingEngine extends AlgorithmEngine implements Seriali
 		this.currentTemperature*=this.decrementingFactor;//update temperature
 
 		
+		currentIteration++;
+		
 	}
 
-	//FIXME document it
+	/**
+	 * 
+	 * 
+	 * A method to set the temperature of the algorithm
+	 * @param temperature the desired temperature
+	 * @param factor the factor by witch it is decremented
+	 */
 	public void setTemperature(double temperature, double factor){
 		
 		this.currentTemperature=temperature;
