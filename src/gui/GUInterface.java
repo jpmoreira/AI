@@ -25,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import mainPackage.GeneticEngine;
+import mainPackage.SavableObject;
 import mainPackage.SimulatedAnnealingEngine;
 import mainPackage.Tile;
 import mainPackage.TileProblemPopulation;
@@ -58,6 +59,8 @@ public class GUInterface {
 	
 	/** The pop size. */
 	private int popSize;
+	
+	private SavableObject savedObject;
 
 	
 	
@@ -675,6 +678,8 @@ public class GUInterface {
 			
 			configSolver();			
 			
+			savedObject = new SavableObject(geneticEngine, annealingEngine, Construction.getConstructions());
+			
 			updateStatusPanel();
 			
 			createResultWidgets();
@@ -788,7 +793,6 @@ public class GUInterface {
 	
 
 	private void initializeLandUses() {
-		// TODO Auto-generated method stub
 		
 		int id = 0;
 		landusesInitializationDialog = new LandUseInitializationDialog(frame, true, "LandUse Initialization", landuses, id);
@@ -801,8 +805,6 @@ public class GUInterface {
 			landusesInitializationDialog = new LandUseInitializationDialog(frame, true, "LandUse Initialization", landuses, id);
 			if (!landusesInitializationDialog.isCanceled()){
 				landuses[id] = landusesInitializationDialog.getTempLanduse();
-//				landuses[id].setForbiddenAdjacenciesConstraint(restrictionsDialog.getForbConst(), restrictionsDialog.getForbClassesNames(), restrictionsDialog.getForbPenalty());
-//				landuses[id].setMustHaveAdjacenciesConstraint(restrictionsDialog.getMustHaveClassesNames(), restrictionsDialog.getMustHaveConst(), restrictionsDialog.getMustHavePenalty());
 
 				id = landusesInitializationDialog.getLanduseID();
 			} else {
@@ -1372,9 +1374,6 @@ public class GUInterface {
 			}
 			else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
 
-			// TODO request focus in result panel 
-//			resultsPanel.requestFocusInWindow();
-
 		}
 
 	}
@@ -1387,7 +1386,7 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 
 			// JDialog - SAVE/LOAD GAME
-			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem",population, geneticEngine);
+			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem", savedObject);
 
 			if(saveLoadDialog.problemSaved())
 			{
@@ -1395,11 +1394,24 @@ public class GUInterface {
 			} 
 			else if (saveLoadDialog.problemLoaded())
 			{
-				population = saveLoadDialog.getTempPopulation();
+				
+				savedObject = saveLoadDialog.getTempSavedObject();
+				
+				geneticEngine = savedObject.getGenetic_engine();
+				
+				annealingEngine = savedObject.getSim_engine();
+				
+				if (geneticEngine != null) {
+					population = (TileProblemPopulation) geneticEngine.getPopulation();
+				} else {
+					population = (TileProblemPopulation) annealingEngine.getPopulation();
+				}
+				
+				
 				tiles = population.tiles();
 				landuses = population.getConstructions();
 				
-				geneticEngine = saveLoadDialog.getTempGeneticEngine();
+				
 				
 				pairingStates = geneticEngine.statesToPair();
 				popSize = population.populationSize();
