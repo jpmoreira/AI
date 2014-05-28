@@ -329,4 +329,34 @@ public class StateTests {
 		
 		
 	}
+	
+	@Test
+	public void testRepeted(){
+		
+		
+		Construction.resetConstructions();
+		
+		Construction c1=new Construction("A");
+		Construction c2=new Construction("B");
+		Construction c3=new Construction("C");
+		
+		Tile t1=new Tile();
+		Tile t2=new Tile();
+		Tile t3=new Tile();
+		
+		TileProblemState s =new TileProblemState(new Construction[]{c1,c3,c2}, new Tile[]{t1,t2,t3});
+	
+		assertEquals(s.repetedConstructions(), 0);
+	
+		s.constructions=new Construction[]{c1,c1,c2};
+		
+		assertEquals(s.repetedConstructions(), 2);
+		
+		s.constructions=new Construction[]{c1,Construction.nullConstruction(),c2};
+		
+		assertEquals(s.repetedConstructions(), 1);
+		
+		
+		
+	}
 }

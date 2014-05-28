@@ -1,6 +1,7 @@
 package mainPackage;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import mainPackage.Tile;
 import mainPackage.constructions.Construction;
@@ -173,22 +174,25 @@ public class TileProblemState  extends State implements Serializable,GeneticStat
 	 * 
 	 * @return the number of repeated constructions in this state
 	 */
-	private int repetedConstructions() {
+	public int repetedConstructions() {
 		
-		//FIXME change this
-
-		int repetitions = 0;
-		for (int i = 0; i < this.constructions.length; i++) {
-			for (int f = i + 1; f < this.constructions.length; f++) {
-				if (constructions[f] == constructions[i]){
-					
-					
-				}
-					repetitions++;
-			}
+		int repeted=0;
+		int[] hitArray=new int[Construction.nrConstructions()-1];
+		Arrays.fill(hitArray, -1);
+		
+		
+		for(int i=0;i<this.constructions.length;i++){
+			if(constructions[i]==Construction.nullConstruction())continue;
+			Construction c=constructions[i];
+			int indexOfConstruction=(int)(Math.log(c.toCromossome())/Math.log(2));
+			hitArray[indexOfConstruction]++;
 		}
-
-		return repetitions;
+		
+		for(int i=0;i<hitArray.length;i++){
+			repeted+=Math.abs(hitArray[i]);
+		}
+		
+		return repeted;
 	}
 
 	/**

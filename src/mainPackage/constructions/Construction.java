@@ -39,16 +39,7 @@ public class Construction implements Serializable{
 	 */
 	public static Construction nullConstruction() {
 
-		if(nullConstruction==null){
-			nullConstruction= new Construction() {
-
-				@Override
-				public double affinityToTileInState(Tile tile,TileProblemState s) {
-
-					return 1;
-				}
-			};
-		}
+		
 		return nullConstruction;
 	};
 
@@ -341,7 +332,8 @@ public class Construction implements Serializable{
 	 */
 
 	public Construction(String theName) {
-
+		if(nullConstruction==null)nullConstruction=new Construction();
+		
 		this.name = theName;
 		chromoRepresentation = (1 << indexForNextConstruction++);
 		constructions.put(this.chromoRepresentation, this);
@@ -408,6 +400,7 @@ public class Construction implements Serializable{
 	static public void resetConstructions() {
 
 		constructions.clear();
+		if(nullConstruction!=null)constructions.put(0, nullConstruction);
 		indexForNextConstruction = 0;
 	}
 
