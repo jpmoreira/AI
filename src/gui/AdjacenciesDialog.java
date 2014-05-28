@@ -271,7 +271,7 @@ public class AdjacenciesDialog extends JDialog{
 		}
 
 		
-		//TODO add restrictions do tiles...
+		//TODO add restrictions to tiles...
 		
 		lakeCheckBox = new JCheckBox("Lake");
 		highwayCheckBox = new JCheckBox("Highway");
