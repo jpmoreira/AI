@@ -174,11 +174,16 @@ public class TileProblemState  extends State implements Serializable,GeneticStat
 	 * @return the number of repeated constructions in this state
 	 */
 	private int repetedConstructions() {
+		
+		//FIXME change this
 
 		int repetitions = 0;
 		for (int i = 0; i < this.constructions.length; i++) {
 			for (int f = i + 1; f < this.constructions.length; f++) {
-				if (constructions[f] == constructions[i])
+				if (constructions[f] == constructions[i]){
+					
+					
+				}
 					repetitions++;
 			}
 		}
@@ -336,7 +341,7 @@ public class TileProblemState  extends State implements Serializable,GeneticStat
 
 	@Override
 	public int nrSuccessors() {
-		return (Construction.latestConstructionIndex()+1)*this.tiles.length;
+		return (Construction.nrConstructions()+1)*this.tiles.length;
 	}
 	
 	

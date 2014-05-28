@@ -248,7 +248,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	int mutatingSegmentForState(GeneticState s, RandomNrGenerator gen) {
 		if (gen == null)
 			gen = this.defaultGenerator;
-		return (int) gen.nextRandomNr() * s.nrSegments();
+		return (int) (gen.nextRandomNr() * s.nrSegments());
 
 	}
 
@@ -438,7 +438,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 																		// order
 																		// bit
 																		// used
-		return (int) (gen.nextRandomNr() * (nrMaxBit));
+		return (int) (gen.nextRandomNr() * nrMaxBit+0.5);
 
 	}
 

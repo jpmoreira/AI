@@ -28,7 +28,7 @@ public class Construction implements Serializable{
 	 * the lazy instantiation is done.
 	 * 
 	 */
-	private static Construction nullConstruction;
+	private static Construction nullConstruction=null;
 
 	/**
 	 * A method that returns a construction that represents an invalid
@@ -39,17 +39,15 @@ public class Construction implements Serializable{
 	 */
 	public static Construction nullConstruction() {
 
-		if (nullConstruction == null) {
-
-			nullConstruction = new Construction("NULL") {
+		if(nullConstruction==null){
+			nullConstruction= new Construction() {
 
 				@Override
 				public double affinityToTileInState(Tile tile,TileProblemState s) {
 
-					return 0;
+					return 1;
 				}
 			};
-
 		}
 		return nullConstruction;
 	};
@@ -299,9 +297,9 @@ public class Construction implements Serializable{
 	 * A method that returns the largest index a construction has
 	 * @return the largest index a construction has
 	 */
-	public static int latestConstructionIndex(){
+	public static int nrConstructions(){
 		
-		return indexForNextConstruction-1;
+		return constructions.size();
 	}
 
 	/**
@@ -349,6 +347,13 @@ public class Construction implements Serializable{
 		constructions.put(this.chromoRepresentation, this);
 	}
 	
+	
+	private Construction(){
+		this.name="NULL";
+		chromoRepresentation=0;
+		constructions.put(this.chromoRepresentation, this);
+		
+	}
 
 
 	/**
