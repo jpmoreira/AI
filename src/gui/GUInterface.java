@@ -80,20 +80,20 @@ public class GUInterface {
 	private GeneticEngine geneticEngine;
 	
 	/* Genetic Generator Settings */
-	/** The mutation prob. */
-	private double mutationProb = 0.10;
-	
-	/** The mutation prob var fac. */
-	private double mutationProbVarFac = 1.0;
-	
-	/** The prob to rank. */
-	private double probToRank = 0.5;
-	
-	/** The diversity usage fac. */
-	private double diversityUsageFac = 0;
-	
-	/** The direct fitness to prob. */
-	private boolean directFitnessToProb = true;
+//	/** The mutation prob. */
+//	private double mutationProb = 0.10;
+//	
+//	/** The mutation prob var fac. */
+//	private double mutationProbVarFac = 1.0;
+//	
+//	/** The prob to rank. */
+//	private double probToRank = 0.5;
+//	
+//	/** The diversity usage fac. */
+//	private double diversityUsageFac = 0;
+//	
+//	/** The direct fitness to prob. */
+//	private boolean directFitnessToProb = true;
 	
 	/* Simulated Annealing Engine */
 	private SimulatedAnnealingEngine annealingEngine;
@@ -709,7 +709,7 @@ public class GUInterface {
 			
 			landuses = new Construction[startDialog.getLandUseNumber()];
 			
-			pairingStates = startDialog.getPopulationSize()/2;
+//			pairingStates = startDialog.getPopulationSize()/2;
 			
 			return true;
 		}	
@@ -901,9 +901,12 @@ public class GUInterface {
 			configAnnealing();
 		} else if (solverOption == 2){
 			configGeneticGenerator();
+
+			configGenStopCond();
 		} else {
 			configAnnealing();
 			configGeneticGenerator();
+			configGenStopCond();
 		}
 		
 	}
@@ -928,45 +931,33 @@ public class GUInterface {
 	private void configGeneticGenerator() {
 		
 		if (geneticEngine == null) {
-			geneticEngine = new GeneticEngine(population, mutationProb, pairingStates);
+			geneticEngine = new GeneticEngine(population, 0.1, population.states().length/2);
 		}
 
 		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", geneticEngine);
 //		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", popSize/2, pairingStates, mutationProb, mutationProbVarFac, diversityUsageFac, directFitnessToProb, probToRank, tiles.length-1);
 
 		if (geneticGeneratorDialog.isNewSettings()){
-			pairingStates = geneticGeneratorDialog.getPairingStates();
-			mutationProb = geneticGeneratorDialog.getMutationProb();
+			
+			geneticEngine.setPairingStates(geneticGeneratorDialog.getPairingStates());
+			geneticEngine.setMutationProbability(geneticGeneratorDialog.getMutationProb(), geneticGeneratorDialog.getMutationProbVarFac());
+			geneticEngine.setDiversityUsage(geneticGeneratorDialog.getDiversityUsageFac());
+			geneticEngine.setCrossoverPoints(geneticGeneratorDialog.getCrossPoints());
 
-			mutationProbVarFac = geneticGeneratorDialog.getMutationProbVarFac();		
-			diversityUsageFac = geneticGeneratorDialog.getDiversityUsageFac();
-
-			if (geneticGeneratorDialog.isDirectFitnessToProb()){
-				directFitnessToProb = true;
+			if (geneticGeneratorDialog.isDirectFitnessToProb()) {
+				geneticEngine.enableDirectMethod();
 			} else {
-				directFitnessToProb = false;
-				probToRank = geneticGeneratorDialog.getProbToRank();
+				geneticEngine.enableFitnessToRank(geneticGeneratorDialog.getProbToRank());
 			}
 			
 		}	
-		
-		geneticEngine.setPairingStates(pairingStates);
-		geneticEngine.setMutationProbability(mutationProb, mutationProbVarFac);
-		geneticEngine.setDiversityUsage(diversityUsageFac);
-
-		if (directFitnessToProb) {
-			geneticEngine.enableDirectMethod();
-		} else {
-			geneticEngine.enableFitnessToRank(probToRank);
-		}
-		
-		configStopCondDialog(); 
+	
 
 	}
 	
 	
 
-	public void configStopCondDialog() {
+	public void configGenStopCond() {
 		// TODO Auto-generated method stub
 		
 		
@@ -1696,7 +1687,7 @@ public class GUInterface {
 //			return;
 //		}
 			
-			configStopCondDialog();
+			configGenStopCond();
 
 		}
 
