@@ -261,7 +261,7 @@ public class GUInterface {
 
 	private SolverDialog solverDialog;
 
-	private GeneticStopDialog geneticStopDialog;
+	private StoppingSettingsDialog geneticStopDialog;
 
 
 
@@ -283,13 +283,15 @@ public class GUInterface {
 
 	private JLabel generationBestState;
 
-	private JButton geneticStopsButton;
+	private JButton stopSettingsButton;
 
 	private LandUseInitializationDialog landusesInitializationDialog;
 
 	private JButton populationButton;
 
 	private JButton landusePrefButton;
+
+	private JLabel othersSettingsLabel;
 
 
 
@@ -329,7 +331,7 @@ public class GUInterface {
 		frame = new JFrame("Lot Assignment");
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setPreferredSize(new Dimension(1200, 735));
+		frame.setPreferredSize(new Dimension(1200, 800));
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
 		createWidgets();
@@ -358,7 +360,7 @@ public class GUInterface {
 
 		/* Genetic Algorithm Panel */
 		geneticPanel = new JPanel();
-		geneticPanel.setLayout(new GridLayout(13,1));
+		geneticPanel.setLayout(new GridLayout(14,1));
 
 		problemLabel = new JLabel("Problem Settings");
 
@@ -394,9 +396,6 @@ public class GUInterface {
 		geneticButton = new JButton("<html><center>Genetic<br>Settings</center></html>");
 		geneticButton.addActionListener(new GeneticListener());
 
-		geneticStopsButton = new JButton("<html><center>Genetic Stop<br>Conditions</center></html>");
-		geneticStopsButton.addActionListener(new GeneticStopListener());
-
 		annealingLabel = new JLabel("Simulated Annealing");
 		annealingLabel.setHorizontalAlignment(JLabel.CENTER);
 		annealingLabel.setVerticalAlignment(JLabel.CENTER);
@@ -404,6 +403,11 @@ public class GUInterface {
 		annealingButton = new JButton("<html><center>Annealing<br>Settings</center></html>");
 		annealingButton.addActionListener(new AnnealingListener());
 		
+		othersSettingsLabel = new JLabel("Other Settings");
+		othersSettingsLabel.setHorizontalAlignment(JLabel.CENTER);
+
+		stopSettingsButton = new JButton("<html><center>Stopping<br>Settings</center></html>");
+		stopSettingsButton.addActionListener(new GeneticStopListener());
 
 		/* Top Panel */
 		topPanel = new JPanel();
@@ -493,19 +497,22 @@ public class GUInterface {
 		geneticPanel.add(landuseSettingButton);
 		geneticPanel.add(restrictionsButton);
 		geneticPanel.add(landusePrefButton);
+		
 		geneticPanel.add(geneticLabel);
 		geneticPanel.add(geneticButton);
-		geneticPanel.add(geneticStopsButton);
-
+		
 		geneticPanel.add(annealingLabel);
 		geneticPanel.add(annealingButton);
-
+		
+		geneticPanel.add(othersSettingsLabel);
+		geneticPanel.add(stopSettingsButton);
+		
 		exitPanel.add(newProblemButton);
 		exitPanel.add(saveProblemButton);
 		exitPanel.add(exitButton);
 
 		leftPanel.add(geneticPanel);
-		leftPanel.add(Box.createVerticalStrut(50));
+		leftPanel.add(Box.createVerticalStrut(30));
 		leftPanel.add(exitPanel);
 		contentPane.add(leftPanel,BorderLayout.WEST);
 
@@ -918,13 +925,14 @@ public class GUInterface {
 		if (solverOption == 1) {
 			configAnnealing();
 		} else if (solverOption == 2){
+			
 			configGeneticGenerator();
 
-			configGenStopCond();
+//			configGenStopCond();
 		} else {
 			configAnnealing();
 			configGeneticGenerator();
-			configGenStopCond();
+//			configGenStopCond();
 		}
 
 	}
@@ -979,7 +987,7 @@ public class GUInterface {
 
 
 		try {
-			geneticStopDialog = new GeneticStopDialog(frame, true, "Genetic Generator Stop Conditions");
+			geneticStopDialog = new StoppingSettingsDialog(frame, true, "Genetic Generator Stop Conditions");
 
 		} catch (Exception e) {
 

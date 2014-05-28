@@ -20,11 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import mainPackage.GeneticEngine;
-import mainPackage.Population;
 import mainPackage.SavableObject;
-import mainPackage.SimulatedAnnealingEngine;
-import mainPackage.TileProblemPopulation;
 
 public class SaveLoadDialog extends JDialog{
 

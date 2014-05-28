@@ -20,7 +20,7 @@ import org.w3c.dom.ranges.RangeException;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class GeneticStopDialog extends JDialog {
+public class StoppingSettingsDialog extends JDialog {
 
 	private final JPanel geneticStopPanel = new JPanel();
 	private JTextField textFieldMinStop;
@@ -39,7 +39,7 @@ public class GeneticStopDialog extends JDialog {
 	 * @param b 
 	 * @param frame 
 	 */
-	public GeneticStopDialog(JFrame frame, boolean modal, String string) {
+	public StoppingSettingsDialog(JFrame frame, boolean modal, String string) {
 		super(frame, modal);
 		
 		this.setTitle("Genetic Stop Conditions");
