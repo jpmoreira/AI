@@ -343,11 +343,11 @@ public class TileProblemPopulation implements Serializable,Population{
 	 * @param segmentsOfFirstOne
 	 * @return the two states that are the result of the pairing
 	 */
-	public TileProblemState[] pairStatesAtIndexes(int index1,int index2,Integer[] segmentsOfFirstOne){
+	public GeneticState[] pairStatesAtIndexes(int index1,int index2,Integer[] segmentsOfFirstOne){
 		
-		TileProblemState [] newOnes=states[index1].pairWith(states[index2], segmentsOfFirstOne);
-		states[index1]=newOnes[0];
-		states[index2]=newOnes[1];
+		GeneticState [] newOnes=states[index1].pairWith(states[index2], segmentsOfFirstOne);
+		states[index1]=(TileProblemState)newOnes[0];
+		states[index2]=(TileProblemState)newOnes[1];
 		
 		return newOnes;
 	}

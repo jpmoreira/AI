@@ -82,46 +82,41 @@ public class TileProblemState  extends State implements Serializable,GeneticStat
 	 *            first of the childs
 	 * @return the state resulting from the pairing
 	 */
-	public TileProblemState[] pairWith(GeneticState other_state,
-			Integer[] segmentsFromSelf) {
+	public GeneticState[] pairWith(GeneticState other_state,
+			Integer[] crossPoints) {
 
-		TileProblemState otherState = (TileProblemState) other_state;
-
-		Construction[] constructionsOfChild1 = new Construction[this.constructions.length];
-		Construction[] constructionsOfChild2 = new Construction[this.constructions.length];
-		for (int i = 0; i < segmentsFromSelf.length; i++) {
-			constructionsOfChild1[segmentsFromSelf[i]] = this.constructions[segmentsFromSelf[i]];// if
-																									// it's
-																									// ment
-																									// to
-																									// be
-																									// one
-																									// of
-																									// this
-																									// then
-																									// assign
-																									// it
-			constructionsOfChild2[segmentsFromSelf[i]] = otherState.constructions[segmentsFromSelf[i]];
-
-		}
-
-		for (int i = 0; i < constructionsOfChild1.length; i++) {// search for
-																// the ones that
-																// have not been
-																// assigned yet.
-			if (constructionsOfChild1[i] == null) {// if was not previously set
-				constructionsOfChild1[i] = otherState.constructions[i];// set it
-				constructionsOfChild2[i] = this.constructions[i];
+		TileProblemState otherState=(TileProblemState)other_state;
+		boolean forThis=true;
+		int start=0;//start point for this iteration (we start at the begining of the constructions)
+		int end=crossPoints[0];
+		Construction [] c1=new Construction[this.constructions.length];
+		Construction [] c2=new Construction[this.constructions.length];
+		
+		for(int i=0;i<=crossPoints.length;i++){//run 1xcrossPoints + 1 time for the last part
+			for(int f=start;f<end;f++){//this portion goes from start to end
+				if(forThis){
+					c1[f]=this.constructions[f];
+					c2[f]=otherState.constructions[f];
+				} 
+				else{
+					c2[f]=this.constructions[f];
+					c1[f]=otherState.constructions[f];
+					
+				}
 			}
+			if(forThis)forThis=false;//if this segment was given from the "this" state next portion should not
+			else forThis=true;
+			if(i<crossPoints.length)start=crossPoints[i];
+			if(i<crossPoints.length-1)end=crossPoints[i+1];//if not a last point
+			else end=c1.length;//if at last crossoverPoint
 		}
-
-		TileProblemState[] childs = new TileProblemState[2];
-		childs[0] = new TileProblemState(constructionsOfChild1, tiles,
-				repetedConstructionFactor);
-		childs[1] = new TileProblemState(constructionsOfChild2, tiles,
-				repetedConstructionFactor);
-		return childs;
-
+		
+		TileProblemState s1=new TileProblemState(c1, this.tiles);
+		TileProblemState s2=new TileProblemState(c2, this.tiles);
+		
+		GeneticState[] array={s1,s2};
+		return array;
+		
 	}
 
 	/**

@@ -16,10 +16,10 @@ public interface GeneticState {
 	 * 
 	 * A method use to pair two states. It does not prevent that the Resulting States has more than one tile with the same construction
 	 * @param otherState the state this object is to be paired with
-	 * @param segmentsFromSelf the segments from this object that are to be passed to the the first of the childs
+	 * @param crossOverPoints the crossOverPoints
 	 * @return the state resulting from the pairing
 	 */
-	public GeneticState[] pairWith(GeneticState otherState, Integer[] segmentsOfSelf);
+	public GeneticState[] pairWith(GeneticState otherState, Integer[] crossOverPoints);
 	
 	
 	/**

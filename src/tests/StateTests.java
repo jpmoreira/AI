@@ -1,6 +1,7 @@
 package tests;
 
 import static org.junit.Assert.*;
+import mainPackage.GeneticState;
 import mainPackage.TileProblemPopulation;
 import mainPackage.TileProblemState;
 import mainPackage.Tile;
@@ -50,11 +51,11 @@ public class StateTests {
 
 		TileProblemState a = p.states()[0];
 		TileProblemState b = p.states()[1];
-		Integer[] segments = { 0, 1, 2 };
+		Integer[] segments = {3};
 
-		TileProblemState[] childs = a.pairWith(b, segments);
+		GeneticState[] childs = a.pairWith(b, segments);
 
-		assertArrayEquals(childs[0].constructions, a.constructions);
+		assertArrayEquals(((TileProblemState)childs[0]).constructions, a.constructions);
 	}
 
 	@Test
@@ -91,11 +92,11 @@ public class StateTests {
 
 		TileProblemState a = p.states()[0];
 		TileProblemState b = p.states()[1];
-		Integer[] segments = { 0, 2 };
+		Integer[] segments = { 1, 2 };
 
-		TileProblemState[] childs = a.pairWith(b, segments);
-		TileProblemState c = childs[0];
-		TileProblemState d = childs[1];
+		GeneticState[] childs = a.pairWith(b, segments);
+		TileProblemState c = (TileProblemState)childs[0];
+		TileProblemState d = (TileProblemState)childs[1];
 
 		assertEquals(c.constructions[0], a.constructions[0]);
 		assertEquals(c.constructions[1], b.constructions[1]);
