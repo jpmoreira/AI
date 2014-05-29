@@ -1132,25 +1132,30 @@ public class GUInterface {
 	 */
 	private void updateStatusPanel() {
 
-		statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
-				";   Nr. of Landuses: " + landuses.length +
-				";   Population Size: " + population.populationSize() +
-				";   Nr of Pairing states: " + geneticEngine.statesToPair() +
-				";   Generation Nr: " + population.getCurrentIterationNr());
+		if ( geneticEngine != null) {
+			
+			statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
+					";   Nr. of Landuses: " + landuses.length +
+					";   Population Size: " + population.populationSize() +
+					";   Nr of Pairing states: " + geneticEngine.statesToPair() +
+					";   Generation Nr: " + population.getCurrentIterationNr());
 
-		if (geneticEngine.getDirectFitnessToProb()) {
-			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",geneticEngine.getMutationProb()) +
-					";   Mutation Probability Variation Factor: " + String.format("%.3f",geneticEngine.getMutationProbVarFac()) +
-					";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
-					";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
-					";   Probability to Rank: N/A");
-		} else {
-			genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",geneticEngine.getMutationProb()) +
-					";   Mutation Probability Variation Factor: " + String.format("%.2f",geneticEngine.getMutationProbVarFac()) +
-					";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
-					";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
-					";   Probability to Rank: " + String.format("%.2f",geneticEngine.getProbToRank()));
+			if (geneticEngine.getDirectFitnessToProb()) {
+				genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",geneticEngine.getMutationProb()) +
+						";   Mutation Probability Variation Factor: " + String.format("%.3f",geneticEngine.getMutationProbVarFac()) +
+						";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
+						";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
+						";   Probability to Rank: N/A");
+			} else {
+				genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",geneticEngine.getMutationProb()) +
+						";   Mutation Probability Variation Factor: " + String.format("%.2f",geneticEngine.getMutationProbVarFac()) +
+						";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
+						";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
+						";   Probability to Rank: " + String.format("%.2f",geneticEngine.getProbToRank()));
+			}
+			
 		}
+		
 
 	}
 
