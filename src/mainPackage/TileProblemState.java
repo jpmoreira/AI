@@ -315,7 +315,7 @@ public class TileProblemState  extends State implements Serializable,GeneticStat
 	@Override
 	public SimulatedAnnealingState evolve(double randomNr) {
 		
-		int constructionToChange=(int)((this.tiles.length-1)*randomNr);
+		int constructionToChange=(int)((this.tiles.length-0.5)*randomNr);
 		
 		Construction cToChange=constructions[constructionToChange];
 		
@@ -339,13 +339,14 @@ public class TileProblemState  extends State implements Serializable,GeneticStat
 		
 		newConstructionArray[constructionToChange]=newC;
 		
-		
-		return new TileProblemState(newConstructionArray, this.tiles);
+		TileProblemState newState=new TileProblemState(newConstructionArray, this.tiles);
+		newState.setRepetitionFactor(this.repetedConstructionFactor);
+		return newState;
 	}
 
 	@Override
 	public int nrSuccessors() {
-		return (Construction.nrConstructions()+1)*this.tiles.length;
+		return (Construction.nrConstructions()-1)*this.tiles.length;
 	}
 	
 	

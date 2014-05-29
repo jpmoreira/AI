@@ -147,4 +147,85 @@ public class SimulatedAnnealingTests {
 		
 		
 	}
+	
+	
+	@Test
+	public void testNextStateProb2(){
+		
+		Construction.resetConstructions();
+		Construction c1=new Construction("A"){
+			
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
+				
+				return 10;
+				
+			};
+			
+		};
+		
+	
+		
+		
+		Construction c2=new Construction("B"){
+			
+			
+			public double affinityToTileInState(Tile tile, TileProblemState state) {
+				
+				return 0;
+				
+			};
+			
+		};
+		
+		Tile t1=new Tile();
+		Tile t2=new Tile();
+		
+		TileProblemState s=new TileProblemState(new Construction[]{c1,c2}, new Tile[]{t1,t2});
+		s.setRepetitionFactor(0.1);
+		TileProblemPopulation p=new TileProblemPopulation(new Tile[]{t1,t2}, new Construction[]{c1,c2}, 1);
+		p.setStates(new TileProblemState[]{s});
+		SimulatedAnnealingEngine eng=new SimulatedAnnealingEngine(p);
+		
+		eng.setTemperature(2000, 0.9);
+		
+		
+	
+		TileProblemState s2=(TileProblemState)eng.nextState(s, new RandomNrGenerator() {
+			
+			public int i=0;
+			
+			public double[] nrs={0,0.0000001};
+			
+			@Override
+			public double nextRandomNr() {
+				return nrs[i++];
+			}
+		});
+		
+		System.out.println(s.nrSuccessors());
+		TileProblemState s3=(TileProblemState)eng.nextState(s, new RandomNrGenerator() {
+			
+			public int i=0;
+			
+			public double[] nrs={0.99,0.0,0.99,0.0,0.99,0.0,0.99,0.0,0.99};
+			
+			@Override
+			public double nextRandomNr() {
+				return nrs[i++];
+			}
+		});
+
+		
+		assertEquals(s3.constructions[0],c1);
+		
+		assertEquals(s3.constructions[1],Construction.nullConstruction());
+		
+		
+		
+		
+		
+		
+		
+		
+	}
 }

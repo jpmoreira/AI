@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import mainPackage.constructions.Construction;
 
-@SuppressWarnings("serial")
 public class SavableObject implements Serializable{
 	
 	private GeneticEngine genetic_engine;

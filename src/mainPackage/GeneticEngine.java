@@ -80,7 +80,11 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	private boolean directFitnessToProbability;
 
 
-	//FIXME document it
+	/**
+	 * 
+	 * The number of crossover points to be used
+	 * 
+	 */
 	private int crossOverPoints=1;
 
 	/**
@@ -472,7 +476,6 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		for(int i=0;i<statesToBePaired.length-1;i+=2){
 			st1=(GeneticState)statesToBePaired[i];
 			st2=(GeneticState)statesToBePaired[i+1];
-			//FIXME continue here
 			segments=crossoverPoints((State)st1,null);//may not be a safe cast
 			childs=st1.pairWith(st2, segments);
 			statesAfterPairing.add(childs[0]);
@@ -501,10 +504,19 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		
 		if(this.stopConditionMet())return;
 		
+		double bestFitnessBefore=population.bestStateEver().fitness();
 		this.population.updateStatistics();
 		this.pair();
 		this.mutate();
 		this.updateParameters();
+		
+		
+		double bestFitnessAfter=population.bestStateEver().fitness();
+		
+		if(bestFitnessAfter>bestFitnessBefore)consecutiveNonImprovingGenerations=0;
+		else consecutiveNonImprovingGenerations++;
+		
+		currentIteration++;
 		
 	}
 
@@ -576,7 +588,11 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	
 
 	
-	//FIXME document it
+	/**
+	 * 
+	 * A setter for the number of crossover points
+	 * @param crossoverPoints the desired number of crossover points
+	 */
 	public void setCrossoverPoints(int crossoverPoints){
 		
 		this.crossOverPoints=crossoverPoints;
