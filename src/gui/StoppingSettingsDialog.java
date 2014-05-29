@@ -216,7 +216,20 @@ public class StoppingSettingsDialog extends JDialog {
 				genVariationPanel.setLayout(new BoxLayout(genVariationPanel, BoxLayout.X_AXIS));
 				{
 					geneticVariationSlider.setMaximum(50);
-					geneticVariationSlider.setValue(15);
+					
+					if (annealingEngine == null) {
+						geneticVariationSlider.setValue(50);
+					} else {
+						
+						int temp = (int) (annealingEngine.getMaxDifferenceToMean()*100);
+						if (temp <= 50) {
+							geneticVariationSlider.setValue(temp);
+						} else {
+							geneticVariationSlider.setValue(50);
+						}
+						
+					}
+					
 					geneticVariationSlider.setMajorTickSpacing(10);
 					geneticVariationSlider.setMinorTickSpacing(1);
 					geneticVariationSlider.setSnapToTicks(true);
@@ -318,7 +331,13 @@ public class StoppingSettingsDialog extends JDialog {
 				annealingFitnessPanel.setLayout(new BoxLayout(annealingFitnessPanel, BoxLayout.X_AXIS));
 				{
 					annealingFitnessSlider.setMaximum(100);
-					annealingFitnessSlider.setValue(90);
+					
+					if (annealingEngine == null) {
+						annealingFitnessSlider.setValue(100);
+					} else {
+						annealingFitnessSlider.setValue((int) (annealingEngine.getMinimumFitness()*100));
+					}
+					
 					annealingFitnessSlider.setMajorTickSpacing(10);
 					annealingFitnessSlider.setMinorTickSpacing(1);
 					annealingFitnessSlider.setSnapToTicks(true);
@@ -351,7 +370,20 @@ public class StoppingSettingsDialog extends JDialog {
 				annVariationPanel.setLayout(new BoxLayout(annVariationPanel, BoxLayout.X_AXIS));
 				{
 					annealingVariationSlider.setMaximum(50);
-					annealingVariationSlider.setValue(15);
+					
+					if (annealingEngine == null) {
+						annealingVariationSlider.setValue(50);
+					} else {
+						
+						int temp = (int) (annealingEngine.getMaxDifferenceToMean()*100);
+						if (temp <= 50) {
+							annealingVariationSlider.setValue(temp);
+						} else {
+							annealingVariationSlider.setValue(50);
+						}
+						
+					}
+		
 					annealingVariationSlider.setMajorTickSpacing(10);
 					annealingVariationSlider.setMinorTickSpacing(1);
 					annealingVariationSlider.setSnapToTicks(true);
@@ -527,7 +559,6 @@ public class StoppingSettingsDialog extends JDialog {
 	}
 
 	private void editSettings() throws NumberFormatException{
-		// TODO Auto-generated method stub
 
 		if (geneticEngine != null) {
 			updateGeneticStopCond();
@@ -620,7 +651,7 @@ public class StoppingSettingsDialog extends JDialog {
 	}
 
 	protected void okButtonPressed() {
-		// TODO Auto-generated method stub
+
 		try {
 
 			editSettings();
@@ -650,7 +681,7 @@ public class StoppingSettingsDialog extends JDialog {
 
 
 	protected void cancelButtonPressed() {
-		// TODO Auto-generated method stub
+
 		setNewStopConditions(false);
 		setVisible(false);
 

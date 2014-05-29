@@ -949,6 +949,7 @@ public class GUInterface {
 			solver.removeAll(solver);
 			solver.add(annealingEngine);
 			solver.add(geneticEngine);
+			
 		} else if (solverOption == 4){
 			
 			configAnnealing();
@@ -998,7 +999,6 @@ public class GUInterface {
 	private void configGeneticGenerator() {
 
 		if (geneticEngine == null) {
-
 			geneticEngine = new GeneticEngine(population, 0.1, (int) ((population.states().length)/2)*2);
 		}
 
@@ -1103,10 +1103,12 @@ public class GUInterface {
 	}
 
 	private void updateResultPanel() {
+		
+		population.updateStatistics();
 
-		if (population.bestStateEver() == null){
-			return;
-		}
+//		if (population.bestStateEver() == null){
+//			return;
+//		}
 		generationBestState.setText("" + population.iterationNrForBestStateEver());
 
 		fitnessBestState.setText("" + String.format("%.7f",((TileProblemState) population.bestStateEver()).fitness()));
