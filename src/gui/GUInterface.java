@@ -24,6 +24,8 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.sun.org.apache.bcel.internal.generic.ANEWARRAY;
+
 import mainPackage.GeneticEngine;
 import mainPackage.SavableObject;
 import mainPackage.SimulatedAnnealingEngine;
@@ -920,17 +922,20 @@ public class GUInterface {
 		solverOption = solverDialog.getOption();
 
 		if (solverOption == 1) {
+			
 			configAnnealing();
+			
 		} else if (solverOption == 2){
 			
 			configGeneticGenerator();
 
-//			configGenStopCond();
 		} else {
+			
 			configAnnealing();
 			configGeneticGenerator();
-//			configGenStopCond();
 		}
+		
+		configStopCond();
 
 	}
 
@@ -947,6 +952,13 @@ public class GUInterface {
 			} 
 			
 			annealingDialog = new AnnealingDialog(frame, true, "Simulated Annealing Settings",annealingEngine);
+			
+			if (annealingDialog.hasNewAnnealingEngine()) {
+				
+				annealingEngine.setTemperature(annealingDialog.getInitialTemperature(), annealingDialog.getVariationFactor());
+				
+				annealingDialog.setNewAnnealingEngine(false);
+			}
 
 
 		} catch (Exception e) {
@@ -966,7 +978,6 @@ public class GUInterface {
 		}
 
 		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", geneticEngine);
-		//		geneticGeneratorDialog = new GeneticGeneratorDialog(frame, true, "Genetic Generator Settings", popSize/2, pairingStates, mutationProb, mutationProbVarFac, diversityUsageFac, directFitnessToProb, probToRank, tiles.length-1);
 
 		if (geneticGeneratorDialog.isNewSettings()){
 
@@ -993,7 +1004,10 @@ public class GUInterface {
 
 
 		try {
+			
 			geneticStopDialog = new StoppingSettingsDialog(frame, true, "Stopping Conditions", geneticEngine, annealingEngine);
+			
+//			geneticEngine.setStopCondition(maxNonEvolvingIterations, maxNonImprovingIterations);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1026,7 +1040,6 @@ public class GUInterface {
 
 		fitnessBestState.setText("" + String.format("%.7f",((TileProblemState) population.bestStateEver()).fitness()));
 
-		//		bestStateVisualization.setText(population.bestStateEver().visualRepresentation());
 		addLineToHistoryPanel();
 
 		for (int i = 0 ; i < tiles.length; i++){

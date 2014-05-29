@@ -49,7 +49,7 @@ public class StoppingSettingsDialog extends JDialog {
 	private int geneticIterations;
 	private int geneticUnimproves;
 	private double geneticMinFitness;
-	private int geneticVariations;
+	private double geneticVariations;
 	
 
 	
@@ -97,8 +97,21 @@ public class StoppingSettingsDialog extends JDialog {
 		this.annealingEngine = annealingEngine;
 		
 		
-		
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		createWdgets();
+		
+		
+		lockPanels();
+		
+		pack();
+		setLocationRelativeTo(frame);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setVisible(true);
+	}
+
+
+	private void createWdgets() {
+		
 		{
 			JPanel geneticPanel = new JPanel();
 			getContentPane().add(geneticPanel);
@@ -117,7 +130,7 @@ public class StoppingSettingsDialog extends JDialog {
 				geneticPanel.add(genStopPanel);
 				genStopPanel.setBorder(new EmptyBorder(0, 5, 0, 5));
 				{
-					geneticMaxIterationsChBx = new JCheckBox("Max. Iterations");
+					geneticMaxIterationsChBx = new JCheckBox("Iterations Without Evolve");
 					geneticMaxIterationsChBx.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 						geneticMaxIterationsTxtFld.setEnabled(geneticMaxIterationsChBx.isSelected());	
@@ -376,21 +389,11 @@ public class StoppingSettingsDialog extends JDialog {
 				getRootPane().setDefaultButton(okButton);
 			}
 		}
-		
-		
-		lockPanels();
-		
-		pack();
-		setLocationRelativeTo(frame);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setVisible(true);
 	}
 
 
 	private void lockPanels() {
 		
-		//TODO
-	
 		if (geneticEngine == null ){
 			
 			geneticMaxIterationsChBx.setEnabled(false);
@@ -445,6 +448,7 @@ public class StoppingSettingsDialog extends JDialog {
 		// TODO Auto-generated method stub
 		
 		if (geneticUnimprovedChBx.isSelected()){
+			
 			int tempMin;
 			tempMin = Integer.parseInt(geneticUnimproveTxtFld.getText());
 			if (tempMin <= 0) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR, "min");

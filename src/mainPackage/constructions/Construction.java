@@ -183,6 +183,8 @@ public class Construction implements Serializable{
 	
 	public static void setConstructions(HashMap<Integer, Construction> constructions) {
 		Construction.constructions = constructions;
+		
+		nullConstruction = constructions.get(0);
 	}
 
 	private static HashMap<Integer, Construction> constructions = new HashMap<Integer, Construction>();

@@ -3,6 +3,8 @@ package mainPackage;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.swing.JPanel;
+
 @SuppressWarnings("serial")
 public class SimulatedAnnealingEngine extends AlgorithmEngine implements Serializable{
 	
@@ -109,6 +111,20 @@ public class SimulatedAnnealingEngine extends AlgorithmEngine implements Seriali
 		
 		this.currentTemperature=temperature;
 		this.decrementingFactor=factor;
+	}
+
+
+
+	public double getCurrentTemperature() {
+
+		return currentTemperature;
+	}
+
+
+
+	public double getVariationFactor() {
+		// TODO Auto-generated method stub
+		return decrementingFactor;
 	}
 	
 }

@@ -35,8 +35,6 @@ public class AnnealingDialog extends JDialog {
 	private double temperatureVariation;
 
 	private final JPanel temperaturePanel = new JPanel();
-	private JTextField textFieldInitialValue;
-	private JTextField textFieldStopValue;
 
 	private boolean newAnnealingEngine;
 	private JSpinner temperatureSpinner;
@@ -50,11 +48,11 @@ public class AnnealingDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public AnnealingDialog(JFrame frame, boolean modal, String string, SimulatedAnnealingEngine annealingEngine) {
-		// TODO Auto-generated constructor stub
 		super(frame,modal);
 		
-		//this.value = (Integer) annealingEngine.getCurrentTemperature();
-		this.value = new Integer(1000);
+		this.value = (Integer) (int)annealingEngine.getCurrentTemperature();
+		this.initialTemperature = annealingEngine.getCurrentTemperature();
+		this.temperatureVariation = annealingEngine.getVariationFactor();
 
 		this.setTitle("Simulated Annealing Settings");
 
@@ -119,7 +117,7 @@ public class AnnealingDialog extends JDialog {
 			{
 				sliderVariatation = new JSlider();
 				sliderVariatation.setSnapToTicks(true);
-				sliderVariatation.setValue(10);
+				sliderVariatation.setValue((int) (temperatureVariation*100));
 				sliderVariatation.setMajorTickSpacing(10);
 				sliderVariatation.setMinorTickSpacing(1);
 				sliderVariatation.setPaintTicks(true);
@@ -172,7 +170,7 @@ public class AnnealingDialog extends JDialog {
 
 
 
-	public boolean isNewAnnealingEngine() {
+	public boolean hasNewAnnealingEngine() {
 		return newAnnealingEngine;
 	}
 
@@ -183,15 +181,16 @@ public class AnnealingDialog extends JDialog {
 
 
 	private void okButtonPressed() throws NumberFormatException, RangeException{
-		// TODO Auto-generated method stub
-
 
 		try {
-			initialTemperature = Double.parseDouble(temperatureSpinner.getToolTipText());
+			
+			initialTemperature = (Integer) temperatureSpinner.getModel().getValue();
+			
 			temperatureVariation = ((double) sliderVariatation.getValue() / 100);
 			
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(getParent(), "Input Error.");
+			return;
 		}
 		
 		setNewAnnealingEngine(true);
@@ -200,11 +199,22 @@ public class AnnealingDialog extends JDialog {
 
 
 	protected void cancelButtonPressed() {
-		// TODO Auto-generated method stub
 
 		setNewAnnealingEngine(false);
 		setVisible(false);
 
+	}
+
+
+
+	public double getInitialTemperature() {
+		return initialTemperature;
+	}
+
+
+
+	public double getVariationFactor() {
+		return temperatureVariation;
 	}
 
 }
