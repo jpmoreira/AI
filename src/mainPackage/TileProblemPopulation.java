@@ -363,9 +363,11 @@ public class TileProblemPopulation implements Serializable,Population{
 
 	@Override
 	public void setStates(State[] newStates) {
-		if(newStates.getClass().isAssignableFrom(TileProblemState[].class)){
-			this.states=(TileProblemState[])newStates;
+		ArrayList<TileProblemState> theStates=new ArrayList<TileProblemState>();
+		for (State state : newStates) {
+			theStates.add((TileProblemState)state);
 		}
+		this.states=theStates.toArray(new TileProblemState[theStates.size()]);
 	}
 
 	@Override
