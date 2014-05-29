@@ -263,6 +263,7 @@ public class GUInterface {
 
 	private StoppingSettingsDialog geneticStopDialog;
 
+	private LandUseInitializationDialog landusesInitializationDialog;
 
 
 
@@ -285,7 +286,6 @@ public class GUInterface {
 
 	private JButton stopSettingsButton;
 
-	private LandUseInitializationDialog landusesInitializationDialog;
 
 	private JButton populationButton;
 
@@ -581,7 +581,6 @@ public class GUInterface {
 
 		/* Result Panel */
 		historyPanel = new JScrollPane();
-		//		historyPanel.setLayout(new BorderLayout());
 
 		String[] header = new String[]{
 				"Iteration Nr.",
@@ -598,8 +597,6 @@ public class GUInterface {
 		historyTable = new JTable(historyTableModel);
 
 		historyPanel.setViewportView(historyTable);
-
-		//		bestStateVisualization = new JLabel("");
 
 
 	}
@@ -941,7 +938,16 @@ public class GUInterface {
 		// TODO Auto-generated method stub
 
 		try {
-			annealingDialog = new AnnealingDialog(frame, true, "Simulated Annealing Settings", initTemp, tempVariation);
+			if (annealingEngine == null) {
+				
+				annealingEngine = new SimulatedAnnealingEngine(population);
+				
+				annealingEngine.setTemperature(1000, .90);
+
+			} 
+			
+			annealingDialog = new AnnealingDialog(frame, true, "Simulated Annealing Settings",annealingEngine);
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -982,15 +988,15 @@ public class GUInterface {
 
 
 
-	public void configGenStopCond() {
+	public void configStopCond() {
 		// TODO Auto-generated method stub
 
 
 		try {
-			geneticStopDialog = new StoppingSettingsDialog(frame, true, "Genetic Generator Stop Conditions");
+			geneticStopDialog = new StoppingSettingsDialog(frame, true, "Stopping Conditions", geneticEngine, annealingEngine);
 
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 
 	}
@@ -1420,6 +1426,8 @@ public class GUInterface {
 				
 				annealingEngine = savedObject.getSim_engine();
 				
+				Construction.setConstructions(savedObject.getMap());
+				
 				if (geneticEngine != null) {
 					population = (TileProblemPopulation) geneticEngine.getPopulation();
 				} else {
@@ -1743,7 +1751,7 @@ public class GUInterface {
 			//			return;
 			//		}
 
-			configGenStopCond();
+			configStopCond();
 
 		}
 

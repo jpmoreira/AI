@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,38 +15,62 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import mainPackage.SimulatedAnnealingEngine;
 
 import org.w3c.dom.ranges.RangeException;
 
+import javax.swing.JSpinner;
+
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+
 public class AnnealingDialog extends JDialog {
 	
-	private double initTemp;
-	private int tempVariation;
+	Integer value;
+	
+	private double initialTemperature;
+	private double temperatureVariation;
 
 	private final JPanel temperaturePanel = new JPanel();
 	private JTextField textFieldInitialValue;
 	private JTextField textFieldStopValue;
-	private JTextField textFieldTimeOut;
 
-	private JCheckBox chckbxTimeOutStop;
 	private boolean newAnnealingEngine;
+	private JSpinner temperatureSpinner;
+
+	private JPanel variationValuePanel;
+
+	private JSlider sliderVariatation;
 
 
 	/**
 	 * Create the dialog.
 	 */
-	public AnnealingDialog(JFrame frame, boolean modal, String myMessage, double initTemp, double tempVariation) {
-
+	public AnnealingDialog(JFrame frame, boolean modal, String string, SimulatedAnnealingEngine annealingEngine) {
+		// TODO Auto-generated constructor stub
 		super(frame,modal);
+		
+		//this.value = (Integer) annealingEngine.getCurrentTemperature();
+		this.value = new Integer(1000);
 
-		this.initTemp = initTemp;
-		this.tempVariation = (int) (tempVariation*100);
 		this.setTitle("Simulated Annealing Settings");
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		
+		createWidgets();
+
+		pack();
+		setLocationRelativeTo(frame);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setVisible(true);
+	}
+
+
+
+	private void createWidgets() {
 		temperaturePanel.setBorder(new EmptyBorder(5, 5, 0, 5));
 		getContentPane().add(temperaturePanel);
 		temperaturePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 5));
@@ -55,6 +80,8 @@ public class AnnealingDialog extends JDialog {
 		}
 		{
 			JPanel valuesPanel = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) valuesPanel.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
 			valuesPanel.setBorder(new EmptyBorder(0, 5, 0, 5));
 			getContentPane().add(valuesPanel);
 			{
@@ -62,18 +89,15 @@ public class AnnealingDialog extends JDialog {
 				valuesPanel.add(lblInitialValue);
 			}
 			{
-				textFieldInitialValue = new JTextField();
-				valuesPanel.add(textFieldInitialValue);
-				textFieldInitialValue.setColumns(4);
-			}
-			{
-				JLabel lblStopValue = new JLabel("      Stop Value:");
-				valuesPanel.add(lblStopValue);
-			}
-			{
-				textFieldStopValue = new JTextField();
-				valuesPanel.add(textFieldStopValue);
-				textFieldStopValue.setColumns(4);
+				Integer min = new Integer(0);
+				Integer max = new Integer(10000000);
+				Integer step = new Integer(1);
+				SpinnerNumberModel numberSpinner = new SpinnerNumberModel(value, min, max, step);
+				
+				temperatureSpinner = new JSpinner(numberSpinner);
+				valuesPanel.add(temperatureSpinner);
+
+
 			}
 		}
 		{
@@ -88,47 +112,23 @@ public class AnnealingDialog extends JDialog {
 			}
 		}
 		{
-			JPanel variationValuePanel = new JPanel();
-			variationValuePanel.setBorder(new EmptyBorder(0, 5, 0, 5));
+			variationValuePanel = new JPanel();
+			variationValuePanel.setBorder(new EmptyBorder(0, 5, 10, 5));
 			getContentPane().add(variationValuePanel);
 			variationValuePanel.setLayout(new BoxLayout(variationValuePanel, BoxLayout.X_AXIS));
 			{
-				JSlider sliderVariatation = new JSlider();
+				sliderVariatation = new JSlider();
 				sliderVariatation.setSnapToTicks(true);
 				sliderVariatation.setValue(10);
 				sliderVariatation.setMajorTickSpacing(10);
 				sliderVariatation.setMinorTickSpacing(1);
 				sliderVariatation.setPaintTicks(true);
 				sliderVariatation.setPaintLabels(true);
+				sliderVariatation.setPreferredSize(new Dimension(500,40));
 				variationValuePanel.add(sliderVariatation);
 			}
 		}
-		{
-			JPanel timeOutPanel = new JPanel();
-			timeOutPanel.setBorder(new EmptyBorder(0, 5, 5, 5));
-			getContentPane().add(timeOutPanel);
-			timeOutPanel.setLayout(new BoxLayout(timeOutPanel, BoxLayout.X_AXIS));
-			{
-				chckbxTimeOutStop = new JCheckBox("Time Out Stop");
-				chckbxTimeOutStop.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						textFieldTimeOut.setEnabled(chckbxTimeOutStop.isSelected());
-					}
-				});
-				timeOutPanel.add(chckbxTimeOutStop);
-			}
-			{
-				JLabel lblMinutes = new JLabel("        Minutes:");
-				timeOutPanel.add(lblMinutes);
-			}
-			{
-				textFieldTimeOut = new JTextField();
-				textFieldTimeOut.setText("5");
-				textFieldTimeOut.setEnabled(false);
-				timeOutPanel.add(textFieldTimeOut);
-				textFieldTimeOut.setColumns(5);
-			}
-		}
+
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -168,11 +168,6 @@ public class AnnealingDialog extends JDialog {
 			}
 
 		}
-
-		pack();
-		setLocationRelativeTo(frame);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setVisible(true);
 	}
 
 
@@ -191,15 +186,14 @@ public class AnnealingDialog extends JDialog {
 		// TODO Auto-generated method stub
 
 
-		double tempInitial;
-		double tempStop;
-
-		tempInitial = Double.parseDouble(textFieldInitialValue.getText());
-		tempStop = Double.parseDouble(textFieldStopValue.getText());
-
-		if (tempStop < 0) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR,"stop");
-		if (tempInitial <= tempStop) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR,"initial");
-
+		try {
+			initialTemperature = Double.parseDouble(temperatureSpinner.getToolTipText());
+			temperatureVariation = ((double) sliderVariatation.getValue() / 100);
+			
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(getParent(), "Input Error.");
+		}
+		
 		setNewAnnealingEngine(true);
 		setVisible(false);
 	}
