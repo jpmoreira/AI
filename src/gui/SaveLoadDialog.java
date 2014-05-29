@@ -26,37 +26,37 @@ public class SaveLoadDialog extends JDialog{
 
 	/** The save problem. */
 	private boolean saveProblem = false;
-	
+
 	/** The load problem. */
 	private boolean loadProblem = false;
-	
+
 	/** The text panel. */
 	private JPanel textPanel;
-	
+
 	/** The path input panel. */
 	private JPanel pathInputPanel;
-	
+
 	/** The buttons panel. */
 	private JPanel buttonsPanel;
 
 	/** The path input label1. */
 	private JLabel pathInputLabel1;
-	
+
 	/** The path input label2. */
 	private JLabel pathInputLabel2;
-	
+
 	/** The path input field. */
 	private JTextField pathInputField;
-	
+
 	/** The save button. */
 	private JButton saveButton;
-	
+
 	/** The load button. */
 	private JButton loadButton;
-	
+
 	/** The cancel button. */
 	private JButton cancelButton;
-	
+
 	private SavableObject tempSavedObject;
 
 
@@ -64,8 +64,8 @@ public class SaveLoadDialog extends JDialog{
 	private JFrame frame;
 
 
-	
-	
+
+
 	/**
 	 * Instantiates a new save load dialog.
 	 *
@@ -84,7 +84,7 @@ public class SaveLoadDialog extends JDialog{
 		this.frame = frame;
 		this.tempSavedObject = savedObject;
 		this.setTitle("Save/Load Problem");
-		
+
 		createWidgets();
 		addWidgets(getContentPane());
 
@@ -94,7 +94,7 @@ public class SaveLoadDialog extends JDialog{
 
 	}
 
-	
+
 	/**
 	 * Adds the widgets.
 	 *
@@ -104,7 +104,7 @@ public class SaveLoadDialog extends JDialog{
 
 		textPanel.add(pathInputLabel1);
 		contentPane.add(textPanel);
-		
+
 		pathInputPanel.add(pathInputLabel2);
 		pathInputPanel.add(pathInputField);
 		contentPane.add(pathInputPanel);
@@ -116,7 +116,7 @@ public class SaveLoadDialog extends JDialog{
 
 	}
 
-	
+
 	/**
 	 * Creates the widgets.
 	 */
@@ -157,7 +157,7 @@ public class SaveLoadDialog extends JDialog{
 		cancelButton.addActionListener(new CancelListener());
 
 	}
-	
+
 
 	/**
 	 * Problem saved.
@@ -167,7 +167,7 @@ public class SaveLoadDialog extends JDialog{
 	public boolean problemSaved() {
 		return saveProblem;
 	}
-	
+
 
 	/**
 	 * Problem loaded.
@@ -178,7 +178,7 @@ public class SaveLoadDialog extends JDialog{
 		return loadProblem;
 	}
 
-	
+
 	/**
 	 * The listener interface for receiving loadProblem events.
 	 * The class that is interested in processing a loadProblem
@@ -199,21 +199,40 @@ public class SaveLoadDialog extends JDialog{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
-			loadProblem = true;
-
 			String name = pathInputField.getText();
 			name.concat(".dat");
 
 			String path = "./saved_problems/" + name;
-			
-			loadProblem(path);
+
+			try {
+				
+				loadProblem(path);
+
+			}
+			catch (FileNotFoundException i)
+			{
+				JOptionPane.showMessageDialog(frame,"File not supported.");
+				return;
+			}
+			catch (ClassNotFoundException c) {
+				JOptionPane.showMessageDialog(frame,"Object error.");
+//				c.printStackTrace();
+				return;
+			}
+			catch (IOException i )
+			{
+				JOptionPane.showMessageDialog(frame,"Input/OutPut error.");
+//				i.printStackTrace();
+				return;
+			}
+
 
 			setVisible(false);
 
 		}
 
 	}
-	
+
 
 	/**
 	 * The listener interface for receiving saveProblem events.
@@ -235,21 +254,28 @@ public class SaveLoadDialog extends JDialog{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
-				 
+
 
 			String name = pathInputField.getText();
 			name.concat(".dat");
 
 			String path = "./saved_problems/" + name;
-			
-			saveProblem(path);
+
+			try
+			{
+				saveProblem(path);
+			}
+			catch (IOException i )
+			{
+				JOptionPane.showMessageDialog(frame,"Error writing the file.");
+			}
 
 			setVisible(false);
 
 		}
 
 	}
-	
+
 
 	/**
 	 * The listener interface for receiving cancel events.
@@ -280,78 +306,53 @@ public class SaveLoadDialog extends JDialog{
 
 	}
 
-	
-	public void saveProblem(String path) {
+
+	public void saveProblem(String path) throws IOException {
 		String newProblemMsg = "Save Problem?";
 		int reply = JOptionPane.showConfirmDialog(frame,newProblemMsg,"Save Problem",JOptionPane.YES_NO_OPTION);
 
 		if(reply == JOptionPane.YES_OPTION)
 		{
-			try
-			{
-				
-				FileOutputStream fileOut = new FileOutputStream(path);
-				ObjectOutputStream os = new ObjectOutputStream(fileOut);
 
-				/* Write the game in a file */
-				
-				os.writeObject(tempSavedObject);
 
-				fileOut.close();
-				os.close();
-				
-				saveProblem = true;
+			FileOutputStream fileOut = new FileOutputStream(path);
+			ObjectOutputStream os = new ObjectOutputStream(fileOut);
 
-			}
-			catch (IOException i )
-			{
-				JOptionPane.showMessageDialog(frame,"Error writing the file.");
-			}
+			/* Write the game in a file */
+
+			os.writeObject(tempSavedObject);
+
+			fileOut.close();
+			os.close();
+
+			saveProblem = true;
+
+
 		}
 		else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
-		
-		
+
+
 	}
 
 
-	public void loadProblem(String path2) {
-		
+	public void loadProblem(String path2) throws IOException, ClassNotFoundException {
+
 		String newProblemMsg = "Load Problem?";
 		int reply = JOptionPane.showConfirmDialog(frame,newProblemMsg,"Load Problem",JOptionPane.YES_NO_OPTION);
 
 		if(reply == JOptionPane.YES_OPTION)
 		{
-			try
-			{
-				
-				FileInputStream fileIn = new FileInputStream(path2);
-				ObjectInputStream is = new ObjectInputStream(fileIn);
+			FileInputStream fileIn = new FileInputStream(path2);
+			ObjectInputStream is = new ObjectInputStream(fileIn);
 
-				/* load the saved game in the file to the object tempGame */
-				
-				tempSavedObject = (SavableObject) is.readObject();
+			/* load the saved game in the file to the object tempGame */
 
-				is.close();
-				fileIn.close();
-				
-				loadProblem = true;
+			tempSavedObject = (SavableObject) is.readObject();
 
+			is.close();
+			fileIn.close();
 
-			}
-			catch (FileNotFoundException i)
-			{
-				JOptionPane.showMessageDialog(frame,"File not supported.");
-			}
-			catch (ClassNotFoundException e) {
-				JOptionPane.showMessageDialog(frame,"Object error.");
-				e.printStackTrace();
-			}
-			catch (IOException i )
-			{
-				JOptionPane.showMessageDialog(frame,"Input/OutPut error.");
-				i.printStackTrace();
-			}
-			
+			loadProblem = true;
 		}
 		else if(reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION){}
 
@@ -367,11 +368,11 @@ public class SaveLoadDialog extends JDialog{
 
 	public void setLoadProblem(boolean b) {
 		this.loadProblem = b;
-		
-	}
-	
 
-	
+	}
+
+
+
 	public SavableObject getTempSavedObject() {
 		return tempSavedObject;
 	}

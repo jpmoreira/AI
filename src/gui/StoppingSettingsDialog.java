@@ -36,43 +36,47 @@ import javax.swing.JSeparator;
 public class StoppingSettingsDialog extends JDialog {
 
 
-	
+
 	private boolean newStopConditions = false;
-	
-	
-	
-	
+
+
+
+
 	private GeneticEngine geneticEngine;
 	private SimulatedAnnealingEngine annealingEngine;
-	
-	
+
+
 	private int geneticIterations;
 	private int geneticUnimproves;
 	private double geneticMinFitness;
 	private double geneticVariations;
-	
 
-	
+	private int annealingIterations;
+	private int annealingUnimproves;
+	private double annealingMinFitness;
+	private double annealingVariations;
+
+
 	private JCheckBox geneticMaxIterationsChBx;
 	private JTextField geneticMaxIterationsTxtFld;
-	
+
 	private JCheckBox geneticUnimprovedChBx;
 	private JTextField geneticUnimproveTxtFld;
 
 	private JCheckBox geneticMaxFitnessChBx;
 	private JSlider geneticFitnessSlider = new JSlider();
-	
+
 	private JCheckBox geneticVariationChBx;
 	private JSlider geneticVariationSlider = new JSlider();
-	
-	
-	
+
+
+
 	private JCheckBox annealingMaxIterationsChBx;
 	private JTextField annealingMaxIterationsTxtFld;
-	
+
 	private JCheckBox annealingUnimprovedChBx;
 	private JTextField annealingUnimproveTxtFld;
-	
+
 	private JCheckBox annealingMaxFitnessChBx;
 	private JSlider annealingFitnessSlider = new JSlider();
 
@@ -90,19 +94,19 @@ public class StoppingSettingsDialog extends JDialog {
 	 */
 	public StoppingSettingsDialog(JFrame frame, boolean modal, String string, GeneticEngine geneticEngine, SimulatedAnnealingEngine annealingEngine) {
 		super(frame, modal);
-		
+
 		this.setTitle("Stopping Settings");
-		
+
 		this.geneticEngine = geneticEngine;
 		this.annealingEngine = annealingEngine;
-		
-		
+
+
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		createWdgets();
-		
-		
+
+
 		lockPanels();
-		
+
 		pack();
 		setLocationRelativeTo(frame);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -111,7 +115,7 @@ public class StoppingSettingsDialog extends JDialog {
 
 
 	private void createWdgets() {
-		
+
 		{
 			JPanel geneticPanel = new JPanel();
 			getContentPane().add(geneticPanel);
@@ -130,10 +134,10 @@ public class StoppingSettingsDialog extends JDialog {
 				geneticPanel.add(genStopPanel);
 				genStopPanel.setBorder(new EmptyBorder(0, 5, 0, 5));
 				{
-					geneticMaxIterationsChBx = new JCheckBox("Iterations Without Evolve");
+					geneticMaxIterationsChBx = new JCheckBox("Max. Iterations");
 					geneticMaxIterationsChBx.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-						geneticMaxIterationsTxtFld.setEnabled(geneticMaxIterationsChBx.isSelected());	
+							geneticMaxIterationsTxtFld.setEnabled(geneticMaxIterationsChBx.isSelected());	
 						}
 					});
 					genStopPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 10, 0));
@@ -223,19 +227,19 @@ public class StoppingSettingsDialog extends JDialog {
 				}
 			}
 		}
-		
-		
-		
-		
+
+
+
+
 		{
 			JSeparator separator = new JSeparator();
 			getContentPane().add(separator);
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 		{
 			JPanel annealingPanel = new JPanel();
 			annealingPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
@@ -250,48 +254,48 @@ public class StoppingSettingsDialog extends JDialog {
 					annealingIDPanel.add(lblAnnealingAlgorithm);
 				}
 			}
-			
+
 			{
 				JPanel annStopPanel = new JPanel();
 				annealingPanel.add(annStopPanel);
 				annStopPanel.setBorder(new EmptyBorder(0, 5, 0, 5));
-				
+
 				{
 					annealingMaxIterationsChBx = new JCheckBox("Max. Iterations");
 					annealingMaxIterationsChBx.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-						annealingMaxIterationsTxtFld.setEnabled(annealingMaxIterationsChBx.isSelected());	
+							annealingMaxIterationsTxtFld.setEnabled(annealingMaxIterationsChBx.isSelected());	
 						}
 					});
 					annStopPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 10, 0));
 					annStopPanel.add(annealingMaxIterationsChBx);
 				}
-				
+
 				{
 					annealingMaxIterationsTxtFld = new JTextField();
 					annealingMaxIterationsTxtFld.setEnabled(annealingMaxIterationsChBx.isSelected());
 					annStopPanel.add(annealingMaxIterationsTxtFld);
 					annealingMaxIterationsTxtFld.setColumns(5);
 				}
-				
+
 				annealingUnimprovedChBx = new JCheckBox("Iterations Without Improve");
 				annStopPanel.add(annealingUnimprovedChBx);
 				geneticUnimproveTxtFld.setEnabled(annealingUnimprovedChBx.isSelected());
-				
+
 				{
 					annealingUnimproveTxtFld = new JTextField();
 					annealingUnimproveTxtFld.setEnabled(annealingUnimprovedChBx.isSelected());
 					annStopPanel.add(annealingUnimproveTxtFld);
 					annealingUnimproveTxtFld.setColumns(5);
 				}
-				
+
 				annealingUnimprovedChBx.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						annealingUnimproveTxtFld.setEnabled(annealingUnimprovedChBx.isSelected());
 					}
 				});
 			}
-			
+
 			{
 				JPanel annealingMinImprovePanel = new JPanel();
 				annealingPanel.add(annealingMinImprovePanel);
@@ -324,7 +328,7 @@ public class StoppingSettingsDialog extends JDialog {
 					annealingFitnessPanel.add(annealingFitnessSlider);
 				}
 			}	
-			
+
 			JPanel annealingDiferencePanel = new JPanel();
 			annealingPanel.add(annealingDiferencePanel);
 			annealingDiferencePanel.setBorder(new EmptyBorder(0, 5, 0, 5));
@@ -338,8 +342,8 @@ public class StoppingSettingsDialog extends JDialog {
 				});
 				annealingDiferencePanel.add(annealingVariationChBx);
 			}
-			
-			
+
+
 			{
 				JPanel annVariationPanel = new JPanel();
 				annealingPanel.add(annVariationPanel);
@@ -357,11 +361,11 @@ public class StoppingSettingsDialog extends JDialog {
 					annVariationPanel.add(annealingVariationSlider);
 				}
 			}
-			
-			
-			
-			
-			
+
+
+
+
+
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -393,33 +397,33 @@ public class StoppingSettingsDialog extends JDialog {
 
 
 	private void lockPanels() {
-		
+
 		if (geneticEngine == null ){
-			
+
 			geneticMaxIterationsChBx.setEnabled(false);
 			geneticMaxIterationsChBx.setSelected(false);
-			
+
 			geneticMaxIterationsTxtFld.setEnabled(false);
-			
+
 			geneticUnimprovedChBx.setEnabled(false);
 			geneticUnimprovedChBx.setSelected(false);
-			
+
 			geneticUnimproveTxtFld.setEnabled(false);
-			
+
 			geneticMaxFitnessChBx.setEnabled(false);
 			geneticMaxFitnessChBx.setSelected(false);
-			
+
 			geneticFitnessSlider.setEnabled(false);
-			
+
 			geneticVariationChBx.setEnabled(false);
 			geneticVariationChBx.setSelected(false);
-			
+
 			geneticVariationSlider.setEnabled(false);
-			
+
 		}
-		
+
 		if (annealingEngine == null){
-			
+
 			annealingMaxIterationsChBx.setEnabled(false);
 			annealingMaxIterationsTxtFld.setEnabled(false);
 			annealingUnimprovedChBx.setEnabled(false);
@@ -428,13 +432,13 @@ public class StoppingSettingsDialog extends JDialog {
 			annealingFitnessSlider.setEnabled(false);
 			annealingVariationChBx.setEnabled(false);
 			annealingVariationSlider.setEnabled(false);
-			
+
 		}
-		
+
 	}
 
 
-	public boolean isNewStopConditions() {
+	public boolean hasNewStopConditions() {
 		return newStopConditions;
 	}
 
@@ -443,39 +447,185 @@ public class StoppingSettingsDialog extends JDialog {
 		this.newStopConditions = newStopConditions;
 	}
 
+	public int getGeneticIterations() {
+		return geneticIterations;
+	}
+
+
+	public void setGeneticIterations(int geneticIterations) {
+		this.geneticIterations = geneticIterations;
+	}
+
+
+	public int getGeneticUnimproves() {
+		return geneticUnimproves;
+	}
+
+
+	public void setGeneticUnimproves(int geneticUnimproves) {
+		this.geneticUnimproves = geneticUnimproves;
+	}
+
+
+	public double getGeneticMinFitness() {
+		return geneticMinFitness;
+	}
+
+
+	public void setGeneticMinFitness(double geneticMinFitness) {
+		this.geneticMinFitness = geneticMinFitness;
+	}
+
+
+	public double getGeneticVariations() {
+		return geneticVariations;
+	}
+
+
+	public void setGeneticVariations(double geneticVariations) {
+		this.geneticVariations = geneticVariations;
+	}
+
+
+	public int getAnnealingIterations() {
+		return annealingIterations;
+	}
+
+
+	public void setAnnealingIterations(int annealingIterations) {
+		this.annealingIterations = annealingIterations;
+	}
+
+
+	public int getAnnealingUnimproves() {
+		return annealingUnimproves;
+	}
+
+
+	public void setAnnealingUnimproves(int annealingUnimproves) {
+		this.annealingUnimproves = annealingUnimproves;
+	}
+
+
+	public double getAnnealingMinFitness() {
+		return annealingMinFitness;
+	}
+
+
+	public void setAnnealingMinFitness(double annealingMinFitness) {
+		this.annealingMinFitness = annealingMinFitness;
+	}
+
+
+	public double getAnnealingVariations() {
+		return annealingVariations;
+	}
+
+
+	public void setAnnealingVariations(double annealingVariations) {
+		this.annealingVariations = annealingVariations;
+	}
 
 	private void editSettings() throws NumberFormatException{
 		// TODO Auto-generated method stub
+
+		if (geneticEngine != null) {
+			updateGeneticStopCond();
+		}
+
+		if (annealingEngine != null) {
+			updateAnnealingStopCond();
+		}
+
+
+
+	}
+
+
+	private void updateAnnealingStopCond() {
 		
+		if (annealingUnimprovedChBx.isSelected()){
+
+			int tempMin;
+			tempMin = Integer.parseInt(annealingUnimproveTxtFld.getText());
+			if (tempMin <= 0) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR, "min");
+
+			annealingUnimproves = tempMin;
+
+		} else {
+			annealingUnimproves = Integer.MAX_VALUE;
+		}
+
+		if (annealingMaxIterationsChBx.isSelected()) {
+			int tempGen;
+			tempGen = Integer.parseInt(annealingMaxIterationsTxtFld.getText());
+
+			if (tempGen <= 0)
+				throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR, "gen");
+
+			annealingIterations = tempGen;
+
+		} else 
+			annealingIterations = Integer.MAX_VALUE;
+
+		if (annealingMaxFitnessChBx.isSelected()) 
+			annealingMinFitness = ((double) annealingFitnessSlider.getValue())/100; 
+		else 
+			annealingMinFitness = 0;
+
+		if (annealingVariationChBx.isSelected()) 
+			annealingVariations = ((double) annealingVariationSlider.getValue())/100; 
+		else 
+			annealingMinFitness = 1.1;
+
+	}
+
+
+	private void updateGeneticStopCond() {
+
 		if (geneticUnimprovedChBx.isSelected()){
-			
+
 			int tempMin;
 			tempMin = Integer.parseInt(geneticUnimproveTxtFld.getText());
 			if (tempMin <= 0) throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR, "min");
-			
+
+			geneticUnimproves = tempMin;
+
+		} else {
+			geneticUnimproves = Integer.MAX_VALUE;
 		}
-		
+
 		if (geneticMaxIterationsChBx.isSelected()) {
 			int tempGen;
 			tempGen = Integer.parseInt(geneticMaxIterationsTxtFld.getText());
-			
+
 			if (tempGen <= 0)
 				throw new RangeException(RangeException.BAD_BOUNDARYPOINTS_ERR, "gen");
-			
-		}
-		
-		
-		
-		
+
+			geneticIterations = tempGen;
+
+		} else 
+			geneticIterations = Integer.MAX_VALUE;
+
+		if (geneticMaxFitnessChBx.isSelected()) 
+			geneticMinFitness = ((double) geneticFitnessSlider.getValue())/100; 
+		else 
+			geneticMinFitness = 0;
+
+		if (geneticVariationChBx.isSelected()) 
+			geneticVariations = ((double) geneticVariationSlider.getValue())/100; 
+		else 
+			geneticMinFitness = 1.1;
+
 	}
-	
+
 	protected void okButtonPressed() {
 		// TODO Auto-generated method stub
 		try {
-			
+
 			editSettings();
-			
-			
+
+
 		} catch (NumberFormatException n) {
 			JOptionPane.showMessageDialog(getParent(), "Input must be bigger than 0.");
 			return;
@@ -487,12 +637,12 @@ public class StoppingSettingsDialog extends JDialog {
 			}
 			return;
 		}
-		
-		
+
+
 		setNewStopConditions(true);
 		setVisible(false);
-		
-		
+
+
 	}
 
 
@@ -503,7 +653,7 @@ public class StoppingSettingsDialog extends JDialog {
 		// TODO Auto-generated method stub
 		setNewStopConditions(false);
 		setVisible(false);
-		
+
 	}
 
 }
