@@ -46,7 +46,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	private int statesToPair;
 	
 	//FIXME document it
-	private int elitistStates=0;
+	private int elitistStates=4;
 
 	public int getElitistStates() {
 		return elitistStates;

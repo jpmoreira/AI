@@ -20,15 +20,7 @@ public class Construction implements Serializable{
 	 * the name of the construction
 	 */
 	private String name;
-	/**
-	 * 
-	 * A private data member to hold the construction representing an invalid
-	 * construction. This property should never be used explicitly as it may be
-	 * null. A call to {@link #nullConstruction()} should be used instead where
-	 * the lazy instantiation is done.
-	 * 
-	 */
-	private static Construction nullConstruction=null;
+
 
 	/**
 	 * A method that returns a construction that represents an invalid
@@ -39,7 +31,9 @@ public class Construction implements Serializable{
 	 */
 	public static Construction nullConstruction() {
 
+		Construction nullConstruction=constructions.get(0);
 		if (nullConstruction==null) nullConstruction=new Construction();
+		constructions.put(0, nullConstruction);
 		return nullConstruction;
 	};
 
@@ -183,8 +177,6 @@ public class Construction implements Serializable{
 	
 	public static void setConstructions(HashMap<Integer, Construction> constructions) {
 		Construction.constructions = constructions;
-		
-		nullConstruction = constructions.get(0);
 	}
 
 	private static HashMap<Integer, Construction> constructions = new HashMap<Integer, Construction>();
@@ -342,7 +334,7 @@ public class Construction implements Serializable{
 	 */
 
 	public Construction(String theName) {
-		if(nullConstruction==null)nullConstruction=new Construction();
+		if(constructions.get(0)==null)constructions.put(0, new Construction());
 		
 		this.name = theName;
 		chromoRepresentation = (1 << indexForNextConstruction++);
@@ -410,7 +402,6 @@ public class Construction implements Serializable{
 	static public void resetConstructions() {
 
 		constructions.clear();
-		new Construction();
 		indexForNextConstruction = 0;
 	}
 

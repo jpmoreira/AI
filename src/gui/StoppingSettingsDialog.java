@@ -596,7 +596,7 @@ public class StoppingSettingsDialog extends JDialog {
 		if (annealingVariationChBx.isSelected()) 
 			annealingVariations = ((double) annealingVariationSlider.getValue())/100; 
 		else 
-			annealingMinFitness = 1.1;
+			annealingVariations = 1.1;
 
 	}
 
