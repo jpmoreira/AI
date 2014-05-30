@@ -73,7 +73,7 @@ public interface Population {
 	 * 
 	 * A method that updates the statistics relative to this population.
 	 */
-	public void updateStatistics();
+	public void updateBestStateEver();
 	
 	/**
 	 * 
@@ -109,5 +109,7 @@ public interface Population {
 	public void addMutationThisIteration();
 	
 	public int maxBitToToggle();
+	
+	public void updateIteration();
 
 }

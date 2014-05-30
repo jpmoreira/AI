@@ -505,7 +505,8 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		if(this.stopConditionMet())return;
 		
 		double bestFitnessBefore=population.bestStateEver().fitness();
-		this.population.updateStatistics();
+		this.population.updateIteration();
+		this.population.updateBestStateEver();
 		this.pair();
 		this.mutate();
 		this.updateParameters();

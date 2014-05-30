@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import mainPackage.Tile;
 import mainPackage.constructions.Construction;
@@ -26,10 +30,12 @@ public class ForbiddenTilesDialog extends JDialog{
 
 
 	/** The tile id. */
-	private int tileID;
+	private int landuseID;
 
 	/** The tiles. */
 	private Tile[] tiles;
+	
+	private Construction[] landuses;
 
 	/** The adj checkboxes. */
 	private ArrayList<JCheckBox> adjCheckboxes;
@@ -37,11 +43,10 @@ public class ForbiddenTilesDialog extends JDialog{
 	/** The adjacencies. */
 	private ArrayList<Integer> adjacencies;
 
-
-
 	/** The num tiles. */
 	private int numTiles;
 
+	private double penalty;
 
 
 	/** The finished. */
@@ -52,7 +57,7 @@ public class ForbiddenTilesDialog extends JDialog{
 
 
 	/** The adj panel. */
-	private JPanel adjPanel;
+	private JPanel forbiddenTilesPanel;
 
 	/** The check box label. */
 	private JLabel checkBoxLabel;
@@ -61,30 +66,11 @@ public class ForbiddenTilesDialog extends JDialog{
 	private JPanel checkBoxLabelPanel;	
 
 	/** The tile id panel. */
-	private JPanel tileIDPanel;
+	private JPanel landuseIDPanel;
 	
 	/** The tile id label. */
-	private JLabel tileIDLabel;
+	private JLabel landuseIDLabel;
 	
-	/** Others adjacencies panels */
-	private JPanel othersPanel;
-	
-	/** Others adjacencies panels */
-	private JLabel othersLabel;
-	
-	private JCheckBox lakeCheckBox;
-	
-	private JCheckBox highwayCheckBox;
-	
-	private JCheckBox beachCheckBox;
-	
-	private JCheckBox riverCheckBox;
-	
-	private JCheckBox trainStationCheckBox;
-	
-	private JCheckBox hospitalCheckBox;
-
-
 	/** The buttons panel. */
 	private JPanel buttonsPanel;
 
@@ -100,8 +86,18 @@ public class ForbiddenTilesDialog extends JDialog{
 	/** The previous button. */
 	private JButton previousButton;
 
-	private JPanel othersLabelPanel;
 
+	
+	/** Forbidden restrictions panel. */
+	private JPanel forbiddenPanel;
+
+	private JLabel forbiddenLabel;
+	
+	private JSlider forbiddenPenSlider;
+
+	private int numLandUses;
+	
+	
 
 
 
@@ -113,22 +109,25 @@ public class ForbiddenTilesDialog extends JDialog{
 	 * @param modal the modal
 	 * @param myMessage the my message
 	 * @param argTiles the arg tiles
-	 * @param tileID the tile id
+	 * @param landuseID the tile id
 	 */
-	public ForbiddenTilesDialog(JFrame frame, boolean modal, String myMessage, Tile[] argTiles, Construction[] constructions, int tileID){
+	public ForbiddenTilesDialog(JFrame frame, boolean modal, String myMessage, Tile[] argTiles, Construction[] constructions, int id){
 		super(frame, modal);
 
 		this.tiles = argTiles;
-		this.tileID = tileID;
-		numTiles = tiles.length;
+		this.landuses = constructions;
+		this.penalty = landuses[id].getForbiddenTilesPenalty();
+		this.landuseID = id;
+		this.numTiles = tiles.length;
+		this.numLandUses = constructions.length;
 
 		adjCheckboxes = new ArrayList<JCheckBox>();
 		adjacencies = new ArrayList<Integer>();
 		
-		updateAdj();
+		updateForbiddenTiles();
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-		this.setTitle("Adjacencies Settings");
+		this.setTitle("Forbidden Sites");
 		
 		createWidgets();
 		addWidgets(getContentPane());
@@ -144,10 +143,10 @@ public class ForbiddenTilesDialog extends JDialog{
 	/**
 	 * Update adj.
 	 */
-	private void updateAdj() {
+	private void updateForbiddenTiles() {
 		
-		for (Tile tile: tiles[tileID].adjacencies()){
-			adjacencies.add(tile.getId());
+		for (Tile t: landuses[landuseID].getForbiddenTiles()){
+			adjacencies.add(t.getId());
 		}
 		
 	}
@@ -159,7 +158,7 @@ public class ForbiddenTilesDialog extends JDialog{
 	 * @param i the i
 	 * @return true, if is adj
 	 */
-	private boolean isAdj(int i) {
+	private boolean isForbidden(int i) {
 		for (int j = 0; j < adjacencies.size(); j++){
 			if(adjacencies.get(j) == i) return true;
 		}
@@ -175,28 +174,21 @@ public class ForbiddenTilesDialog extends JDialog{
 	 */
 	private void addWidgets(Container contentPane) {
 		
-		tileIDPanel.add(tileIDLabel);
-		contentPane.add(tileIDPanel);
+		landuseIDPanel.add(landuseIDLabel);
+		contentPane.add(landuseIDPanel);
 
 		checkBoxLabelPanel.add(checkBoxLabel);
 		contentPane.add(checkBoxLabelPanel);
 
 		for (int i = 0;i < numTiles; i++){
-			adjPanel.add(adjCheckboxes.get(i));
+			forbiddenTilesPanel.add(adjCheckboxes.get(i));
 
 		}
-		contentPane.add(adjPanel);
+		contentPane.add(forbiddenTilesPanel);
 		
-		othersLabelPanel.add(othersLabel);
-		contentPane.add(othersLabelPanel);
-		
-		othersPanel.add(lakeCheckBox);
-		othersPanel.add(highwayCheckBox);
-		othersPanel.add(hospitalCheckBox);
-		othersPanel.add(riverCheckBox);
-		othersPanel.add(beachCheckBox);
-		othersPanel.add(trainStationCheckBox);
-		contentPane.add(othersPanel);
+		forbiddenPanel.add(forbiddenLabel);
+		forbiddenPanel.add(forbiddenPenSlider);
+		contentPane.add(forbiddenPanel);
 		
 
 		buttonsPanel.add(cancelButton);
@@ -220,25 +212,19 @@ public class ForbiddenTilesDialog extends JDialog{
 	 */
 	private void createWidgets() {
 
-		tileIDPanel = new JPanel();
-		tileIDPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		landuseIDPanel = new JPanel();
+		landuseIDPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 		
-		tileIDLabel = new JLabel("Tile ID: " + tileID);
+		landuseIDLabel = new JLabel("Landuse ID: " + landuseID + "  Chromosome: " + landuses[landuseID].toCromossome() + " - " + landuses[landuseID].name());
 
 		checkBoxLabel = new JLabel("Lots Adjacencies");
 		
-		othersLabel = new JLabel("Others Adjacencies:");
-		
 		checkBoxLabelPanel = new JPanel();
 		checkBoxLabelPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
-		
-		othersLabelPanel = new JPanel();
-		othersLabelPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 
-		adjPanel = new JPanel();
-		othersPanel = new JPanel();
+		forbiddenTilesPanel = new JPanel();
 		
-		int rows , cols, rowsOthers;
+		int rows , cols;
 		
 		if (numTiles%5 > 0){
 			rows = numTiles/5+1;
@@ -252,43 +238,43 @@ public class ForbiddenTilesDialog extends JDialog{
 			cols = numTiles;
 		}
 		
-		if (cols < 3){
-			rowsOthers = 6/cols;
-		} else {
-			rowsOthers = 2;
-		}
-		
-		adjPanel.setLayout(new GridLayout(rows, cols));		
-		othersPanel.setLayout(new GridLayout(rowsOthers, cols));
+
+		forbiddenTilesPanel.setLayout(new GridLayout(rows, cols));		
 
 		for (int i = 0 ; i < numTiles; i++){
 			JCheckBox tempCheck = new JCheckBox("Lot " + i);
-			if (tileID == i) {
-				tempCheck.setEnabled(false);
-			} else if (isAdj(i)){
+			if (isForbidden(i)){
 				tempCheck.setSelected(true);
 			}
-
 			adjCheckboxes.add(tempCheck);
 		}
 
 		
-		//TODO add restrictions do tiles...
 		
-		lakeCheckBox = new JCheckBox("Lake");
-		highwayCheckBox = new JCheckBox("Highway");
-		hospitalCheckBox = new JCheckBox("Hospital");
-		beachCheckBox = new JCheckBox("Beach");
-		riverCheckBox = new JCheckBox("River");
-		trainStationCheckBox = new JCheckBox("Train Station");
-
+		forbiddenPanel = new JPanel();
+		forbiddenPanel.setLayout(new BoxLayout(forbiddenPanel,BoxLayout.Y_AXIS));
+		forbiddenPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		
+		forbiddenLabel = new JLabel("Forbidden penalty:");
+		forbiddenLabel.setBorder(new EmptyBorder(0, 0, 2, 0));
+		forbiddenLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		forbiddenPenSlider = new JSlider(0,100,(int) (penalty*100));
+		forbiddenPenSlider.setSnapToTicks(true);
+		forbiddenPenSlider.setPaintTicks(true);
+		forbiddenPenSlider.setPaintLabels(true);
+		forbiddenPenSlider.setMinorTickSpacing(1);
+		forbiddenPenSlider.setMajorTickSpacing(10);
+		forbiddenPenSlider.setPreferredSize(new Dimension(400,40));
+		
+		
 		buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.TRAILING,5,5));
 
 		saveButton = new JButton("Save");
 		saveButton.addActionListener(new SaveButtonListener());
 
-		if (getTileID() != numTiles-1){
+		if (getTileID() != numLandUses-1){
 			saveButton.setEnabled(false);
 		} else{
 			saveButton.setEnabled(true);	
@@ -300,7 +286,7 @@ public class ForbiddenTilesDialog extends JDialog{
 		nextButton = new JButton("Next");
 		nextButton.addActionListener(new NextButtonListener());
 
-		if (getTileID() == numTiles-1){
+		if (getTileID() == numLandUses-1){
 			nextButton.setEnabled(false);
 		} else{
 			nextButton.setEnabled(true);	
@@ -329,7 +315,7 @@ public class ForbiddenTilesDialog extends JDialog{
 	/**
 	 * Adds the adj.
 	 */
-	private void addAdj() {
+	private void addForbiddenTiles() {
 		for (int i = 0; i < numTiles; i++){
 			if (adjCheckboxes.get(i).isSelected()){
 				adjacencies.add(i);
@@ -348,7 +334,7 @@ public class ForbiddenTilesDialog extends JDialog{
 	 *
 	 * @return the adjacencies
 	 */
-	public ArrayList<Integer> getAdjacencies() {
+	public ArrayList<Integer> getForbiddenTiles() {
 		return adjacencies;
 	}
 
@@ -362,7 +348,7 @@ public class ForbiddenTilesDialog extends JDialog{
 	 * @return the tile id
 	 */
 	public int getTileID() {
-		return tileID;
+		return landuseID;
 	}
 
 
@@ -383,6 +369,9 @@ public class ForbiddenTilesDialog extends JDialog{
 
 
 
+	public double getForbiddenPenaty() {
+		return penalty;
+	}
 
 
 
@@ -445,9 +434,11 @@ public class ForbiddenTilesDialog extends JDialog{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
-			addAdj();
+			addForbiddenTiles();
 			
-			tileID--;
+			penalty = ((double) forbiddenPenSlider.getValue())/100;
+			
+			landuseID--;
 
 			setVisible(false);
 
@@ -476,9 +467,11 @@ public class ForbiddenTilesDialog extends JDialog{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
-			addAdj();
+			addForbiddenTiles();
+			
+			penalty = ((double) forbiddenPenSlider.getValue())/100;
 
-			tileID++;
+			landuseID++;
 
 			setVisible(false);
 
@@ -508,6 +501,10 @@ public class ForbiddenTilesDialog extends JDialog{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 
+			addForbiddenTiles();
+			
+			penalty = ((double) forbiddenPenSlider.getValue())/100;
+			
 			finished = true;
 
 			setVisible(false);
@@ -517,4 +514,5 @@ public class ForbiddenTilesDialog extends JDialog{
 
 
 	}
+
 }

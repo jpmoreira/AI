@@ -282,7 +282,7 @@ public class TileProblemPopulation implements Serializable,Population{
 	 * 
 	 * A method that updates the statistics relative to this population.
 	 */
-	public void updateStatistics(){
+	public void updateBestStateEver(){
 		
 		TileProblemState currentMostFit=this.mostFitState();
 		
@@ -294,7 +294,10 @@ public class TileProblemPopulation implements Serializable,Population{
 			this.bestStateIterationNr=this.currentIteration;
 			
 		}
-		
+
+	}
+
+	public void updateIteration() {
 		currentIteration++;
 		mutationsSoFar+=mutationsThisIteration;
 		mutationsThisIteration=0;

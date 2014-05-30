@@ -39,7 +39,7 @@ public class Construction implements Serializable{
 	 */
 	public static Construction nullConstruction() {
 
-		
+		if (nullConstruction==null) nullConstruction=new Construction();
 		return nullConstruction;
 	};
 
@@ -410,7 +410,7 @@ public class Construction implements Serializable{
 	static public void resetConstructions() {
 
 		constructions.clear();
-		if(nullConstruction!=null)constructions.put(0, nullConstruction);
+		new Construction();
 		indexForNextConstruction = 0;
 	}
 
@@ -652,13 +652,19 @@ public class Construction implements Serializable{
 	}
 
 	public double getForbiddenPenalty() {
-		// TODO Auto-generated method stub
 		return forbiddenConstructionPenalty;
 	}
 
 	public double getMustHavePenalty() {
-		// TODO Auto-generated method stub
 		return missingMustHaveAdjacenciePenalty;
+	}
+
+	public Tile[] getForbiddenTiles() {
+		return this.forbiddenTiles;
+	}
+
+	public double getForbiddenTilesPenalty() {
+		return this.forbiddenTilesPenalty;
 	}
 	
 }

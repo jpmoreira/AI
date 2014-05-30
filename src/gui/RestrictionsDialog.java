@@ -265,8 +265,7 @@ public class RestrictionsDialog extends JDialog{
 			}
 			soilCheckboxes.add(tempCheckBox);
 		}
-		
-		// TODO adicionar restrições das construções vizinhas
+
 		
 		forbiddenPanel = new JPanel();
 		forbiddenPanel.setLayout(flowLeading);

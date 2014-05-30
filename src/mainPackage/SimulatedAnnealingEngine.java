@@ -106,6 +106,9 @@ public class SimulatedAnnealingEngine extends AlgorithmEngine implements Seriali
 		
 		currentIteration++;
 		
+		this.population.updateIteration();
+		this.population.updateBestStateEver();
+		
 	}
 
 	/**

@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
 public class SolverDialog extends JDialog {
 	
 	private boolean newSettings;
-
 	
 	private int option;
 
@@ -154,6 +153,10 @@ public class SolverDialog extends JDialog {
 
 	public int getOption() {
 		return this.option;
+	}
+
+	public boolean isCanceled() {
+		return !newSettings;
 	}
 
 }
