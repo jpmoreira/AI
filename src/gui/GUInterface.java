@@ -34,6 +34,10 @@ import mainPackage.Tile;
 import mainPackage.TileProblemPopulation;
 import mainPackage.TileProblemState;
 import mainPackage.constructions.Construction;
+import java.awt.FlowLayout;
+import javax.swing.border.TitledBorder;
+import java.awt.Component;
+import javax.swing.SwingConstants;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -60,10 +64,10 @@ public class GUInterface {
 
 	/** The population. */
 	private TileProblemPopulation population;
-	
+
 	/** The pop size. */
 	private int popSize;
-	
+
 	private SavableObject savedObject;
 
 
@@ -109,7 +113,7 @@ public class GUInterface {
 
 	private double tempVariation = 0.9;
 
-	
+
 	/** Timer */
 	private Timer evolutionTimer;
 
@@ -267,7 +271,7 @@ public class GUInterface {
 	private StoppingSettingsDialog geneticStopDialog;
 
 	private LandUseInitializationDialog landusesInitializationDialog;
-	
+
 	private ArrayList<AlgorithmEngine> solver;
 
 
@@ -392,7 +396,7 @@ public class GUInterface {
 
 		landuseSettingButton = new JButton("<html><center>Landuses<br>Settings</center></html>");
 		landuseSettingButton.addActionListener(new LanduseSettingsListener());
-		
+
 		landusePrefButton = new JButton("<html><center>Landuses<br>Preferences</center></html>");
 		landusePrefButton.addActionListener(new LandusePreferencesListener());
 
@@ -405,7 +409,7 @@ public class GUInterface {
 
 		annealingButton = new JButton("<html><center>Annealing<br>Settings</center></html>");
 		annealingButton.addActionListener(new AnnealingListener());
-		
+
 		othersSettingsLabel = new JLabel("Other Settings");
 		othersSettingsLabel.setHorizontalAlignment(JLabel.CENTER);	
 
@@ -419,22 +423,6 @@ public class GUInterface {
 		topPanel = new JPanel();
 		topPanel.setLayout(new BorderLayout(0,0));
 		topPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-
-		statusOuputLabel = new JLabel("Nr. of Sites:  ND" + 
-				";   Nr. of Landuses: ND" + 
-				";   Population Size: ND" +
-				";   Nr of Pairing states: ND" +
-				";   Generation Nr: ND");
-		statusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
-		statusOuputLabel.setVisible(true);
-
-		genStatusOuputLabel = new JLabel("Mutation Probability: ND" +
-				";   Mutation Probability Variation Factor: ND" +
-				";   Diversity Factor: ND" +
-				";   Direct Fitness to Probability: ND" +
-				";   Probability to Rank: ND");
-		genStatusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
-		genStatusOuputLabel.setVisible(true);
 
 
 		/* Center and Top Panels and Elements */
@@ -466,7 +454,7 @@ public class GUInterface {
 
 		/* Result Panel */
 		resultsPanel = new JPanel();
-		resultsPanel.setLayout(new BorderLayout());
+		resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
 
 		/* Exit Panel */
 
@@ -502,17 +490,17 @@ public class GUInterface {
 		geneticPanel.add(landuseSettingButton);
 		geneticPanel.add(restrictionsButton);
 		geneticPanel.add(landusePrefButton);
-		
+
 		geneticPanel.add(geneticLabel);
 		geneticPanel.add(geneticButton);
-		
+
 		geneticPanel.add(annealingLabel);
 		geneticPanel.add(annealingButton);
-		
+
 		geneticPanel.add(othersSettingsLabel);
 		geneticPanel.add(solverSettingsButton);
 		geneticPanel.add(stopSettingsButton);
-		
+
 		exitPanel.add(newProblemButton);
 		exitPanel.add(saveProblemButton);
 		exitPanel.add(exitButton);
@@ -521,9 +509,6 @@ public class GUInterface {
 		leftPanel.add(Box.createVerticalStrut(30));
 		leftPanel.add(exitPanel);
 		contentPane.add(leftPanel,BorderLayout.WEST);
-
-		topPanel.add(statusOuputLabel,BorderLayout.NORTH);
-		topPanel.add(genStatusOuputLabel,BorderLayout.CENTER);
 
 		runPanel.add(run1GenBtn);
 		runPanel.add(run10GenBtn);
@@ -534,6 +519,63 @@ public class GUInterface {
 		topPanel.add(runPanel,BorderLayout.SOUTH);	
 
 		centerPanel.add(topPanel,BorderLayout.NORTH);
+
+		geneticStatusPanel = new JPanel();
+		geneticStatusPanel.setBorder(new TitledBorder(null, "Genetic Algorithm Status", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		topPanel.add(geneticStatusPanel, BorderLayout.CENTER);
+		geneticStatusPanel.setLayout(new BoxLayout(geneticStatusPanel, BoxLayout.Y_AXIS));
+
+		genStatusOuputLabel = new JLabel("Mutation Probability: ND" +
+				";   Decrease Mutation Factor: ND" +
+				";   Diversity Factor: ND");
+		geneticStatusPanel.add(genStatusOuputLabel);
+		genStatusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
+
+		lblDirectFitness = new JLabel("Direct Fitness: ND" +
+				";   Probability to Rank: ND");
+		lblDirectFitness.setBorder(new EmptyBorder(5,5,5,5));
+		geneticStatusPanel.add(lblDirectFitness);
+
+		populationStatusPanel = new JPanel();
+		populationStatusPanel.setBorder(new TitledBorder(null, "Population Status", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		FlowLayout flowLayout = (FlowLayout) populationStatusPanel.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEADING);
+		topPanel.add(populationStatusPanel, BorderLayout.NORTH);
+
+		statusOuputLabel = new JLabel("Nr. of Sites:  ND" + 
+				";   Nr. of Landuses: ND" + 
+				";   Population Size: ND" +
+				";   Nr of Pairing states: ND" +
+				";   Generation Nr: ND");
+		populationStatusPanel.add(statusOuputLabel);
+		statusOuputLabel.setBorder(new EmptyBorder(5,5,5,5));
+
+		annealingStatusPanel = new JPanel();
+		annealingStatusPanel.setPreferredSize(new Dimension(250,50));
+		annealingStatusPanel.setBorder(new TitledBorder(null, "Simulated Annealing Status", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		topPanel.add(annealingStatusPanel, BorderLayout.WEST);
+		annealingStatusPanel.setLayout(new BoxLayout(annealingStatusPanel, BoxLayout.Y_AXIS));
+
+		lblCurrentTemperature = new JLabel("Current temperature: ND");
+		lblCurrentTemperature.setBorder(new EmptyBorder(5,5,5,5));
+		annealingStatusPanel.add(lblCurrentTemperature);
+
+		lblDecreasingFactor = new JLabel("Decreasing Factor: ND");
+		lblDecreasingFactor.setBorder(new EmptyBorder(5,5,5,5));
+		annealingStatusPanel.add(lblDecreasingFactor);
+
+		runningPannel = new JPanel();
+		runningPannel.setBorder(new TitledBorder(null, "Running Algorithm", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		topPanel.add(runningPannel, BorderLayout.EAST);
+		runningPannel.setLayout(new GridLayout(0, 1, 0, 0));
+
+		lblRunningEngine = new JLabel("None");
+		lblRunningEngine.setHorizontalAlignment(SwingConstants.CENTER);
+		lblRunningEngine.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblRunningEngine.setPreferredSize(new Dimension (150, 50));
+		runningPannel.add(lblRunningEngine);
+		statusOuputLabel.setVisible(true);
+		genStatusOuputLabel.setVisible(true);
 
 		centerPanel.add(resultsPanel,BorderLayout.CENTER);
 
@@ -551,7 +593,7 @@ public class GUInterface {
 
 		/* Best Statistics Panel */
 		bestStatisticsPanel = new JPanel();
-		bestStatisticsPanel.setLayout(new GridLayout(2,4));
+		bestStatisticsPanel.setLayout(new GridLayout(3,2));
 
 		generationBestStateLabel = new JLabel("Generation");
 		generationBestStateLabel.setHorizontalTextPosition(JLabel.CENTER);
@@ -609,34 +651,32 @@ public class GUInterface {
 
 	private void addResultWidgets() {
 
+		bestStatisticsPanel.add(bestSolutionLabel);
 		bestStatisticsPanel.add(new JLabel(""));
 		bestStatisticsPanel.add(generationBestStateLabel);
 		bestStatisticsPanel.add(fitnessBestStateLabel);
-		bestStatisticsPanel.add(new JLabel(""));
-		bestStatisticsPanel.add(new JLabel(""));
 		bestStatisticsPanel.add(generationBestState);
 		bestStatisticsPanel.add(fitnessBestState);
-		bestStatisticsPanel.add(new JLabel(""));
 
-		JPanel temp = new JPanel();
-		temp.setLayout(new BorderLayout(5,5));
-		temp.add(bestStatisticsPanel,BorderLayout.NORTH);	
-
-//		historyPanel.add(bestStateVisualization,BorderLayout.CENTER);
-
-		temp.add(historyPanel,BorderLayout.CENTER);
+		bestStatisticsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		JPanel rightPanel = new JPanel();
-		rightPanel.setPreferredSize(new Dimension(200,735));
+		//		rightPanel.setPreferredSize(new Dimension(200,500));
 		rightPanel.setLayout(new BoxLayout(rightPanel,BoxLayout.Y_AXIS));
 		rightPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-		rightPanel.add(bestSolutionLabel);
+		rightPanel.add(bestStatisticsPanel);
 		rightPanel.add(bestSolutionPanel);
 
 		resultsPanel.add(rightPanel,BorderLayout.EAST);
+
+		JPanel temp = new JPanel();
+		temp.setLayout(new BorderLayout(5,5));
+
+		temp.add(new JLabel("Iterations History"),BorderLayout.NORTH);
+		temp.add(historyPanel,BorderLayout.CENTER);
+
 		resultsPanel.add(temp,BorderLayout.CENTER);
-		//resultsPanel.add(historyPanel,BorderLayout.CENTER);
 
 
 	}
@@ -671,7 +711,7 @@ public class GUInterface {
 			configLandUses();
 
 			configRestrictions();
-			
+
 			configForbiddenTiles();
 
 			if (startDialog.allowRepeatedConst()){
@@ -683,7 +723,7 @@ public class GUInterface {
 			configSolver();			
 
 			savedObject = new SavableObject(geneticEngine, annealingEngine, Construction.getConstructions(), solver);
-			
+
 			updateStatusPanel();
 
 			createResultWidgets();
@@ -694,7 +734,7 @@ public class GUInterface {
 			centerPanel.repaint();
 		};
 
-		
+
 
 	}
 
@@ -717,7 +757,7 @@ public class GUInterface {
 				return false;
 
 			}
-			
+
 		} else {
 
 			startDialog = new StartDialog(frame, true, "New Problem");
@@ -813,13 +853,13 @@ public class GUInterface {
 			}
 
 		}
-		
+
 
 	}
 
 	private void initializeLandUses() {
 
-		
+
 		int id = 0;
 		landusesInitializationDialog = new LandUseInitializationDialog(frame, true, "LandUse Initialization", landuses, id);
 
@@ -910,7 +950,7 @@ public class GUInterface {
 
 	public void configForbiddenTiles() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
@@ -926,41 +966,41 @@ public class GUInterface {
 		solverOption = solverDialog.getOption();
 
 		if (solverOption == 1) {
-			
+
 			configAnnealing();
 			solver.removeAll(solver);
 			solver.add(annealingEngine);
-			
+
 			geneticEngine = null;
-			
+
 		} else if (solverOption == 2){
-			
+
 			configGeneticGenerator();
 			solver.removeAll(solver);
 			solver.add(geneticEngine);
-			
+
 			annealingEngine = null;
 
 		} else if (solverOption == 3){
-			
+
 			configAnnealing();
 			configGeneticGenerator();
-			
+
 			solver.removeAll(solver);
 			solver.add(annealingEngine);
 			solver.add(geneticEngine);
-			
+
 		} else if (solverOption == 4){
-			
+
 			configAnnealing();
 			configGeneticGenerator();
-			
+
 			solver.removeAll(solver);
 			solver.add(geneticEngine);
 			solver.add(annealingEngine);
-			
+
 		}
-		
+
 		configStopCond();
 
 	}
@@ -970,19 +1010,19 @@ public class GUInterface {
 
 		try {
 			if (annealingEngine == null) {
-				
+
 				annealingEngine = new SimulatedAnnealingEngine(population);
-				
+
 				annealingEngine.setTemperature(1000, .90);
 
 			} 
-			
+
 			annealingDialog = new AnnealingDialog(frame, true, "Simulated Annealing Settings",annealingEngine);
-			
+
 			if (annealingDialog.hasNewAnnealingEngine()) {
-				
+
 				annealingEngine.setTemperature(annealingDialog.getInitialTemperature(), annealingDialog.getVariationFactor());
-				
+
 				annealingDialog.setNewAnnealingEngine(false);
 			}
 
@@ -1029,33 +1069,33 @@ public class GUInterface {
 
 
 		try {
-			
+
 			geneticStopDialog = new StoppingSettingsDialog(frame, true, "Stopping Conditions", geneticEngine, annealingEngine);
-			
+
 			if (geneticStopDialog.hasNewStopConditions()){
-				
-				
+
+
 				if (geneticEngine != null) {
-					
+
 					geneticEngine.setMaxNrIterations(geneticStopDialog.getGeneticIterations());
 					geneticEngine.setMaxNrAllowedNonImprovingGenerations(geneticStopDialog.getGeneticUnimproves());
 					geneticEngine.setMaxDifferenceToMean(geneticStopDialog.getGeneticVariations());
 					geneticEngine.setMinimumFitness(geneticStopDialog.getGeneticMinFitness());
-					
+
 				}
-				
+
 				if (annealingEngine != null) {
-					
+
 					annealingEngine.setMaxNrIterations(geneticStopDialog.getAnnealingIterations());
 					annealingEngine.setMaxNrAllowedNonImprovingGenerations(geneticStopDialog.getAnnealingUnimproves());
 					annealingEngine.setMaxDifferenceToMean(geneticStopDialog.getAnnealingVariations());
 					annealingEngine.setMinimumFitness(geneticStopDialog.getAnnealingMinFitness());
-					
+
 				}
 
-				
+
 			}
-			
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1072,30 +1112,38 @@ public class GUInterface {
 
 
 	private void evolution() {
-		
+
+		solver.get(0).iterate();
+
+		if (solver.get(0).stopConditionMet()) {
+			JOptionPane.showMessageDialog(frame, "Stop conditions met.");
+			evolutionTimer.stop();
+		}
+
 		if (solver.size() == 1) {
 			solver.get(0).iterate();
-			
+
 			if (solver.get(0).stopConditionMet()) {
 				JOptionPane.showMessageDialog(frame, "Stop conditions met.");
+				evolutionTimer.stop();
 			}
-			
+
 		} else if (solver.size() == 2) {
-			
-			if (solver.get(0).stopConditionMet()) {
-				solver.get(1).iterate();
-			} else {
-				solver.get(0).iterate();
-			}
-			
+
+			if (solver.get(0).stopConditionMet()) 
+				solver.remove(0);
+
+			solver.get(0).iterate();
+
 			if (solver.get(0).stopConditionMet()) {
 				JOptionPane.showMessageDialog(frame, "Stop conditions met.");
+				evolutionTimer.stop();
 			}
 		} else {
 			JOptionPane.showMessageDialog(frame, "Algorithm Engine Error.");
 			evolutionTimer.stop();
 		}
-		
+
 
 		updateStatusPanel();
 		updateResultPanel();
@@ -1103,12 +1151,9 @@ public class GUInterface {
 	}
 
 	private void updateResultPanel() {
-		
+
 		population.updateStatistics();
 
-//		if (population.bestStateEver() == null){
-//			return;
-//		}
 		generationBestState.setText("" + population.iterationNrForBestStateEver());
 
 		fitnessBestState.setText("" + String.format("%.7f",((TileProblemState) population.bestStateEver()).fitness()));
@@ -1133,7 +1178,7 @@ public class GUInterface {
 	private void updateStatusPanel() {
 
 		if ( geneticEngine != null) {
-			
+
 			statusOuputLabel.setText("Nr. of Sites: " +  tiles.length +
 					";   Nr. of Landuses: " + landuses.length +
 					";   Population Size: " + population.populationSize() +
@@ -1142,20 +1187,39 @@ public class GUInterface {
 
 			if (geneticEngine.getDirectFitnessToProb()) {
 				genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",geneticEngine.getMutationProb()) +
-						";   Mutation Probability Variation Factor: " + String.format("%.3f",geneticEngine.getMutationProbVarFac()) +
-						";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
-						";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
+						";   Decrease Mutation Factor: " + String.format("%.3f",geneticEngine.getMutationProbVarFac()) +
+						";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()));
+
+				lblDirectFitness.setText("Direct Fitness: " + geneticEngine.getDirectFitnessToProb() +
 						";   Probability to Rank: N/A");
+
 			} else {
 				genStatusOuputLabel.setText("Mutation Probability: " + String.format("%.2f",geneticEngine.getMutationProb()) +
-						";   Mutation Probability Variation Factor: " + String.format("%.2f",geneticEngine.getMutationProbVarFac()) +
-						";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()) +
-						";   Direct Fitness to Probability: " + geneticEngine.getDirectFitnessToProb() +
+						";   Decrease Mutation Factor: " + String.format("%.2f",geneticEngine.getMutationProbVarFac()) +
+						";   Diversity Factor: " + String.format("%.2f",geneticEngine.getDiversityUsageFac()));
+
+				lblDirectFitness.setText("Direct Fitness: " + geneticEngine.getDirectFitnessToProb() +
 						";   Probability to Rank: " + String.format("%.2f",geneticEngine.getProbToRank()));
 			}
-			
+
 		}
-		
+
+		if ( annealingEngine != null ) {
+
+			lblCurrentTemperature.setText("Current temperature: " + String.format("%.2f",annealingEngine.getCurrentTemperature()));
+			lblDecreasingFactor.setText("Decreasing Factor: " + String.format("%.2f",annealingEngine.getVariationFactor()));
+
+		}
+
+		if ( solver.size() != 0 ) {
+			if (solver.get(0).getClass().getCanonicalName() == SimulatedAnnealingEngine.class.getCanonicalName()) {
+				lblRunningEngine.setText("Simulated Annealing");
+			} else {
+				lblRunningEngine.setText("Genetic Algorithm");
+			}
+
+		}
+
 
 	}
 
@@ -1207,9 +1271,6 @@ public class GUInterface {
 
 
 
-
-
-
 	/**
 	 * Gets the tiles.
 	 *
@@ -1257,6 +1318,14 @@ public class GUInterface {
 
 		}		
 	};
+	private JPanel geneticStatusPanel;
+	private JPanel populationStatusPanel;
+	private JLabel lblDirectFitness;
+	private JPanel annealingStatusPanel;
+	private JLabel lblCurrentTemperature;
+	private JLabel lblDecreasingFactor;
+	private JPanel runningPannel;
+	private JLabel lblRunningEngine;
 
 
 
@@ -1510,24 +1579,24 @@ public class GUInterface {
 			} 
 			else if (saveLoadDialog.problemLoaded())
 			{
-				
+
 				savedObject = saveLoadDialog.getTempSavedObject();
-				
+
 				geneticEngine = savedObject.getGenetic_engine();
-				
+
 				annealingEngine = savedObject.getSim_engine();
-				
+
 				Construction.setConstructions(savedObject.getMap());
-				
+
 				solver =  savedObject.getSolver();
-				
+
 				if (geneticEngine != null) {
 					population = (TileProblemPopulation) geneticEngine.getPopulation();
 				} else {
 					population = (TileProblemPopulation) annealingEngine.getPopulation();
 				}
-				
-				
+
+
 				tiles = population.tiles();
 				landuses = population.getConstructions();
 
@@ -1535,7 +1604,7 @@ public class GUInterface {
 				resultsPanel.removeAll();
 				createResultWidgets();
 				addResultWidgets();
-				
+
 				updateStatusPanel();
 				updateResultPanel();
 
@@ -1546,7 +1615,7 @@ public class GUInterface {
 
 			saveLoadDialog.setSaveProblem(false);
 			saveLoadDialog.setLoadProblem(false);
-			
+
 		}
 
 	}
@@ -1620,7 +1689,7 @@ public class GUInterface {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			
+
 			if (getTiles() == null){
 				JOptionPane.showMessageDialog(frame, "You need to start a new problem.");
 				return;
@@ -1670,21 +1739,21 @@ public class GUInterface {
 	}
 
 
-	
+
 
 	public class LandusePreferencesListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
+
 			configForbiddenTiles();
 
 		}
 
 	}
 
-	
-	
+
+
 
 
 	/**

@@ -99,7 +99,7 @@ public class SimulatedAnnealingEngine extends AlgorithmEngine implements Seriali
 		double bestFitnessAfter=this.population.mostFitState().fitness();
 		
 		if(bestFitnessAfter>bestFitnessBefore)consecutiveNonImprovingGenerations=0;
-		else consecutiveNonImprovingGenerations=0;
+		else consecutiveNonImprovingGenerations++;
 		
 		this.currentTemperature*=this.decrementingFactor;//update temperature
 
