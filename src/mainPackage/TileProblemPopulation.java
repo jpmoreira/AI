@@ -215,6 +215,20 @@ public class TileProblemPopulation implements Serializable,Population{
 		
 	}
 	
+	
+	public double overallDiversity(){
+		
+		
+		double overallDiversity=0;
+		for (TileProblemState state : states) {
+			overallDiversity+=state.diversity(states);
+		}
+		
+		return overallDiversity;
+		
+		
+	}
+	
 	/**
 	 * 
 	 * A method that returns an array with the fitness for all the states in the population 

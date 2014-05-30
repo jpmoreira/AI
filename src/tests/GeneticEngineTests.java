@@ -32,6 +32,7 @@ public class GeneticEngineTests {
 		
 		TileProblemPopulation p=new TileProblemPopulation(new Tile[]{t1,t2,t3}, new Construction[]{c1,c2,c3}, 2,1.0);
 		GeneticEngine gen=new GeneticEngine(p, 0.01, 2);
+		p.updateBestStateEver();
 		gen.iterate();
 		
 		try

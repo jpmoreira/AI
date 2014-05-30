@@ -274,28 +274,24 @@ public class ForbiddenTilesDialog extends JDialog{
 		saveButton = new JButton("Save");
 		saveButton.addActionListener(new SaveButtonListener());
 
-		if (getTileID() != numLandUses-1){
-			saveButton.setEnabled(false);
-		} else{
-			saveButton.setEnabled(true);	
-		}
-
 		buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout(FlowLayout.TRAILING,5,5));
 
 		nextButton = new JButton("Next");
 		nextButton.addActionListener(new NextButtonListener());
 
-		if (getTileID() == numLandUses-1){
+		if (getLanduseID() == numLandUses-1){
+			saveButton.setEnabled(true);	
 			nextButton.setEnabled(false);
 		} else{
+			saveButton.setEnabled(false);
 			nextButton.setEnabled(true);	
 		}
 
 		previousButton = new JButton("Previous");
 		previousButton.addActionListener(new PreviousButtonListener());
 
-		if (getTileID() == 0){
+		if (getLanduseID() == 0){
 			previousButton.setEnabled(false);
 		} else{
 			previousButton.setEnabled(true);	
@@ -347,7 +343,7 @@ public class ForbiddenTilesDialog extends JDialog{
 	 *
 	 * @return the tile id
 	 */
-	public int getTileID() {
+	public int getLanduseID() {
 		return landuseID;
 	}
 

@@ -104,6 +104,9 @@ public interface Population {
 		 */
 	public double overallFitness();
 	
+	//FIXME document
+	public double overallDiversity();
+	
 	
 	//TODO document it
 	public void addMutationThisIteration();

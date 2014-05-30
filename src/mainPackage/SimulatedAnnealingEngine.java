@@ -85,6 +85,7 @@ public class SimulatedAnnealingEngine extends AlgorithmEngine implements Seriali
 		
 		State[] newStates=new State[this.population.states().length];
 		
+		this.population.updateBestStateEver();
 		double bestFitnessBefore=this.population.mostFitState().fitness();
 		
 		for(int i=0;i<this.population.states().length;i++){

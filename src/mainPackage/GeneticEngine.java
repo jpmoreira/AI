@@ -25,7 +25,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 * Public for testing purposes.
 	 * 
 	 */
-	public double[] upperBound;
+//	public double[] upperBound;
 	
 
 	/**
@@ -138,10 +138,10 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		while (statesForReproduction.size() < this.statesToPair) {
 
 			randomNumber = gen.nextRandomNr();
-			for (int i = 0; i < states.length; i++) {
-				if (randomNumber >= this.lowerBound[i]
-						&& randomNumber <= this.upperBound[i]) {
-					statesForReproduction.add((GeneticState)states[i]);
+			for (int i = 1; i < states.length; i++) {
+				if (randomNumber >= this.lowerBound[i-1]
+						&& randomNumber < this.lowerBound[i]) {
+					statesForReproduction.add((GeneticState)states[i-1]);
 					break;
 				}
 			}
@@ -170,7 +170,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		
 		HashSet<State> statesForRep=new HashSet<State>();
 
-		double overallFitness = this.population.overallFitness();
+		double overallFitness = this.population.overallFitness()*(1-diversityUsageFactor)+this.population.overallDiversity()*diversityUsageFactor;
 		double randomNumber;
 		double probForReproduction;
 		int stateIndex = 0;
@@ -180,7 +180,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 
 			randomNumber = gen.nextRandomNr();
 			currentState =(GeneticState) this.population.states()[stateIndex];
-			probForReproduction = ((State)currentState).fitness() / overallFitness;//may not be safe
+			probForReproduction = (((State)currentState).fitness()*(1-diversityUsageFactor)+diversityUsageFactor*((State)currentState).diversity(this.population.states())) / overallFitness;//may not be safe
 			if (randomNumber <= probForReproduction)//FIXME here its not working for fitness of the state being 0
 				statesForRep.add((State)currentState);
 
@@ -317,27 +317,6 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		}
 	}
 
-	/**
-	 * 
-	 * 
-	 * A function that computes the sum over k from k=first till k=last of r to
-	 * the kth.
-	 * 
-	 * @param first
-	 *            the start of the sum
-	 * @param last
-	 *            the end of the sum
-	 * @param r
-	 *            the ratio of the sum
-	 * @return the sum
-	 */
-	public static double GeometricSum(int first, int last, double r) {
-
-		return (Math.pow(r, first) - Math.pow(r, last + 1)) / (1 - r);// geometric
-																		// progression
-																		// sum
-
-	}
 
 	/**
 	 * 
@@ -384,17 +363,17 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	public void enableFitnessToRank(double rankProb) {
 
 		this.directFitnessToProbability = false;
-		this.probToRankFactor = 1.0 - rankProb;// directly calculate
-		this.lowerBound = new double[this.population.states().length];
-		this.upperBound = new double[this.population.states().length];
+		this.probToRankFactor = rankProb;// directly calculate
+		this.lowerBound = new double[this.population.states().length+1];
 
-		for (int i = 0; i < this.lowerBound.length; i++) {
-
-			this.lowerBound[i] = GeometricSum(1, i, this.probToRankFactor);
-			this.upperBound[i] = GeometricSum(1, i + 1, this.probToRankFactor);
-		}
 		this.lowerBound[0] = 0.0;
-		this.upperBound[upperBound.length - 1] = 1.0;
+		for (int i = 1; i < this.lowerBound.length; i++) {
+
+			this.lowerBound[i] = this.lowerBound[i-1] + Math.pow((1-probToRankFactor), i-1)*probToRankFactor;
+
+		}
+		this.lowerBound[this.lowerBound.length-1] = 1.0;
+
 
 	}
 
@@ -502,14 +481,15 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	//FIXME test stop conditions met
 	public void iterate() {
 		
-		if(this.stopConditionMet())return;
+		this.population.updateBestStateEver();
 		
 		double bestFitnessBefore=population.bestStateEver().fitness();
 		this.population.updateIteration();
-		this.population.updateBestStateEver();
+		
 		this.pair();
 		this.mutate();
 		this.updateParameters();
+		this.population.updateBestStateEver();
 		
 		
 		double bestFitnessAfter=population.bestStateEver().fitness();

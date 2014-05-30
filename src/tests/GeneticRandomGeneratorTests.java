@@ -294,6 +294,8 @@ public class GeneticRandomGeneratorTests {
 
 			GeneticEngine gen = new GeneticEngine(pop, 0.5,2);
 
+			pop.updateBestStateEver();
+			
 			gen.enableFitnessToRank(0.5);
 
 			assertEquals(gen.lowerBound[0], 0.0, 0.001);
@@ -301,10 +303,6 @@ public class GeneticRandomGeneratorTests {
 			assertEquals(gen.lowerBound[2], 0.75, 0.001);
 			assertEquals(gen.lowerBound[3], 0.875, 0.001);
 
-			assertEquals(gen.upperBound[0], 0.5, 0.001);
-			assertEquals(gen.upperBound[1], 0.75, 0.001);
-			assertEquals(gen.upperBound[2], 0.875, 0.001);
-			assertEquals(gen.upperBound[3], 1.0, 0.001);
 
 	}
 
@@ -346,6 +344,9 @@ public class GeneticRandomGeneratorTests {
 			generator.enableFitnessToRank(0.5);
 			GeneticEngine.BubbleSort(pop.states(),
 					pop.states().length, 0);
+			GeneticEngine.BubbleSort(pop.states(),
+					pop.states().length, 0);
+			
 			TileProblemState bestState = pop.states()[0];
 			TileProblemState secondBestState = pop.states()[1];
 
@@ -414,7 +415,7 @@ public class GeneticRandomGeneratorTests {
 			}
 		});
 		
-		assertEquals(bit, 2);
+		assertEquals(3, bit);
 		
 		bit=gen.bitToToggle(new RandomNrGenerator() {
 			
@@ -424,7 +425,7 @@ public class GeneticRandomGeneratorTests {
 			}
 		});
 		
-		assertEquals(bit, 1);
+		assertEquals(bit, 2);
 		
 		bit=gen.bitToToggle(new RandomNrGenerator() {
 			
@@ -434,7 +435,7 @@ public class GeneticRandomGeneratorTests {
 			}
 		});
 		
-		assertEquals(bit, 0);
+		assertEquals(bit, 1);
 		
 		
 	}

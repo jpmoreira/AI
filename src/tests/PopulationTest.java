@@ -348,6 +348,7 @@ public class PopulationTest {
 		
 		TileProblemPopulation p=new TileProblemPopulation(new Tile[]{t1,t2,t3}, new Construction[]{c1,c2,c3}, 2,1.0);
 		GeneticEngine gen=new GeneticEngine(p, 0.01, 2);
+		p.updateBestStateEver();
 		gen.iterate();
 		
 		try
@@ -401,6 +402,7 @@ public class PopulationTest {
 		
 		TileProblemPopulation p=new TileProblemPopulation(new Tile[]{t1,t2}, new Construction[]{c1,c2,c3,c4},3,1.0);
 		GeneticEngine gen=new GeneticEngine(p, 0.01, 2);
+		p.updateBestStateEver();
 		gen.iterate();
 		
 		assertTrue(1==1);//possible to iterate so everything ok
@@ -419,6 +421,7 @@ public class PopulationTest {
 		
 		TileProblemPopulation p=new TileProblemPopulation(new Tile[]{t1,t2,t3,t4}, new Construction[]{c1,c2,},3,1.0);
 		GeneticEngine gen=new GeneticEngine(p, 0.01, 2);
+		p.updateBestStateEver();
 		gen.iterate();
 		
 		assertTrue(1==1);//possible to iterate so everything ok
@@ -428,6 +431,7 @@ public class PopulationTest {
 	@Test
 	public void testRepetedStatesPenalty(){
 		
+		Construction.resetConstructions();
 		Construction c1=new Construction("C1");
 		Construction c2=new Construction("C2");
 		Construction c3=new Construction("C3");
@@ -450,9 +454,9 @@ public class PopulationTest {
 		double[] fitnesses=p.fitnessArray();
 		
 		assertEquals(1.0, fitnesses[0],0.00001);
-		assertEquals(0.5, fitnesses[1],0.00001);
-		assertEquals(0.125, fitnesses[2],0.00001);
-		assertEquals(0.25, fitnesses[3],0.00001);
+		assertEquals(0.25, fitnesses[1],0.00001);
+		assertEquals(0.0625, fitnesses[2],0.00001);
+		assertEquals(0.0625, fitnesses[3],0.00001);
 		
 		
 	}

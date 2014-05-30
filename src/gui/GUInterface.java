@@ -973,8 +973,7 @@ public class GUInterface {
 		
 		landuses[id].setTilesConstraint(auxForb, forbiddenTilesDialog.getForbiddenPenaty());
 
-		id = forbiddenTilesDialog.getTileID();
-		if (id == landuses.length)
+		id = forbiddenTilesDialog.getLanduseID();
 
 
 		while (!forbiddenTilesDialog.isFinished() && !forbiddenTilesDialog.isCanceled()){
@@ -993,7 +992,7 @@ public class GUInterface {
 				
 				landuses[id].setTilesConstraint(auxForb, forbiddenTilesDialog.getForbiddenPenaty());
 
-				id = forbiddenTilesDialog.getTileID();
+				id = forbiddenTilesDialog.getLanduseID();
 
 			} else {
 				break;
