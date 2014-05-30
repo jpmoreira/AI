@@ -727,8 +727,6 @@ public class GUInterface {
 
 			configSolver();			
 
-			savedObject = new SavableObject(geneticEngine, annealingEngine, Construction.getConstructions(), solver);
-
 		};
 
 
@@ -1066,6 +1064,7 @@ public class GUInterface {
 	private void configAnnealing() {
 
 		try {
+			
 			if (annealingEngine == null) {
 
 				annealingEngine = new SimulatedAnnealingEngine(population);
@@ -1618,6 +1617,9 @@ public class GUInterface {
 		public void actionPerformed(ActionEvent e) {
 
 			// JDialog - SAVE/LOAD GAME
+			
+			savedObject = new SavableObject(geneticEngine, annealingEngine, Construction.getConstructions(), solver);
+			
 			saveLoadDialog = new SaveLoadDialog(frame, true, "Save/Load Problem", savedObject);
 
 			if(saveLoadDialog.problemSaved())
