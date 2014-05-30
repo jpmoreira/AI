@@ -44,6 +44,19 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 * The number of states to pair
 	 */
 	private int statesToPair;
+	
+	//FIXME document it
+	private int elitistStates=0;
+
+	public int getElitistStates() {
+		return elitistStates;
+	}
+
+	public void setElitistStates(int elististStates) {
+		this.elitistStates = elististStates;
+	}
+
+
 
 	/**
 	 * The current probability of a mutation occurring
@@ -97,15 +110,15 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 *            {@link #defaultGenerator} will be used.
 	 * @return an array withTheStatesForNextGeneration
 	 */
-	public GeneticState[] statesForReproduction(RandomNrGenerator gen) {
+	public GeneticState[] selectBestStates(int nrStates,RandomNrGenerator gen) {
 
 		
 		GeneticState [] states;
 		if (this.directFitnessToProbability)
 			states= this
-					.statesForReproduction_Direct_Fitness_To_Probability(gen);
+					.statesForReproduction_Direct_Fitness_To_Probability(nrStates,gen);
 		else
-			states= this.statesForReproduction_Fitness_To_Rank(gen);
+			states= this.statesForReproduction_Fitness_To_Rank(nrStates,gen);
 		
 		return states;
 
@@ -121,13 +134,13 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 *            {@link #defaultGenerator} will be used instead.
 	 * @return the states to be used in reproduction
 	 */
-	private GeneticState[] statesForReproduction_Fitness_To_Rank(RandomNrGenerator gen) {
+	private GeneticState[] statesForReproduction_Fitness_To_Rank(int nrStates,RandomNrGenerator gen) {
 
 		if (gen == null)
 			gen = defaultGenerator;
 
 		GeneticEngine.BubbleSort(population.states(),
-				population.states().length, this.diversityUsageFactor);// sort
+				nrStates, this.diversityUsageFactor);// sort
 																		// states
 
 		HashSet<GeneticState> statesForReproduction = new HashSet<GeneticState>();
@@ -135,7 +148,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		double randomNumber;
 		State[] states = this.population.states();
 
-		while (statesForReproduction.size() < this.statesToPair) {
+		while (statesForReproduction.size() < nrStates) {
 
 			randomNumber = gen.nextRandomNr();
 			for (int i = 1; i < states.length; i++) {
@@ -162,7 +175,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	 *            {@link #defaultGenerator} will be used.
 	 * @return the states to be used in reproduction
 	 */
-	public GeneticState[] statesForReproduction_Direct_Fitness_To_Probability(
+	public GeneticState[] statesForReproduction_Direct_Fitness_To_Probability(int nrStates,
 			RandomNrGenerator gen) {
 
 		if (gen == null)
@@ -176,7 +189,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		int stateIndex = 0;
 		GeneticState currentState;
 
-		while (statesForRep.size() < this.statesToPair) {
+		while (statesForRep.size() < nrStates) {
 
 			randomNumber = gen.nextRandomNr();
 			currentState =(GeneticState) this.population.states()[stateIndex];
@@ -195,19 +208,17 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 
 	}
 
-	public GeneticState[] statesForNextGen() {
+	public GeneticState[] elitistStatesForNextGen() {
 
 		State[] orderedStates = this.population.states().clone();
 
-		int nrOfElitistStatesToSelect = this.population.states().length
-				- this.statesToPair;
 
 		GeneticEngine.BubbleSort(orderedStates,
-				nrOfElitistStatesToSelect, diversityUsageFactor);
+				elitistStates, diversityUsageFactor);
 
-		GeneticState[] statesForNextGen = new GeneticState[nrOfElitistStatesToSelect];
+		GeneticState[] statesForNextGen = new GeneticState[elitistStates];
 
-		for (int i = 0; i < nrOfElitistStatesToSelect; i++) {
+		for (int i = 0; i < elitistStates; i++) {
 			statesForNextGen[i] = (GeneticState)orderedStates[i];
 		}
 
@@ -444,7 +455,7 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 	public void pair(){
 		
 		if(crossOverPoints==0)return;//if no crossoverpoints no pairing
-		GeneticState[] statesToBePaired=statesForReproduction(null);
+		GeneticState[] statesToBePaired=selectBestStates(statesToPair,null);
 		GeneticState st1,st2;
 		Integer[] segments;
 		GeneticState[] childs;
@@ -463,17 +474,25 @@ public class GeneticEngine extends AlgorithmEngine implements Serializable {
 		}
 		
 		
-		GeneticState[] directToNextGenStates=statesForNextGen();
+		GeneticState[] elitistStates=elitistStatesForNextGen();
+		
+		GeneticState[] remaining=selectBestStates(this.population.states().length-statesToPair-this.elitistStates, null);
 		
 		State[] states=population.states();
 		
-		for(int i=0;i<directToNextGenStates.length;i++){//add states passing intact
-			states[i]=(State)directToNextGenStates[i];
+		for(int i=0;i<this.elitistStates;i++){//add states passing intact
+			states[i]=(State)elitistStates[i];
 		}
 
-		for(int i=directToNextGenStates.length;i<states.length;i++){//ass states paired
-			states[i]=(State)statesAfterPairing.get(i-directToNextGenStates.length);
+		for(int i=this.elitistStates;i<this.elitistStates+statesToPair;i++){//ass states paired
+			states[i]=(State)statesAfterPairing.get(i-elitistStates.length);
 		}
+		
+		for(int i=this.elitistStates+statesToPair;i<this.elitistStates+statesToPair+remaining.length;i++){
+			
+			states[i]=(State)remaining[i-(this.elitistStates+statesToPair)];
+		}
+		
 		
 		
 	}

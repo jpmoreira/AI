@@ -147,7 +147,6 @@ public class PopulationTest {
 				return 100;
 			}
 		};
-
 		c4 = new Construction("Aeroporto") {
 
 			@Override
@@ -159,12 +158,12 @@ public class PopulationTest {
 		Tile[] tiles = { tile1, tile2 };
 		Construction[] constructions = { c1, c2, c3, c4 };
 		TileProblemPopulation pop = new TileProblemPopulation(tiles, constructions, 4);
+		
 		GeneticEngine gen=new GeneticEngine(pop, 1.0, 2);
-
+		gen.setElitistStates(2);
+		
 		TileProblemState st1 = pop.states()[0];
 		TileProblemState st2 = pop.states()[1];
-		TileProblemState st3 = pop.states()[2];
-		TileProblemState st4 = pop.states()[3];
 
 		TileProblemState best, secondBest;
 

@@ -242,7 +242,8 @@ public class GeneticRandomGeneratorTests {
 
 			GeneticEngine gen = new GeneticEngine(pop, 0.5, 1);
 
-			GeneticState[] statesOfNextGen =  gen.statesForNextGen();
+			gen.setElitistStates(2);
+			GeneticState[] statesOfNextGen =  gen.elitistStatesForNextGen();
 			State[] supposedStatesForNextGen = { s3, s2 };
 
 			assertArrayEquals(statesOfNextGen, supposedStatesForNextGen);
@@ -351,7 +352,7 @@ public class GeneticRandomGeneratorTests {
 			TileProblemState secondBestState = pop.states()[1];
 
 			GeneticState[] statesForRep = generator
-					.statesForReproduction(new RandomNrGenerator() {
+					.selectBestStates(2,new RandomNrGenerator() {
 
 						int i = 0;
 						double[] seq = { 0.4, 0.7 };
